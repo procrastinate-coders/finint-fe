@@ -3,12 +3,13 @@
 > Living document. Describes what **EXISTS**, not what is planned. Updated whenever the
 > architecture changes. Never aspirational.
 
-**Last updated:** 2026-07-15 — **FIN-149 Phase 1 has landed** (auth wired to the LIVE API + shell).
+**Last updated:** 2026-07-16 — **FIN-160 has landed** (the readiness screen at `/`, stale-gated
+on-land refresh, and the Kite modal), on top of FIN-149 (auth + shell) and FIN-158 (scaffold).
 This describes what EXISTS: the tooling, the ported skin + design-system, the formatter, the
 session + api client (single-flight refresh + `ensureAccessToken` rehydrate), the login flow +
-route guard, the `/kite/callback` placeholder, MSW for every endpoint, and the Vercel config.
-No product SCREENS yet — those are FIN-160/161/162. Contracts are GENERATED from FIN-159's
-`/openapi.json` (FFE-004); the earlier PROVISIONAL schemas are deleted (FFE-008 retired).
+route guard, the readiness screen + refresh/kite flows, MSW for every endpoint, the Vercel config.
+Still to come: generate (FIN-161) + the brief surface (FIN-162). Contracts are GENERATED from
+FIN-159's `/openapi.json` (FFE-004); the earlier PROVISIONAL schemas are deleted (FFE-008 retired).
 
 ---
 
@@ -68,7 +69,7 @@ src/
 │   ├── login.tsx             # public; redirects to / if already authed
 │   ├── kite.callback.tsx     # PUBLIC-ish: reads ?request_token (PLACEHOLDER — FIN-149 Ph2)
 │   └── _authenticated.tsx    # beforeLoad gate → /login; renders AppShell + <Outlet/>
-│       └── _authenticated/   # index.tsx (Brief empty shell) · dev.components.tsx (DEV-only)
+│       └── _authenticated/   # index.tsx (ReadinessScreen) · dev.components.tsx (DEV-only)
 ├── design-system/            # ported from apex-admin (same skin, own copy — FFE-003)
 │   ├── index.ts              # public barrel (re-exports components/finint data primitives)
 │   ├── material/             # Glass (the one chrome primitive) + Glass.preview
@@ -84,16 +85,18 @@ src/
 │   │   │   └── index.ts      # barrel — re-exports generated schemas with app-friendly names + error
 │   │   └── endpoints.ts      # login/logout/getMe/getReadiness/refreshSpine/kite*/generate*/getBrief*
 │   ├── auth/                 # session.ts (memory access + localStorage refresh) + auth-context (AuthProvider/useAuth)
-│   ├── query/                # createQueryClient + useMe/useReadiness hooks
+│   ├── query/                # createQueryClient + useMe/useReadiness/useRefreshSpine/useKite* hooks
 │   ├── format/               # THE formatter (number.ts: Intl 'en-IN' + pct; time.ts: IST) — null → "—"
 │   └── utils.ts              # cn()
 ├── components/
 │   ├── ui/                   # shadcn primitives, owned (button · input · label · sonner)
-│   ├── finint/               # flat, signal-pure DATA primitives (Skeleton · IstClock; more with FIN-149)
+│   ├── finint/               # flat, signal-pure DATA primitives (Skeleton · IstClock · StatusDot · SourceRow)
 │   ├── layout/               # AppShell · Sidebar · Header (the glass shell) + Aura
 │   └── common/               # ScreenState (loading-skeleton / error / empty)
 ├── features/
-│   └── auth/                 # LoginForm (email + generic error) — readiness/generate/brief/kite land in FIN-149
+│   ├── auth/                 # LoginForm (email + generic error)
+│   └── readiness/            # ReadinessScreen · on-land (stale rule + guard) · refresh-summary +
+│                             #   RefreshReport · KiteRefreshModal + request-token (kite co-located here)
 ├── styles/                   # tokens.css (ported --apex-*) · (index.css lives at src/index.css: @theme + glass CSS)
 └── test/                     # setup.ts + mocks/ (MSW handlers + fixtures; readiness fixture is CONTEXT.md verbatim)
 ```

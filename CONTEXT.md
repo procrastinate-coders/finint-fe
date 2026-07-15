@@ -3,12 +3,37 @@
 *The living state of the build. Updated at the END of every session; read FIRST at the start of
 the next. Never close a session with a stale CONTEXT.*
 
-**Updated:** 2026-07-15 — **FIN-149 Phase 1 LANDED** (auth wired to the LIVE API + app shell).
-Read this before starting FIN-160.
+**Updated:** 2026-07-16 — **FIN-160 LANDED** (readiness screen + stale-gated on-land refresh +
+Kite modal). Read this before starting FIN-161.
 
 ---
 
 ## WHERE WE ARE
+
+**FIN-160 (readiness + on-land refresh + Kite modal) is done and PROVEN against the live API.**
+The readiness screen is the home (`/`): it maps over `readiness.sources` (never hardcoded — a 9th
+source appears with no code change), renders the six-colour status dots (amber→yellow), the
+`critical` tag, the note VERBATIM (including the backend's honest `-82791s ago` future-stamp bug —
+we do NOT sanitise it), and registry-driven CTAs. Generate is gated on `can_generate` +
+`blocked_reason` (inert here — wiring is FIN-161).
+
+- **On-land refresh is STALE-GATED (FFE-006):** fire POST /refresh ONLY if news/comex/usdinr/dxy/cot
+  is RED — never on amber, never for macro_continuity/kite/board. A module once-guard survives
+  StrictMode and can't loop. ⚠️ Tested: all-amber board → **ZERO** refresh calls (the GNews quota
+  test). The refresh report shows the honest per-source truth (a partial NAMES the failed source;
+  COT "skipped" reads as success; already_running bounds the wait on `started_at`).
+- **Kite modal:** GET /kite/login-url → open → the honest broken-redirect warning (the localhost:8080
+  page WON'T load — that's normal; the token is in the address bar) → paste request_token (or the
+  whole URL) → POST /kite/refresh → uses the returned kite dot + re-reads readiness. Glass chrome.
+- **Two contract corrections — RESOLVED, no backend change:** verified LIVE that
+  `KiteRefreshResponse.source` is an OBJECT (a SourceHealthModel, the refreshed kite dot) — the model
+  was always correct; the drift was only my FIN-149 MSW fixture (now fixed). And `/readiness` +
+  `/kite/refresh` live shapes match the generated schemas exactly (keys + types).
+- Proven: live readiness renders (warm board, 7/8, no refresh fired → quota-safe); cold board (mock)
+  shows every state — blocked generate, refresh report, 3 CTAs, the Kite modal. **55 tests** green.
+  ⚠️ NOT done: the Kite modal's full happy-path token exchange against LIVE needs kite to be RED
+  (it's green now) AND a real Zerodha login — that's a Father/Udit step (login-url + the endpoint +
+  the honest-failure path ARE live-verified).
 
 **FIN-149 (auth wire + app shell) is done and PROVEN against the live API** — not just mocks.
 Login → shell → hard-reload rehydrate → logout were all driven in a real browser against
@@ -55,13 +80,13 @@ The readiness gate returns **8 sources** and `can_generate: true`.
 1. ~~**FIN-158 — scaffold**~~ ✅ **DONE**.
 2. ~~**FIN-149 Phase 1 — auth wire + app shell + pages**~~ ✅ **DONE** (this session). Follow-up:
    run `vercel --prod` to deploy (deferred).
-3. **FIN-160 — Readiness screen + Kite refresh modal** ($0, no LLM) ← **START HERE.** The
-   highest-value screen: it proves the system is honest and exercises the whole stack for free. Map
-   over `readiness.sources` (law 5). The real shape is in `../finint/docs/api/samples/readiness.json`
-   (+ the verbatim JSON below). Kite modal: `GET /kite/login-url` → open → `?request_token` →
-   `POST /kite/refresh` (the `/kite/callback` route is a placeholder ready to wire).
-4. **FIN-161 — Generate + progress.** ⚠️ First real money (~$0.06/run). Real `/generate` response
-   carries `started` + `positioning_only` (see `samples/generate_run.json`) — reconcile `GenerateResponse`.
+3. ~~**FIN-160 — Readiness screen + Kite refresh modal**~~ ✅ **DONE** (this session).
+4. **FIN-161 — Generate + progress** ← **START HERE.** ⚠️ First real money (~$0.06/run). The
+   Generate button already renders + is gated on `can_generate` in the readiness screen — wire its
+   onClick to POST /generate → poll GET /generate/status (4 steps; the design's "Generating" state
+   is in `docs/designs/FinintBrief.jsx`). ⚠️ Real `/generate` response carries `started` +
+   `positioning_only` (see `../finint/docs/api/samples/generate_run_real_*.json`) — reconcile
+   `GenerateResponse` (regenerate if the backend types it). Don't block on the POST (it takes minutes).
 5. **FIN-162 — The brief surface.** ⚠️ Build against the DEGRADED sample too, not just the complete
    fixture — the honest-degradation case is a core law. (Ask the backend which real brief samples exist.)
 6. **Cutover:** add `finint.apextrader.trade` to the Vercel project → repoint DNS
@@ -123,6 +148,7 @@ fixed on 2026-07-15).
 - **Contracts codegen — RESOLVED (FFE-004 satisfied, FFE-008 retired).** FIN-159 shipped a real
   typed `openapi.json`; `contracts/_generated/schemas.ts` is generated from it and `provisional/` is
   deleted. Re-run `npm run gen:contracts` whenever `../finint/docs/api/openapi.json` changes.
-  ⚠️ Two known drifts to reconcile in later phases: real `/generate` carries `started` +
-  `positioning_only` (FIN-161), and `KiteRefreshResponse.source` is an object not a string (FIN-160).
+  ⚠️ One known drift left: real `/generate` carries `started` + `positioning_only` (FIN-161). The
+  `KiteRefreshResponse.source` "drift" was RESOLVED in FIN-160 — it's an OBJECT by design (verified
+  live); the generated model was right, only my old MSW fixture was wrong.
 - **Not deployed yet.** No `vercel` deploy was run (deferred by choice); `vercel.json` is in place.

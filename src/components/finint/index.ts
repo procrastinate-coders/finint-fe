@@ -5,3 +5,5 @@
  */
 export { Skeleton } from './Skeleton'
 export { IstClock } from './IstClock'
+export { StatusDot } from './StatusDot'
+export { SourceRow } from './SourceRow'

@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { FileText, LayoutGrid } from 'lucide-react'
+import { Gauge, LayoutGrid } from 'lucide-react'
 import { Glass, BrandMark, Wordmark } from '@/design-system'
 import { cn } from '@/lib/utils'
 
@@ -11,13 +11,13 @@ const labelCls = 'max-xl:hidden max-xl:group-hover:inline whitespace-nowrap'
 interface NavItem {
   to: string
   label: string
-  icon: typeof FileText
+  icon: typeof Gauge
   exact?: boolean
   devOnly?: boolean
 }
 
 const NAV: NavItem[] = [
-  { to: '/', label: 'Brief', icon: FileText, exact: true },
+  { to: '/', label: 'Readiness', icon: Gauge, exact: true },
   {
     to: '/dev/components',
     label: 'Components',

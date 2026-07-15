@@ -60,19 +60,24 @@ export const handlers = [
   // --- readiness (LIVE today) ---------------------------------------------
   http.get(`${H}/readiness`, () => HttpResponse.json(readinessFixture)),
 
-  // --- spine refresh + kite (PROVISIONAL — FIN-156) -----------------------
+  // --- spine refresh + kite (FIN-156, real shapes) ------------------------
   http.post(`${H}/refresh`, () => HttpResponse.json(refreshSpineFixture)),
   http.get(`${H}/kite/login-url`, () => HttpResponse.json(kiteLoginUrlFixture)),
   http.post(`${H}/kite/refresh`, async ({ request }) => {
     const body = (await request.json().catch(() => null)) as {
       request_token?: string
     } | null
-    // The backend never 500s here — a bad token is an honest {ok:false}.
+    // The backend never 500s here — a bad token is an honest {ok:false} whose
+    // `source` is still the (red) kite dot OBJECT, not a string.
     if (!body?.request_token) {
       return HttpResponse.json({
         ok: false,
         reason: 'missing request_token',
-        source: 'kite',
+        source: {
+          ...kiteRefreshFixture.source,
+          status: 'red',
+          note: 'Token expired / absent — daily login required',
+        },
       })
     }
     return HttpResponse.json(kiteRefreshFixture)

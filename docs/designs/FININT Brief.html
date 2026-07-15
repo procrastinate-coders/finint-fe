@@ -1,0 +1,93 @@
+<!-- @dsCard group="Admin Panel" viewport="1440x900" name="FININT Brief — pre-market intelligence" subtitle="Readiness · Kite refresh · generating · the brief" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>APEX — FININT Brief</title>
+<link rel="stylesheet" href="../../styles.css" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script src="finint-data.js"></script>
+<style>
+  html, body { margin: 0; background: #000000; }
+  * { box-sizing: border-box; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: var(--apex-border-default); border-radius: 5px; }
+  /* demo state switcher */
+  .demobar { position: fixed; bottom: 16px; right: 16px; z-index: 200; display: flex; gap: 4px;
+    background: var(--apex-bg-primary); border: 0.5px solid var(--apex-border-default);
+    border-radius: var(--apex-radius-control); padding: 4px; }
+  .demobar button { border: none; background: transparent; border-radius: 6px; padding: 5px 10px;
+    font-family: var(--apex-font-sans); font-size: 11px; font-weight: 500; color: var(--apex-text-secondary); cursor: pointer; white-space: nowrap; }
+  .demobar button.on { background: var(--apex-blue); color: #fff; }
+  .demolabel { font-family: var(--apex-font-sans); font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--apex-text-tertiary); align-self: center; padding: 0 6px; }
+</style>
+</head>
+<body class="apex-dark">
+<div id="root"></div>
+<script type="text/babel" src="Icons.jsx"></script>
+<script type="text/babel" src="Shell.jsx"></script>
+<script type="text/babel" src="FinintBrief.jsx"></script>
+<script type="text/babel" src="FinintBriefView.jsx"></script>
+<script type="text/babel">
+const D = window.FININT_DATA;
+
+function App() {
+  // phase: readiness | generating | brief   ·  kite token live state
+  const [phase, setPhase] = React.useState("readiness");
+  const [kiteFresh, setKiteFresh] = React.useState(false);
+  const [showRefresh, setShowRefresh] = React.useState(false);
+
+  // sources reflect the live kite state
+  const data = React.useMemo(() => {
+    const sources = D.sources.map((s) => s.key === "kite"
+      ? (kiteFresh ? { ...s, status: "green", note: "Fresh · token valid until ~7:30 AM" } : s)
+      : s);
+    return { ...D, sources };
+  }, [kiteFresh]);
+
+  let body;
+  if (phase === "readiness") {
+    body = <FININT_Readiness data={data}
+      onGenerate={() => setPhase("generating")}
+      onRefreshKite={() => setShowRefresh(true)}
+      onViewLast={() => setPhase("brief")} />;
+  } else if (phase === "generating") {
+    body = <FININT_Generating data={data} onDone={() => setPhase("brief")} />;
+  } else {
+    body = <FININT_Brief data={data} onRegenerate={() => setPhase("generating")} />;
+  }
+
+  return (
+    <>
+      <Shell active="finint" onNav={() => {}} title="FININT Brief"
+        feedState={kiteFresh ? "live" : "stale"} feedSeconds={kiteFresh ? undefined : 63}
+        tradingLive={true} onResume={() => {}} onKill={() => {}}>
+        {body}
+      </Shell>
+
+      {showRefresh && (
+        <FININT_KiteRefresh
+          onClose={() => setShowRefresh(false)}
+          onComplete={() => { setKiteFresh(true); setShowRefresh(false); }} />
+      )}
+
+      <div className="demobar">
+        <span className="demolabel">State</span>
+        <button className={phase === "readiness" && !kiteFresh ? "on" : ""} onClick={() => { setPhase("readiness"); setKiteFresh(false); }}>1 · Readiness</button>
+        <button className={showRefresh ? "on" : ""} onClick={() => { setPhase("readiness"); setShowRefresh(true); }}>2 · Kite refresh</button>
+        <button className={phase === "generating" ? "on" : ""} onClick={() => { setKiteFresh(true); setPhase("generating"); }}>3 · Generating</button>
+        <button className={phase === "brief" ? "on" : ""} onClick={() => { setKiteFresh(true); setPhase("brief"); }}>4 · The Brief</button>
+      </div>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-import type { ElementType, ReactNode } from 'react'
+import type { ComponentPropsWithoutRef, ElementType } from 'react'
 import { cn } from '@/lib/utils'
 
 export type GlassVariant = 'sidebar' | 'toolbar' | 'panel' | 'modal' | 'overlay'
@@ -11,7 +11,7 @@ const variantClass: Record<GlassVariant, string> = {
   overlay: 'apex-glass--overlay',
 }
 
-export interface GlassProps {
+export interface GlassProps extends ComponentPropsWithoutRef<'div'> {
   /** selects tint + blur + elevation preset */
   variant?: GlassVariant
   /** 'danger' = the ONE tinted glass (the urgency wrapper); never on data */
@@ -20,8 +20,6 @@ export interface GlassProps {
   interactive?: boolean
   /** semantic element (aside | header | section | div …) */
   as?: ElementType
-  className?: string
-  children?: ReactNode
 }
 
 /**
@@ -37,6 +35,7 @@ export function Glass({
   as,
   className,
   children,
+  ...rest
 }: GlassProps) {
   const Comp: ElementType = as ?? 'div'
   return (
@@ -48,6 +47,7 @@ export function Glass({
         interactive && 'apex-glass--interactive',
         className,
       )}
+      {...rest}
     >
       {children}
     </Comp>
