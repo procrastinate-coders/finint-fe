@@ -3,48 +3,46 @@
 *The living state of the build. Updated at the END of every session; read FIRST at the start of
 the next. Never close a session with a stale CONTEXT.*
 
-**Updated:** 2026-07-15 — **FIN-158 scaffold LANDED.** Read this before starting FIN-149.
+**Updated:** 2026-07-15 — **FIN-149 Phase 1 LANDED** (auth wired to the LIVE API + app shell).
+Read this before starting FIN-160.
 
 ---
 
 ## WHERE WE ARE
 
-**The scaffold is built and verified (FIN-158).** `npm run dev` boots on mocks; login → gate →
-authed glass shell works end-to-end (verified in a real browser, no console errors); typecheck +
-lint + tests (24) all green; `npm run build` succeeds; the layer-boundary lint rule was proven to
-fire on a violation.
+**FIN-149 (auth wire + app shell) is done and PROVEN against the live API** — not just mocks.
+Login → shell → hard-reload rehydrate → logout were all driven in a real browser against
+`https://apifinint.apextrader.trade`, plus a scripted API proof and the 429 rate-limit path.
 
-**What exists now:**
-- Tooling: Vite 8 · React 19 · TS 6 · Tailwind v4 · TanStack Router/Query · Zod v4 · Vitest 4 +
-  MSW 2 · ESLint 10 flat (layer boundary + FFE-002 number-format guard) · CI (typecheck→lint→test→build).
-- The ported skin: `styles/tokens.css` (--apex-*, six-colour lock) + `src/index.css` (@theme + glass/aura)
-  + `design-system/` (Glass, motion, monochrome FININT brand — FFE-009, preview gallery).
-- `lib/format/` — THE formatter (₹1,47,889 Indian grouping, +1.638%/−0.905%, IST, null → "—").
-- `lib/auth/session.ts` (memory access + `finint.refresh_token`) + `lib/api/client.ts`
-  (**single-flight refresh**, tested) + `endpoints.ts` + provisional contracts.
-- Login (email, generic error) + `_authenticated` gate + `/kite/callback` placeholder + Brief empty shell.
-- MSW for every endpoint (readiness fixture = CONTEXT verbatim, 8 sources, `can_generate: true`).
-- `vercel.json` SPA rewrite · `.env.example` · codegen script (`npm run gen:contracts`).
+**Proven live (2026-07-15, `udit@finint.local`):**
+- `POST /auth/login` → tokens ONLY (no user), `token_type` present. Identity comes from `GET /auth/me`.
+- `GET /auth/me` → `{id:number, email, is_active, created_at}` (no `name`) — renders in the header.
+- `POST /auth/refresh` → new access token, **NOT rotated** (no `refresh_token` in body) — the trap
+  the ticket warned about; the contract does not expect one, so no mysterious logout.
+- Hard reload rehydrates via `ensureAccessToken` (refresh → me), NO re-login. Access is memory-only.
+- `POST /auth/logout` → revokes; the revoked refresh token then 401s; UI bounces to `/login`.
+- 429 after 5 failed logins/IP (`retry-after: ~298`) → UI shows "Too many attempts", not the generic line.
+- ONE `{detail}` error shape everywhere. CORS/OPTIONS preflight is unauthed + allows `localhost:5173`.
+- typecheck + lint + **29 tests** green; build green; **no zodios/axios in the bundle**.
 
-**Two decisions recorded this session:** FFE-008 (provisional hand-authored contracts until the
-backend declares `response_model=`; codegen is wired but currently generates empty schemas) and
-FFE-009 (monochrome wordmark-derived brand, no invented pictorial mark).
+**Contracts are now GENERATED (FFE-004 satisfied; FFE-008 retired).** FIN-159 shipped a real
+`openapi.json` with response models. `npm run gen:contracts` builds `contracts/_generated/schemas.ts`
+(schemas-only — the zodios/axios client half is stripped) from `../finint/docs/api/openapi.json`.
+The hand-authored `provisional/` schemas are **DELETED**. The only hand-authored contract left is
+`contracts/error.ts` (the `{detail}` envelope isn't a reusable OpenAPI component). Added `ajv` as a
+devDep so openapi-zod-client resolves.
 
-**⚠️ Mocks are ON by default in `npm run dev`** (set `VITE_API_MOCK=0` to hit the live backend).
+**⚠️ NOT deployed** — the Vercel deploy was deferred this session (user choice). `vercel.json` is
+ready; run `vercel --prod` when convenient (default `.vercel.app` domain). **`.env.local`**
+(gitignored) currently has `VITE_API_MOCK=0`, so `npm run dev` hits the LIVE API (login required);
+set `VITE_API_MOCK=1` to go back to mocks.
 
-**The backend is live and ahead of us:**
-- `https://apifinint.apextrader.trade` — FastAPI on EC2, HTTPS (Let's Encrypt), **currently
-  behind nginx basic auth** (user `naveen`). Basic auth comes off when FIN-157 (FININT's own JWT)
-  ships — they cannot coexist, both use the `Authorization` header.
-- Live contract: `https://apifinint.apextrader.trade/openapi.json` · Swagger at `/docs`
-- **7 endpoints exist today:** `/readiness`, `/brief/today`, `/brief/{date}`, `/briefs`,
-  `POST /kite/refresh`, `POST /generate`, `GET /generate/status`
-- **NOT yet built (in flight):**
-  - **FIN-156** — `POST /refresh` + `GET /kite/login-url` (+ concurrency guard) ← the FE blocker
-  - **FIN-157** — FININT's own auth: users table, `/auth/login|refresh|logout|me`, JWT middleware, CORS
-
-**⇒ Build against MSW mocks.** The FE does NOT wait on the backend. `VITE_API_MOCK=1` and mock
-every endpoint including the ones that don't exist yet. Integrate when 156/157 land.
+**The backend (shipped since the scaffold):**
+- `https://apifinint.apextrader.trade` — FastAPI on EC2, **now guarded by FININT's own JWT**
+  (FIN-157). The nginx basic auth is GONE. `/openapi.json` now sits behind the JWT (needs a Bearer).
+- FIN-157 (own auth) + FIN-156 (`POST /refresh`, `GET /kite/login-url`) + FIN-159 (typed contracts
+  + `docs/api/CONTRACT.md` + `samples/`) all landed. **Source of truth for shapes:**
+  `../finint/docs/api/` (`CONTRACT.md`, `openapi.json`, `samples/`).
 
 **Data state (backend):** all 9 MCX mains backfilled and current (verified 2026-07-15 against live
 prices: GOLD ₹1,47,889 · SILVER ₹2,38,086 · CRUDEOIL ₹7,702 — all matched real MCX within noise).
@@ -54,17 +52,19 @@ The readiness gate returns **8 sources** and `can_generate: true`.
 
 ## WHAT'S NEXT (in order)
 
-1. ~~**FIN-158 — scaffold**~~ ✅ **DONE** (this session). Only remaining follow-up: deploy to
-   Vercel on the default `.vercel.app` domain (not done here — no deploy step run yet). And re-run
-   `npm run gen:contracts` + flip the contracts barrel off `provisional/` the moment the backend
-   declares `response_model=` (FFE-008).
-2. **FIN-149 Phase 1 — Readiness screen** ($0, no LLM) ← **START HERE.** The highest-value screen: it proves the
-   system is honest and exercises the whole stack for free.
-3. **FIN-149 Phase 2 — Kite refresh modal.**
-4. **FIN-149 Phase 3 — Generate + progress.** ⚠️ First real money (~$0.06/run).
-5. **FIN-149 Phase 4 — The brief surface.**
-6. **FIN-149 Phase 5 — History.**
-7. **Cutover:** add `finint.apextrader.trade` to the Vercel project → repoint DNS
+1. ~~**FIN-158 — scaffold**~~ ✅ **DONE**.
+2. ~~**FIN-149 Phase 1 — auth wire + app shell + pages**~~ ✅ **DONE** (this session). Follow-up:
+   run `vercel --prod` to deploy (deferred).
+3. **FIN-160 — Readiness screen + Kite refresh modal** ($0, no LLM) ← **START HERE.** The
+   highest-value screen: it proves the system is honest and exercises the whole stack for free. Map
+   over `readiness.sources` (law 5). The real shape is in `../finint/docs/api/samples/readiness.json`
+   (+ the verbatim JSON below). Kite modal: `GET /kite/login-url` → open → `?request_token` →
+   `POST /kite/refresh` (the `/kite/callback` route is a placeholder ready to wire).
+4. **FIN-161 — Generate + progress.** ⚠️ First real money (~$0.06/run). Real `/generate` response
+   carries `started` + `positioning_only` (see `samples/generate_run.json`) — reconcile `GenerateResponse`.
+5. **FIN-162 — The brief surface.** ⚠️ Build against the DEGRADED sample too, not just the complete
+   fixture — the honest-degradation case is a core law. (Ask the backend which real brief samples exist.)
+6. **Cutover:** add `finint.apextrader.trade` to the Vercel project → repoint DNS
    (A→EC2 becomes CNAME→Vercel) → **then** flip the Kite redirect URL (LAST — one-way).
 
 ---
@@ -98,7 +98,8 @@ fixed on 2026-07-15).
   clobbered tokens. One owner of the refresh promise. Non-negotiable.
 - **OPTIONS preflight must not require auth** (backend, FIN-157) — browsers don't send
   `Authorization` on preflight. If it 401s, every cross-origin call fails and it LOOKS like a
-  CORS bug. Hours lost chasing the wrong thing.
+  CORS bug. Hours lost chasing the wrong thing. ✅ VERIFIED live 2026-07-15: preflight → 200
+  unauthed, `Allow-Origin: http://localhost:5173`, `Authorization` in `Allow-Headers`.
 - **On-land refresh must be stale-gated** — GNews is 100/day, ~6 per refresh. StrictMode
   double-mounts. See FFE-006.
 - **`/generate` takes minutes** (LLM calls). nginx `proxy_read_timeout` is already 300s. The FE
@@ -119,9 +120,9 @@ fixed on 2026-07-15).
 - **Design port scope — RESOLVED.** Ported: tokens + Glass material + motion + monochrome brand
   (FFE-009) + preview gallery. NOT ported (not needed yet): CommandPalette, TanStack Table, the
   data primitives beyond Skeleton/IstClock — those arrive with FIN-149's screens.
-- **Contracts codegen — BLOCKED on the backend (FFE-008).** `npm run gen:contracts` is wired but
-  the spec has no `response_model=` and no `/auth/*` yet, so it generates nothing usable. The app
-  runs on hand-authored `provisional/*` schemas until FIN-156/157 type their responses. The `/auth`
-  and spine/kite/generate provisional shapes are DESIGNED, not observed — expect a Zod-boundary
-  mismatch (the intended failure) when the real backend lands, and reconcile then.
-- **Not deployed yet.** No `vercel` deploy was run this session; `vercel.json` is in place for when it is.
+- **Contracts codegen — RESOLVED (FFE-004 satisfied, FFE-008 retired).** FIN-159 shipped a real
+  typed `openapi.json`; `contracts/_generated/schemas.ts` is generated from it and `provisional/` is
+  deleted. Re-run `npm run gen:contracts` whenever `../finint/docs/api/openapi.json` changes.
+  ⚠️ Two known drifts to reconcile in later phases: real `/generate` carries `started` +
+  `positioning_only` (FIN-161), and `KiteRefreshResponse.source` is an object not a string (FIN-160).
+- **Not deployed yet.** No `vercel` deploy was run (deferred by choice); `vercel.json` is in place.

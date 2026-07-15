@@ -108,6 +108,11 @@ a mismatch when the backend lands surfaces at the Zod boundary (the intended fai
 backend declares response models: run `gen:contracts`, switch the `contracts/index.ts` barrel to the
 generated schemas, and DELETE each provisional file it replaces. Does NOT supersede FFE-004 — it
 time-boxes an exception to it. Backend: FIN-156, FIN-157.
+Resolved 2026-07-15 (FIN-149): FIN-159 shipped a real typed `openapi.json` (response models on
+every 200) + `docs/api/CONTRACT.md`. `contracts/_generated/schemas.ts` is now generated from it and
+the `provisional/` schemas are DELETED — the FFE-004 mechanism is live. The one remaining
+hand-authored contract is `contracts/error.ts` (the `{detail}` envelope isn't an OpenAPI component).
+The exception this decision opened is closed.
 
 ## FFE-009 — Monochrome, wordmark-derived FININT brand (no invented pictorial mark)
 Status: LOCKED

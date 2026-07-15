@@ -1,22 +1,24 @@
 # `_generated/` — DO NOT hand-edit (FFE-004)
 
-Zod schemas here are generated from the live OpenAPI spec by:
+`schemas.ts` is generated from the FININT OpenAPI spec and committed (so CI builds
+without a network round-trip). Regenerate it — never hand-edit it — with:
 
 ```bash
-npm run gen:contracts        # needs the API reachable; set FININT_BASIC_AUTH if gated
+npm run gen:contracts
 ```
 
-Never hand-write or patch a schema in this directory. A backend shape change is
-fixed in the backend (a FININT Linear ticket), then regenerated here — that is
-what turns drift into a visible diff/error instead of a silent `undefined`.
+By default this reads the FIN-159 committed spec at `../finint/docs/api/openapi.json`.
+Point it elsewhere with `FININT_OPENAPI_FILE=<path>`, or at the live (JWT-guarded)
+API with `FININT_BEARER=<access_token>`.
 
-## Why this is empty right now (FFE-008)
+## What's here
 
-As of the scaffold the backend endpoints return raw dicts with **no FastAPI
-`response_model=`**, so every response serialises in the spec as `schema: {}` —
-there is nothing to generate for `/readiness`, `/brief`, `/generate`, and the
-`/auth/*` endpoints (FIN-157) don't exist yet. Until the backend declares its
-response models, the app reads the hand-authored **PROVISIONAL** schemas in
-`../provisional/` (tracked by FFE-008). The moment the backend types its
-responses: run `gen:contracts`, switch the barrel over, and delete the
-provisional files it replaces.
+- `openapi.json` — the exact spec `schemas.ts` was generated from (provenance).
+- `schemas.ts` — **schemas only** (pure zod). openapi-zod-client emits a full zodios
+  client; `scripts/generate-contracts.mjs` strips the client half so the app bundle
+  never pulls a second HTTP client (we have our own `apiRequest`). Import these via the
+  `../index.ts` barrel with app-friendly names — never from here directly.
+
+A backend shape change → regenerate → the diff (and, where a schema is consumed, a
+Zod-boundary/type error) surfaces it. That is the whole point of FFE-004: the earlier
+hand-authored `provisional/` schemas are gone now that real generated ones exist.

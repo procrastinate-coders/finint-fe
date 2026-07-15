@@ -3,11 +3,12 @@
 > Living document. Describes what **EXISTS**, not what is planned. Updated whenever the
 > architecture changes. Never aspirational.
 
-**Last updated:** 2026-07-15 — **FIN-158 scaffold has landed.** This describes what EXISTS: the
-tooling, the ported skin + design-system, the formatter, the session + api client (single-flight
-refresh), the login flow + route guard, the `/kite/callback` placeholder, MSW for every endpoint,
-and the Vercel config. No product SCREENS yet — those are FIN-149. Where a shape isn't yet typeable
-from `/openapi.json`, contracts are hand-authored PROVISIONAL schemas (FFE-008).
+**Last updated:** 2026-07-15 — **FIN-149 Phase 1 has landed** (auth wired to the LIVE API + shell).
+This describes what EXISTS: the tooling, the ported skin + design-system, the formatter, the
+session + api client (single-flight refresh + `ensureAccessToken` rehydrate), the login flow +
+route guard, the `/kite/callback` placeholder, MSW for every endpoint, and the Vercel config.
+No product SCREENS yet — those are FIN-160/161/162. Contracts are GENERATED from FIN-159's
+`/openapi.json` (FFE-004); the earlier PROVISIONAL schemas are deleted (FFE-008 retired).
 
 ---
 
@@ -78,9 +79,9 @@ src/
 │   ├── api/
 │   │   ├── client.ts         # fetch wrapper: bearer, 401 single-flight refresh + retry, ApiError
 │   │   ├── contracts/
-│   │   │   ├── _generated/   # Zod GENERATED from /openapi.json (FFE-004) — empty until backend types responses
-│   │   │   ├── provisional/  # PROVISIONAL hand-authored schemas (FFE-008): auth · readiness · system · error
-│   │   │   └── index.ts      # barrel (points at provisional today; flips to _generated later)
+│   │   │   ├── _generated/   # Zod GENERATED from /openapi.json (FFE-004): schemas.ts (zodios stripped) + openapi.json
+│   │   │   ├── error.ts      # the ONE hand-authored contract: the {detail} envelope (not an OpenAPI component)
+│   │   │   └── index.ts      # barrel — re-exports generated schemas with app-friendly names + error
 │   │   └── endpoints.ts      # login/logout/getMe/getReadiness/refreshSpine/kite*/generate*/getBrief*
 │   ├── auth/                 # session.ts (memory access + localStorage refresh) + auth-context (AuthProvider/useAuth)
 │   ├── query/                # createQueryClient + useMe/useReadiness hooks
@@ -113,7 +114,10 @@ Imports point downward only; features never import each other. Enforced by
    and retries **once**; on terminal failure it clears the session and routes to `/login`.
 4. The response is **Zod-parsed at the boundary** — drift fails loudly.
 5. **Access token in memory only**; refresh token in `localStorage` (`finint.refresh_token`).
-   `_authenticated`'s `beforeLoad` gates on `tokenStore.isAuthenticated()`.
+   The user IDENTITY is NOT stored — `POST /auth/login` returns only tokens, so the shell reads
+   identity from `GET /auth/me` (`useMe`). On a hard reload the memory-only access token is gone, so
+   `_authenticated`'s `beforeLoad` runs `ensureAccessToken()` (refresh → mint) BEFORE rendering —
+   rehydrate. No refresh token, or refresh 401s → `/login`.
 
 **No WebSocket.** FININT is a pre-open read, not a live feed. Polling only where meaningful
 (`/generate/status` during a run). Do not add a tick stream.

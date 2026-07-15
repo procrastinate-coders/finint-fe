@@ -10,24 +10,29 @@
  * with contracts/provisional/auth.ts.
  */
 
-// --- auth (PROVISIONAL — FIN-157) -----------------------------------------
+// --- auth (FIN-157, real shapes — captured from the live API) --------------
 
-export const userFixture = {
-  id: 'usr_naveen',
-  email: 'naveen@apextrader.trade',
-  name: 'Naveen',
+// GET /auth/me → id is a NUMBER; there is no `name` field.
+export const meFixture = {
+  id: 1,
+  email: 'udit@finint.local',
+  is_active: true,
+  created_at: '2026-07-15T15:55:58Z',
 }
 
+// POST /auth/login → tokens ONLY (no user), with token_type.
 export const loginFixture = {
   access_token: 'mock-access-token',
-  expires_at: '2026-07-15T21:20:00+05:30',
   refresh_token: 'mock-refresh-token',
-  user: userFixture,
+  expires_at: '2026-07-15T16:10:58Z',
+  token_type: 'bearer',
 }
 
+// POST /auth/refresh → a NEW access token only — the refresh token is NOT rotated.
 export const refreshFixture = {
   access_token: 'mock-access-token-refreshed',
-  expires_at: '2026-07-15T21:35:00+05:30',
+  expires_at: '2026-07-15T16:25:58Z',
+  token_type: 'bearer',
 }
 
 // --- readiness (VERBATIM from CONTEXT.md, 2026-07-15) ----------------------

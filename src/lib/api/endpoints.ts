@@ -7,9 +7,9 @@ import {
   kiteLoginUrlResponse,
   kiteRefreshResponse,
   loginResponse,
+  meResponse,
   readinessResponse,
   refreshSpineResponse,
-  user,
   type GenerateResponse,
   type GenerateStatusResponse,
   type KiteLoginUrlResponse,
@@ -20,7 +20,7 @@ import {
   type User,
 } from './contracts'
 
-// --- auth (FIN-157; PROVISIONAL shapes) ----------------------------------
+// --- auth (FIN-157) ------------------------------------------------------
 
 export async function login(
   email: string,
@@ -32,12 +32,12 @@ export async function login(
     body: { email, password },
     auth: false, // one of the two unauthenticated endpoints
   })
+  // Login returns ONLY tokens — the user identity comes from GET /auth/me.
   tokenStore.setSession(
     {
       accessToken: res.access_token,
       expiresAt: res.expires_at,
       refreshToken: res.refresh_token,
-      user: res.user,
     },
     remember,
   )
@@ -45,25 +45,30 @@ export async function login(
 }
 
 export async function logout(): Promise<void> {
+  const refreshToken = tokenStore.getRefreshToken()
   try {
-    await apiRequest('/auth/logout', null, { method: 'POST' })
+    // Revoke the refresh token server-side (needs a valid Bearer + the token).
+    await apiRequest('/auth/logout', null, {
+      method: 'POST',
+      body: { refresh_token: refreshToken ?? '' },
+    })
   } finally {
-    // Clear locally even if the server revoke fails — the session is gone here.
+    // Clear locally even if the revoke fails — the session is gone here.
     tokenStore.clear()
   }
 }
 
 export function getMe(signal?: AbortSignal): Promise<User> {
-  return apiRequest('/auth/me', user, { signal })
+  return apiRequest('/auth/me', meResponse, { signal })
 }
 
-// --- readiness ($0 gate) -------------------------------------------------
+// --- readiness (FIN-160; $0 gate) ----------------------------------------
 
 export function getReadiness(signal?: AbortSignal): Promise<ReadinessResponse> {
   return apiRequest('/readiness', readinessResponse, { signal })
 }
 
-// --- spine refresh + kite (FIN-156; PROVISIONAL shapes) ------------------
+// --- spine refresh + kite (FIN-160) --------------------------------------
 
 export function refreshSpine(): Promise<RefreshSpineResponse> {
   return apiRequest('/refresh', refreshSpineResponse, { method: 'POST' })
@@ -84,7 +89,7 @@ export function kiteRefresh(
   })
 }
 
-// --- generate (PAID — ~$0.06, minutes; poll status, don't block) ----------
+// --- generate (FIN-161; PAID) --------------------------------------------
 
 export function generate(): Promise<GenerateResponse> {
   return apiRequest('/generate', generateResponse, { method: 'POST' })
@@ -96,9 +101,7 @@ export function getGenerateStatus(
   return apiRequest('/generate/status', generateStatusResponse, { signal })
 }
 
-// --- brief (shape lands with FIN-149; parsed as unknown for now) ----------
-// Deliberately untyped: the brief contract is large and is NOT built here.
-// FIN-149 replaces `z.unknown()` with the generated brief schema.
+// --- brief (FIN-162; parsed as unknown until that phase wires ServedBrief) -
 
 export function getBriefToday(signal?: AbortSignal): Promise<unknown> {
   return apiRequest('/brief/today', z.unknown(), { signal })

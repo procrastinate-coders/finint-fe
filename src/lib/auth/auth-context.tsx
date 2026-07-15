@@ -7,11 +7,9 @@ import {
 } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { login as loginReq, logout as logoutReq } from '@/lib/api/endpoints'
-import type { User } from '@/lib/api/contracts'
 import { tokenStore } from './session'
 
 interface AuthContextValue {
-  user: User | null
   isAuthenticated: boolean
   login: (email: string, password: string, remember?: boolean) => Promise<void>
   logout: () => Promise<void>
@@ -21,10 +19,9 @@ const AuthContext = createContext<AuthContextValue | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient()
-  const snapshot = useSyncExternalStore(
-    tokenStore.subscribe,
-    tokenStore.getSnapshot,
-  )
+  // Re-render this subtree whenever the token state changes (login / refresh /
+  // logout). The user IDENTITY is not here — it's the `useMe` query.
+  useSyncExternalStore(tokenStore.subscribe, tokenStore.getSnapshot)
 
   const login = useCallback(
     async (email: string, password: string, remember = true) => {
@@ -35,11 +32,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     await logoutReq()
-    queryClient.clear()
+    queryClient.clear() // drop the cached /auth/me + any authed reads
   }, [queryClient])
 
   const value: AuthContextValue = {
-    user: snapshot.user,
     isAuthenticated: tokenStore.isAuthenticated(),
     login,
     logout,

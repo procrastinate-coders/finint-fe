@@ -82,6 +82,19 @@ export function refreshAccessToken(): Promise<string | null> {
   return refreshInFlight
 }
 
+/**
+ * Ensure we hold a usable access token, minting one from the refresh token if
+ * needed. Used by the `_authenticated` route guard so a hard reload rehydrates
+ * BEFORE the shell renders (the access token is memory-only, so every reload
+ * mints a fresh one via /auth/refresh — that is correct, not a bug). Returns
+ * false when there is no session to restore → the guard sends you to /login.
+ */
+export async function ensureAccessToken(): Promise<boolean> {
+  if (tokenStore.getAccessToken()) return true
+  if (!tokenStore.getRefreshToken()) return false
+  return Boolean(await refreshAccessToken())
+}
+
 interface RequestOptions {
   method?: string
   body?: unknown

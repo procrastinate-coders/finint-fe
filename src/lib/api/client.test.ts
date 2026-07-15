@@ -3,7 +3,12 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { z } from 'zod'
 import { server } from '@/test/mocks/server'
 import { tokenStore } from '@/lib/auth/session'
-import { ApiError, apiRequest, setUnauthorizedHandler } from './client'
+import {
+  ApiError,
+  apiRequest,
+  ensureAccessToken,
+  setUnauthorizedHandler,
+} from './client'
 
 const pingSchema = z.object({ ok: z.boolean() })
 
@@ -12,9 +17,16 @@ function seedSession(accessToken: string) {
     accessToken,
     expiresAt: '2026-07-15T21:20:00+05:30',
     refreshToken: 'seed-refresh',
-    user: { id: 'usr', email: 'a@b.c', name: 'Naveen' },
   })
 }
+
+// A refresh 200 body — a NEW access token only (refresh not rotated), with the
+// required token_type. Matches AccessTokenResponse.
+const refreshBody = (accessToken: string) => ({
+  access_token: accessToken,
+  expires_at: '2026-07-15T21:35:00+05:30',
+  token_type: 'bearer',
+})
 
 beforeEach(() => tokenStore.clear())
 afterEach(() => {
@@ -30,10 +42,7 @@ describe('api client — single-flight refresh (CLAUDE.md law 13)', () => {
     server.use(
       http.post('*/auth/refresh', () => {
         refreshCalls += 1
-        return HttpResponse.json({
-          access_token: 'fresh-token',
-          expires_at: '2026-07-15T21:35:00+05:30',
-        })
+        return HttpResponse.json(refreshBody('fresh-token'))
       }),
       http.get('*/ping', ({ request }) => {
         // Only the refreshed token is accepted; the stale one 401s.
@@ -60,10 +69,7 @@ describe('api client — single-flight refresh (CLAUDE.md law 13)', () => {
     seedSession('stale-token')
     server.use(
       http.post('*/auth/refresh', () =>
-        HttpResponse.json({
-          access_token: 'fresh-token',
-          expires_at: '2026-07-15T21:35:00+05:30',
-        }),
+        HttpResponse.json(refreshBody('fresh-token')),
       ),
       http.get('*/ping', ({ request }) =>
         request.headers.get('Authorization') === 'Bearer fresh-token'
@@ -107,5 +113,61 @@ describe('api client — single-flight refresh (CLAUDE.md law 13)', () => {
     )
     await apiRequest('/public', pingSchema, { auth: false })
     expect(sawAuthHeader).toBe(false)
+  })
+})
+
+describe('ensureAccessToken — the rehydrate gate (no re-login on reload)', () => {
+  it('returns true without a network call when an access token is in memory', async () => {
+    seedSession('live-token')
+    let refreshCalls = 0
+    server.use(
+      http.post('*/auth/refresh', () => {
+        refreshCalls += 1
+        return HttpResponse.json(refreshBody('x'))
+      }),
+    )
+    await expect(ensureAccessToken()).resolves.toBe(true)
+    expect(refreshCalls).toBe(0)
+  })
+
+  it('mints an access token from the refresh token (the hard-reload case)', async () => {
+    // Simulate a reload: refresh token in storage, NO access token in memory.
+    tokenStore.setSession({
+      accessToken: 'boot',
+      expiresAt: 'x',
+      refreshToken: 'good-refresh',
+    })
+    tokenStore.setAccessToken('', '') // wipe the in-memory access token
+    // setAccessToken('') leaves a falsy token, so ensureAccessToken must refresh.
+    server.use(
+      http.post('*/auth/refresh', () =>
+        HttpResponse.json(refreshBody('rehydrated')),
+      ),
+    )
+    await expect(ensureAccessToken()).resolves.toBe(true)
+    expect(tokenStore.getAccessToken()).toBe('rehydrated')
+  })
+
+  it('returns false when there is no session to restore', async () => {
+    tokenStore.clear()
+    await expect(ensureAccessToken()).resolves.toBe(false)
+  })
+
+  it('returns false and clears when the refresh token is rejected', async () => {
+    tokenStore.setSession({
+      accessToken: '',
+      expiresAt: '',
+      refreshToken: 'expired-refresh',
+    })
+    server.use(
+      http.post('*/auth/refresh', () =>
+        HttpResponse.json(
+          { detail: 'invalid or expired refresh token' },
+          { status: 401 },
+        ),
+      ),
+    )
+    await expect(ensureAccessToken()).resolves.toBe(false)
+    expect(tokenStore.isAuthenticated()).toBe(false)
   })
 })

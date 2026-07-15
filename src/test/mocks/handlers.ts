@@ -3,10 +3,10 @@ import {
   kiteLoginUrlFixture,
   kiteRefreshFixture,
   loginFixture,
+  meFixture,
   readinessFixture,
   refreshFixture,
   refreshSpineFixture,
-  userFixture,
 } from './fixtures'
 
 // FININT runs on its own host with BARE paths (no /api prefix). Match any
@@ -24,10 +24,10 @@ const WRONG_PASSWORD = 'wrong-password'
 // failure is INTENTIONALLY generic — it must not reveal whether the email or
 // the password was wrong (task step 8 / backend design).
 const invalidCredentials = () =>
-  HttpResponse.json({ detail: 'invalid credentials' }, { status: 401 })
+  HttpResponse.json({ detail: 'invalid email or password' }, { status: 401 })
 
 export const handlers = [
-  // --- auth (PROVISIONAL — FIN-157) ---------------------------------------
+  // --- auth (FIN-157, real shapes) ----------------------------------------
   http.post(`${H}/auth/login`, async ({ request }) => {
     const body = (await request.json().catch(() => null)) as {
       email?: string
@@ -38,20 +38,24 @@ export const handlers = [
     if (!email || !password || password === WRONG_PASSWORD) {
       return invalidCredentials()
     }
-    return HttpResponse.json({
-      ...loginFixture,
-      user: { ...loginFixture.user, email },
-    })
+    // Tokens ONLY — no user (the user comes from GET /auth/me).
+    return HttpResponse.json(loginFixture)
   }),
   http.post(`${H}/auth/refresh`, async ({ request }) => {
     const body = (await request.json().catch(() => null)) as {
       refresh_token?: string
     } | null
-    if (!body?.refresh_token) return invalidCredentials()
+    if (!body?.refresh_token) {
+      return HttpResponse.json(
+        { detail: 'invalid or expired refresh token' },
+        { status: 401 },
+      )
+    }
+    // A NEW access token only — the refresh token is NOT rotated.
     return HttpResponse.json(refreshFixture)
   }),
-  http.post(`${H}/auth/logout`, () => new HttpResponse(null, { status: 204 })),
-  http.get(`${H}/auth/me`, () => HttpResponse.json(userFixture)),
+  http.post(`${H}/auth/logout`, () => HttpResponse.json({ ok: true })),
+  http.get(`${H}/auth/me`, () => HttpResponse.json(meFixture)),
 
   // --- readiness (LIVE today) ---------------------------------------------
   http.get(`${H}/readiness`, () => HttpResponse.json(readinessFixture)),

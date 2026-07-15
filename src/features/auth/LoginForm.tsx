@@ -26,14 +26,18 @@ export function LoginForm() {
       await login(email, password, remember)
       await navigate({ to: '/' })
     } catch (err) {
-      // The message is INTENTIONALLY generic — the backend returns the same
-      // shape whether the email or the password is wrong (by design), and the
-      // UI must not leak which. Do not branch to a more specific message here.
-      setError(
-        err instanceof ApiError
-          ? 'Invalid email or password.'
-          : 'Could not reach the server.',
-      )
+      if (err instanceof ApiError) {
+        // 401 is INTENTIONALLY generic — the backend returns the same body for a
+        // wrong password AND an unknown email (no enumeration), and the UI must
+        // not leak which. 429 is the rate limiter (5 failed logins / 5 min).
+        setError(
+          err.status === 429
+            ? 'Too many attempts. Please wait a minute and try again.'
+            : 'Invalid email or password.',
+        )
+      } else {
+        setError('Could not reach the server.')
+      }
     } finally {
       setSubmitting(false)
     }

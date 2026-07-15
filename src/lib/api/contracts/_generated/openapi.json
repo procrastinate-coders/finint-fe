@@ -1,0 +1,2075 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "FININT Brief API",
+    "version": "5c"
+  },
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "summary": "Auth Login",
+        "operationId": "auth_login_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenPairResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "summary": "Auth Refresh",
+        "operationId": "auth_refresh_auth_refresh_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessTokenResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "summary": "Auth Logout",
+        "operationId": "auth_logout_auth_logout_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogoutResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "summary": "Auth Me",
+        "operationId": "auth_me_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/brief/today": {
+      "get": {
+        "summary": "Brief Today",
+        "operationId": "brief_today_brief_today_get",
+        "parameters": [
+          {
+            "name": "live",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Live"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServedBrief"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/brief/{date}": {
+      "get": {
+        "summary": "Brief Date",
+        "operationId": "brief_date_brief__date__get",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Date"
+            }
+          },
+          {
+            "name": "live",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Live"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServedBrief"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/briefs": {
+      "get": {
+        "summary": "Briefs",
+        "operationId": "briefs_briefs_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/BriefListItem"
+                  },
+                  "type": "array",
+                  "title": "Response Briefs Briefs Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/readiness": {
+      "get": {
+        "summary": "Readiness",
+        "operationId": "readiness_readiness_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadinessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/kite/refresh": {
+      "post": {
+        "summary": "Kite Refresh",
+        "operationId": "kite_refresh_kite_refresh_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KiteRefreshBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KiteRefreshResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/refresh": {
+      "post": {
+        "summary": "Refresh",
+        "operationId": "refresh_refresh_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RefreshResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/kite/login-url": {
+      "get": {
+        "summary": "Kite Login Url",
+        "operationId": "kite_login_url_kite_login_url_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginUrlResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/generate": {
+      "post": {
+        "summary": "Generate",
+        "operationId": "generate_generate_post",
+        "parameters": [
+          {
+            "name": "positioning_only",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Positioning Only"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenerateResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/generate/status": {
+      "get": {
+        "summary": "Generate Status",
+        "operationId": "generate_status_generate_status_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenerateStatusResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AccessTokenResponse": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "expires_at": {
+            "type": "string",
+            "title": "Expires At"
+          },
+          "token_type": {
+            "type": "string",
+            "title": "Token Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token",
+          "expires_at",
+          "token_type"
+        ],
+        "title": "AccessTokenResponse"
+      },
+      "Backdrop": {
+        "properties": {
+          "usd_inr": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Macro"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "dxy": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Macro"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "risk_tone": {
+            "$ref": "#/components/schemas/Tone"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "risk_tone"
+        ],
+        "title": "Backdrop"
+      },
+      "BriefListItem": {
+        "properties": {
+          "date": {
+            "type": "string",
+            "title": "Date"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "generated_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Generated At"
+          },
+          "guard_failed": {
+            "type": "boolean",
+            "title": "Guard Failed",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "date",
+          "label"
+        ],
+        "title": "BriefListItem"
+      },
+      "CostReport": {
+        "properties": {
+          "total_tokens": {
+            "type": "integer",
+            "title": "Total Tokens"
+          },
+          "input_tokens": {
+            "type": "integer",
+            "title": "Input Tokens"
+          },
+          "output_tokens": {
+            "type": "integer",
+            "title": "Output Tokens"
+          },
+          "cost_usd": {
+            "type": "number",
+            "title": "Cost Usd"
+          },
+          "ceiling": {
+            "type": "integer",
+            "title": "Ceiling"
+          },
+          "web_search_calls": {
+            "type": "integer",
+            "title": "Web Search Calls"
+          },
+          "retries": {
+            "type": "integer",
+            "title": "Retries"
+          },
+          "stages": {
+            "items": {
+              "$ref": "#/components/schemas/StageCost"
+            },
+            "type": "array",
+            "title": "Stages"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_tokens",
+          "input_tokens",
+          "output_tokens",
+          "cost_usd",
+          "ceiling",
+          "web_search_calls",
+          "retries",
+          "stages"
+        ],
+        "title": "CostReport"
+      },
+      "CotRefresh": {
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "title": "Ok"
+          },
+          "action": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Action"
+          },
+          "stored_pub": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stored Pub"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "stored": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stored"
+          },
+          "scope": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scope"
+          },
+          "stored_pub_before": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stored Pub Before"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ok"
+        ],
+        "title": "CotRefresh"
+      },
+      "GenerateResponse": {
+        "properties": {
+          "run_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Run Id"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "started": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started"
+          },
+          "positioning_only": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Positioning Only"
+          },
+          "brief": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ServedBrief"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "GenerateResponse",
+        "description": "Superset of the two real /generate variants (started run / already_complete). See\nCONTRACT.md for the two discriminated shapes; document-only, so the real bytes pass through."
+      },
+      "GenerateStatusResponse": {
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "title": "Run Id"
+          },
+          "date": {
+            "type": "string",
+            "title": "Date"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/RunStep"
+            },
+            "type": "array",
+            "title": "Steps"
+          },
+          "brief_ready": {
+            "type": "boolean",
+            "title": "Brief Ready"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "cost": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CostReport"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "run_id",
+          "date",
+          "status",
+          "steps",
+          "brief_ready"
+        ],
+        "title": "GenerateStatusResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "KiteRefreshBody": {
+        "properties": {
+          "request_token": {
+            "type": "string",
+            "title": "Request Token",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "title": "KiteRefreshBody"
+      },
+      "KiteRefreshResponse": {
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "title": "Ok"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "source": {
+            "$ref": "#/components/schemas/SourceHealthModel"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ok",
+          "source"
+        ],
+        "title": "KiteRefreshResponse",
+        "description": "POST /kite/refresh \u2014 the one-call token exchange result + the refreshed kite source dot."
+      },
+      "LoginBody": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "title": "Email",
+            "default": ""
+          },
+          "password": {
+            "type": "string",
+            "title": "Password",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "title": "LoginBody"
+      },
+      "LoginUrlResponse": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "Url"
+          }
+        },
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "title": "LoginUrlResponse"
+      },
+      "LogoutResponse": {
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "title": "Ok"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ok"
+        ],
+        "title": "LogoutResponse"
+      },
+      "Macro": {
+        "properties": {
+          "value": {
+            "type": "number",
+            "title": "Value"
+          },
+          "change_pct": {
+            "type": "number",
+            "title": "Change Pct"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "value",
+          "change_pct"
+        ],
+        "title": "Macro"
+      },
+      "MacroRefresh": {
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "title": "Ok"
+          },
+          "rows": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rows"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "date_range": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date Range"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ok"
+        ],
+        "title": "MacroRefresh"
+      },
+      "MeResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "is_active",
+          "created_at"
+        ],
+        "title": "MeResponse"
+      },
+      "NewsRefresh": {
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "title": "Ok"
+          },
+          "date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date"
+          },
+          "count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Count"
+          },
+          "queries_ok": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Queries Ok"
+          },
+          "queries_total": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Queries Total"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ok"
+        ],
+        "title": "NewsRefresh"
+      },
+      "ReadinessResponse": {
+        "properties": {
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/SourceHealthModel"
+            },
+            "type": "array",
+            "title": "Sources"
+          },
+          "can_generate": {
+            "type": "boolean",
+            "title": "Can Generate"
+          },
+          "blocked_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Blocked Reason"
+          },
+          "fresh_count": {
+            "type": "string",
+            "title": "Fresh Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sources",
+          "can_generate",
+          "fresh_count"
+        ],
+        "title": "ReadinessResponse"
+      },
+      "RefreshReport": {
+        "properties": {
+          "date": {
+            "type": "string",
+            "title": "Date"
+          },
+          "macro": {
+            "$ref": "#/components/schemas/MacroRefresh"
+          },
+          "cot": {
+            "$ref": "#/components/schemas/CotRefresh"
+          },
+          "news": {
+            "$ref": "#/components/schemas/NewsRefresh"
+          },
+          "token": {
+            "$ref": "#/components/schemas/TokenStatus"
+          }
+        },
+        "type": "object",
+        "required": [
+          "date",
+          "macro",
+          "cot",
+          "news",
+          "token"
+        ],
+        "title": "RefreshReport"
+      },
+      "RefreshResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "guard": {
+            "type": "string",
+            "title": "Guard"
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At"
+          },
+          "report": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RefreshReport"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "guard"
+        ],
+        "title": "RefreshResponse"
+      },
+      "RefreshTokenBody": {
+        "properties": {
+          "refresh_token": {
+            "type": "string",
+            "title": "Refresh Token",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "title": "RefreshTokenBody"
+      },
+      "Regime": {
+        "properties": {
+          "is_new": {
+            "type": "boolean",
+            "title": "Is New"
+          },
+          "regime_change": {
+            "type": "boolean",
+            "title": "Regime Change"
+          },
+          "headline": {
+            "type": "string",
+            "title": "Headline"
+          },
+          "body": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Body"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "is_new",
+          "regime_change",
+          "headline"
+        ],
+        "title": "Regime"
+      },
+      "RunStep": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "state": {
+            "type": "string",
+            "title": "State"
+          },
+          "detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "state"
+        ],
+        "title": "RunStep"
+      },
+      "ServedAiRead": {
+        "properties": {
+          "what_changed": {
+            "type": "string",
+            "title": "What Changed"
+          },
+          "narrative": {
+            "type": "string",
+            "title": "Narrative"
+          },
+          "positioning": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ServedPositioning"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "cross_instrument_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cross Instrument Note"
+          },
+          "watch": {
+            "type": "string",
+            "title": "Watch"
+          },
+          "why": {
+            "type": "string",
+            "title": "Why"
+          },
+          "guard_failed": {
+            "type": "boolean",
+            "title": "Guard Failed",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "what_changed",
+          "narrative",
+          "watch",
+          "why"
+        ],
+        "title": "ServedAiRead"
+      },
+      "ServedBrief": {
+        "properties": {
+          "date": {
+            "type": "string",
+            "title": "Date"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "market_open": {
+            "type": "string",
+            "title": "Market Open"
+          },
+          "generated_at": {
+            "type": "string",
+            "title": "Generated At"
+          },
+          "schema_version": {
+            "type": "string",
+            "title": "Schema Version"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/SourceStatus"
+            },
+            "type": "array",
+            "title": "Sources"
+          },
+          "market": {
+            "$ref": "#/components/schemas/ServedMarket"
+          },
+          "scan": {
+            "items": {
+              "$ref": "#/components/schemas/ServedScanRow"
+            },
+            "type": "array",
+            "title": "Scan"
+          },
+          "instruments": {
+            "items": {
+              "$ref": "#/components/schemas/ServedInstrument"
+            },
+            "type": "array",
+            "title": "Instruments"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ServedMeta"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "date",
+          "label",
+          "market_open",
+          "generated_at",
+          "schema_version",
+          "market",
+          "meta"
+        ],
+        "title": "ServedBrief"
+      },
+      "ServedCatalyst": {
+        "properties": {
+          "direction": {
+            "type": "string",
+            "title": "Direction"
+          },
+          "headline": {
+            "type": "string",
+            "title": "Headline"
+          },
+          "instruments": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Instruments"
+          },
+          "source": {
+            "$ref": "#/components/schemas/SourceRef"
+          },
+          "hours_old": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hours Old"
+          },
+          "is_new": {
+            "type": "boolean",
+            "title": "Is New"
+          },
+          "age_label": {
+            "type": "string",
+            "title": "Age Label"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "direction",
+          "headline",
+          "source",
+          "is_new",
+          "age_label"
+        ],
+        "title": "ServedCatalyst"
+      },
+      "ServedFactors": {
+        "properties": {
+          "gap": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gap"
+          },
+          "oi": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oi"
+          },
+          "level": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Level"
+          },
+          "vol": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vol"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "ServedFactors"
+      },
+      "ServedImpliedOpen": {
+        "properties": {
+          "implied_open_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Implied Open Pct"
+          },
+          "intl_change_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Intl Change Pct"
+          },
+          "usdinr_change_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Usdinr Change Pct"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "ServedImpliedOpen"
+      },
+      "ServedInstrument": {
+        "properties": {
+          "instrument": {
+            "type": "string",
+            "title": "Instrument"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "tier": {
+            "type": "string",
+            "title": "Tier"
+          },
+          "data_tier": {
+            "type": "string",
+            "title": "Data Tier"
+          },
+          "implied_open": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ServedImpliedOpen"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "oi_state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oi State"
+          },
+          "cot_percentile": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cot Percentile"
+          },
+          "atr": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Atr"
+          },
+          "levels": {
+            "$ref": "#/components/schemas/ServedLevels"
+          },
+          "factors": {
+            "$ref": "#/components/schemas/ServedFactors"
+          },
+          "ai_read": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ServedAiRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "instrument",
+          "name",
+          "tier",
+          "data_tier",
+          "levels",
+          "factors"
+        ],
+        "title": "ServedInstrument"
+      },
+      "ServedLevels": {
+        "properties": {
+          "support": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Support"
+          },
+          "resistance": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Resistance"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "ServedLevels"
+      },
+      "ServedMarket": {
+        "properties": {
+          "session_read": {
+            "type": "string",
+            "title": "Session Read"
+          },
+          "regime": {
+            "$ref": "#/components/schemas/Regime"
+          },
+          "backdrop": {
+            "$ref": "#/components/schemas/Backdrop"
+          },
+          "catalysts": {
+            "items": {
+              "$ref": "#/components/schemas/ServedCatalyst"
+            },
+            "type": "array",
+            "title": "Catalysts"
+          },
+          "cross_instrument": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Cross Instrument"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "session_read",
+          "regime",
+          "backdrop"
+        ],
+        "title": "ServedMarket"
+      },
+      "ServedMeta": {
+        "properties": {
+          "deep_set": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Deep Set"
+          },
+          "guard_failed": {
+            "type": "boolean",
+            "title": "Guard Failed",
+            "default": false
+          },
+          "fabricated_claims": {
+            "type": "integer",
+            "title": "Fabricated Claims",
+            "default": 0
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "ServedMeta"
+      },
+      "ServedPositioning": {
+        "properties": {
+          "oi_state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oi State"
+          },
+          "cot_stance": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cot Stance"
+          },
+          "cot_percentile": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cot Percentile"
+          },
+          "divergence_flag": {
+            "type": "boolean",
+            "title": "Divergence Flag",
+            "default": false
+          },
+          "divergence_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Divergence Note"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "ServedPositioning"
+      },
+      "ServedScanRow": {
+        "properties": {
+          "rank": {
+            "type": "integer",
+            "title": "Rank"
+          },
+          "instrument": {
+            "type": "string",
+            "title": "Instrument"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "tier": {
+            "type": "string",
+            "title": "Tier"
+          },
+          "implied_open_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Implied Open Pct"
+          },
+          "oi_state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oi State"
+          },
+          "cot_percentile": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cot Percentile"
+          },
+          "factors": {
+            "$ref": "#/components/schemas/ServedFactors"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "rank",
+          "instrument",
+          "name",
+          "tier",
+          "factors"
+        ],
+        "title": "ServedScanRow"
+      },
+      "SourceHealthModel": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "critical": {
+            "type": "boolean",
+            "title": "Critical"
+          },
+          "human_refreshable": {
+            "type": "boolean",
+            "title": "Human Refreshable",
+            "default": false
+          },
+          "action": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Action"
+          },
+          "blocks_on_red": {
+            "type": "boolean",
+            "title": "Blocks On Red",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "label",
+          "status",
+          "critical"
+        ],
+        "title": "SourceHealthModel"
+      },
+      "SourceRef": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "SourceRef"
+      },
+      "SourceStatus": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "key",
+          "status"
+        ],
+        "title": "SourceStatus"
+      },
+      "StageCost": {
+        "properties": {
+          "stage": {
+            "type": "string",
+            "title": "Stage"
+          },
+          "input_tokens": {
+            "type": "integer",
+            "title": "Input Tokens"
+          },
+          "output_tokens": {
+            "type": "integer",
+            "title": "Output Tokens"
+          },
+          "web_search_calls": {
+            "type": "integer",
+            "title": "Web Search Calls"
+          },
+          "retries": {
+            "type": "integer",
+            "title": "Retries"
+          },
+          "cost_usd": {
+            "type": "number",
+            "title": "Cost Usd"
+          }
+        },
+        "type": "object",
+        "required": [
+          "stage",
+          "input_tokens",
+          "output_tokens",
+          "web_search_calls",
+          "retries",
+          "cost_usd"
+        ],
+        "title": "StageCost"
+      },
+      "TokenPairResponse": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "refresh_token": {
+            "type": "string",
+            "title": "Refresh Token"
+          },
+          "expires_at": {
+            "type": "string",
+            "title": "Expires At"
+          },
+          "token_type": {
+            "type": "string",
+            "title": "Token Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token",
+          "refresh_token",
+          "expires_at",
+          "token_type"
+        ],
+        "title": "TokenPairResponse"
+      },
+      "TokenStatus": {
+        "properties": {
+          "valid": {
+            "type": "boolean",
+            "title": "Valid"
+          },
+          "ttl_hours": {
+            "type": "number",
+            "title": "Ttl Hours"
+          },
+          "cta": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cta"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "valid",
+          "ttl_hours"
+        ],
+        "title": "TokenStatus"
+      },
+      "Tone": {
+        "properties": {
+          "value": {
+            "type": "string",
+            "title": "Value"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "value"
+        ],
+        "title": "Tone"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
