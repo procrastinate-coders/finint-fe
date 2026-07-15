@@ -1,0 +1,8 @@
+dist
+node_modules
+coverage
+src/routeTree.gen.ts
+public/mockServiceWorker.js
+src/lib/api/contracts/_generated
+*.md
+docs

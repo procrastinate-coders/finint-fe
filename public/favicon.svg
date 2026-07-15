@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <rect width="48" height="48" rx="11" fill="#0b0b0c" />
+  <!-- Wordmark-derived "F" monogram — monochrome (colour is reserved for
+       state/signal, never branding: DESIGN §12 / CLAUDE.md law 8). -->
+  <path
+    d="M17 13h15M17 13v22M17 24h11"
+    stroke="#ffffff"
+    stroke-width="2.6"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>

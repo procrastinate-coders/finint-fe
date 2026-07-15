@@ -1,0 +1,211 @@
+/* ===========================================================================
+ * FININT design tokens — PORTED VERBATIM from apex-admin (docs/design/DESIGN.md
+ * §13). Same skin, separate app, own copy (FFE-003). Do NOT hand-tune values
+ * here to "make FININT feel different" — a visual change is made in apex-admin's
+ * DESIGN.md first, then ported. The six status colours are LOCKED (CLAUDE.md
+ * law 8): green · orange · red · red-critical · blue · yellow. Any new colour
+ * is a bug.
+ *
+ * Light is :root (default); dark is applied via the .dark class (not @media) —
+ * the app controls the theme and defaults to dark. Font families prepend the
+ * Fontsource *Variable* names (self-hosted) ahead of Inter / JetBrains Mono.
+ * ===========================================================================*/
+
+:root {
+  /* Backgrounds */
+  --apex-bg-canvas: #f2f2f7;
+  --apex-bg-primary: #ffffff;
+  --apex-bg-secondary: #f2f2f7;
+  --apex-bg-tertiary: #e5e5ea;
+  /* Text */
+  --apex-text-primary: #000000;
+  --apex-text-secondary: rgba(60, 60, 67, 0.6);
+  --apex-text-tertiary: rgba(60, 60, 67, 0.3);
+  --apex-text-on-fill: #ffffff;
+  /* Borders */
+  --apex-border-default: #c6c6c8;
+  --apex-border-subtle: rgba(60, 60, 67, 0.18);
+  --apex-border-strong: #007aff;
+  /* Status — the SIX locked colours (CLAUDE.md law 8) */
+  --apex-green: #34c759;
+  --apex-orange: #ff9500;
+  --apex-red: #ff3b30;
+  --apex-red-critical: #ff2d55;
+  --apex-blue: #007aff;
+  --apex-yellow: #ffcc00;
+  /* Status tints (15%) */
+  --apex-green-tint: rgba(52, 199, 89, 0.15);
+  --apex-orange-tint: rgba(255, 149, 0, 0.15);
+  --apex-red-tint: rgba(255, 59, 48, 0.15);
+  --apex-red-critical-tint: rgba(255, 45, 85, 0.15);
+  --apex-blue-tint: rgba(0, 122, 255, 0.15);
+  --apex-yellow-tint: rgba(255, 204, 0, 0.15);
+  /* Row tints + flash */
+  --apex-row-critical: #fff1f2;
+  --apex-row-danger: #fff5f5;
+  --apex-flash-amber: #fff3cd;
+  /* Neutral fills + scrim */
+  --apex-fill-neutral: #1c1c1e;
+  --apex-fill-neutral-hover: #2c2c2e;
+  --apex-scrim: rgba(0, 0, 0, 0.4);
+  /* Type (Variable family names prepended) */
+  --apex-font-sans:
+    'Inter Variable', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
+  --apex-font-mono:
+    'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo,
+    monospace;
+  /* Spacing (8pt grid) */
+  --apex-space-1: 4px;
+  --apex-space-2: 8px;
+  --apex-space-3: 12px;
+  --apex-space-4: 16px;
+  --apex-space-5: 20px;
+  --apex-space-6: 24px;
+  --apex-space-8: 32px;
+  --apex-space-10: 40px;
+  /* Radius */
+  --apex-radius-badge: 4px;
+  --apex-radius-control: 8px;
+  --apex-radius-card: 10px;
+  --apex-radius-pill: 12px;
+  --apex-radius-sheet: 14px;
+  --apex-radius-dialog: 20px;
+  --apex-radius-xs: 4px;
+  --apex-radius-sm: 8px;
+  --apex-radius-md: 10px;
+  --apex-radius-lg: 14px;
+  --apex-radius-xl: 20px;
+  /* Borders */
+  --apex-border-hair: 0.5px;
+  --apex-border-accent: 3px;
+  /* Shell */
+  --apex-sidebar-w: 220px;
+  --apex-sidebar-w-collapsed: 64px;
+  --apex-header-h: 56px;
+  --apex-content-max: 1600px;
+  --apex-row-h: 48px;
+  --apex-row-h-compact: 36px;
+  /* Motion */
+  --apex-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --apex-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --apex-dur-hover: 100ms;
+  --apex-dur-focus: 200ms;
+  --apex-dur-flash: 300ms;
+  --apex-dur-panel: 400ms;
+  --apex-duration-xs: 100ms;
+  --apex-duration-sm: 200ms;
+  --apex-duration-md: 300ms;
+  --apex-duration-lg: 400ms;
+}
+
+.dark {
+  --apex-bg-canvas: #000000;
+  --apex-bg-primary: #1c1c1e;
+  --apex-bg-secondary: #2c2c2e;
+  --apex-bg-tertiary: #3a3a3c;
+  --apex-text-primary: #ffffff;
+  --apex-text-secondary: rgba(235, 235, 245, 0.6);
+  --apex-text-tertiary: rgba(235, 235, 245, 0.3);
+  --apex-text-on-fill: #ffffff;
+  --apex-border-default: #38383a;
+  --apex-border-subtle: rgba(84, 84, 88, 0.36);
+  --apex-border-strong: #0a84ff;
+  --apex-green: #30d158;
+  --apex-orange: #ff9f0a;
+  --apex-red: #ff453a;
+  --apex-red-critical: #ff375f;
+  --apex-blue: #0a84ff;
+  --apex-yellow: #ffd60a;
+  --apex-green-tint: rgba(48, 209, 88, 0.15);
+  --apex-orange-tint: rgba(255, 159, 10, 0.15);
+  --apex-red-tint: rgba(255, 69, 58, 0.15);
+  --apex-red-critical-tint: rgba(255, 55, 95, 0.15);
+  --apex-blue-tint: rgba(10, 132, 255, 0.15);
+  --apex-yellow-tint: rgba(255, 214, 10, 0.15);
+  --apex-row-critical: #2d1015;
+  --apex-row-danger: #2d1515;
+  --apex-flash-amber: #3a3320;
+  --apex-fill-neutral: #2c2c2e;
+  --apex-fill-neutral-hover: #3a3a3c;
+  --apex-scrim: rgba(0, 0, 0, 0.4);
+}
+
+/* ===========================================================================
+ * Liquid Glass material — CHROME ONLY (CLAUDE.md law 9/10). Data surfaces MUST
+ * NOT consume any --apex-glass-* / --apex-elev-* token. Shared (theme-agnostic)
+ * tokens + light-mode tints live in :root; .dark overrides tints/edges/aura for
+ * the (primary) dark theme.
+ * ===========================================================================*/
+:root {
+  /* shared: blur scale, saturation, composed filters */
+  --apex-glass-blur-sm: 20px;
+  --apex-glass-blur-md: 30px;
+  --apex-glass-blur-lg: 40px;
+  --apex-glass-blur-xl: 60px;
+  --apex-glass-saturate: 180%;
+  --apex-glass-saturate-calm: 160%;
+  --apex-glass-filter: blur(var(--apex-glass-blur-lg))
+    saturate(var(--apex-glass-saturate));
+  --apex-glass-filter-modal: blur(var(--apex-glass-blur-xl))
+    saturate(var(--apex-glass-saturate-calm));
+  /* shared: elevation (chrome-only exemption from the no-shadow rule) */
+  --apex-elev-0: none;
+  --apex-elev-1: 0 8px 24px -12px rgba(0, 0, 0, 0.6);
+  --apex-elev-2: 0 18px 44px -18px rgba(0, 0, 0, 0.7);
+  --apex-elev-3:
+    0 30px 70px -20px rgba(0, 0, 0, 0.85), 0 8px 24px -12px rgba(0, 0, 0, 0.6);
+  --apex-elev-4:
+    0 40px 100px -24px rgba(0, 0, 0, 0.9), 0 12px 32px -12px rgba(0, 0, 0, 0.7);
+  --apex-glass-float: 20px;
+  --apex-glass-radius: var(--apex-radius-xl);
+  --apex-aura-blur: 120px;
+  --apex-aura-opacity: 0.5;
+  /* light tints/edges (parity; the desk runs dark) */
+  --apex-glass-tint: rgba(255, 255, 255, 0.6);
+  --apex-glass-tint-strong: rgba(255, 255, 255, 0.72);
+  --apex-glass-tint-thin: rgba(255, 255, 255, 0.45);
+  --apex-glass-tint-danger: linear-gradient(
+    155deg,
+    rgba(255, 55, 95, 0.12),
+    rgba(255, 69, 58, 0.04)
+  );
+  --apex-glass-border: var(--apex-border-subtle);
+  --apex-glass-edge: rgba(255, 255, 255, 0.7);
+  --apex-glass-specular-top: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  --apex-glass-specular-left: inset 1px 0 0 rgba(255, 255, 255, 0.5);
+  --apex-glass-inner-glow: inset 0 0 60px rgba(255, 255, 255, 0.2);
+  --apex-glass-shadow:
+    var(--apex-elev-3), var(--apex-glass-specular-top),
+    var(--apex-glass-specular-left), var(--apex-glass-inner-glow);
+  --apex-glass-shadow-modal:
+    var(--apex-elev-4), var(--apex-glass-specular-top),
+    var(--apex-glass-specular-left), var(--apex-glass-inner-glow);
+  --apex-aura-blue: rgba(10, 132, 255, 0.18);
+  --apex-aura-green: rgba(48, 209, 88, 0.1);
+  --apex-aura-red: rgba(255, 55, 95, 0.08);
+  --apex-aura-indigo: rgba(94, 92, 230, 0.12);
+  /* brand mark colours (logo/monogram reads these) */
+  --apex-logo-ink: #0b0b0c;
+  --apex-logo-accent: #0a84ff;
+}
+
+.dark {
+  --apex-glass-tint: rgba(38, 38, 42, 0.55);
+  --apex-glass-tint-strong: rgba(44, 44, 48, 0.62);
+  --apex-glass-tint-thin: rgba(38, 38, 42, 0.4);
+  --apex-glass-tint-danger: linear-gradient(
+    155deg,
+    rgba(255, 55, 95, 0.16),
+    rgba(255, 69, 58, 0.05)
+  );
+  --apex-glass-edge: rgba(255, 255, 255, 0.14);
+  --apex-glass-specular-top: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  --apex-glass-specular-left: inset 1px 0 0 rgba(255, 255, 255, 0.06);
+  --apex-glass-inner-glow: inset 0 0 60px rgba(255, 255, 255, 0.025);
+  --apex-aura-blue: rgba(10, 132, 255, 0.4);
+  --apex-aura-green: rgba(48, 209, 88, 0.2);
+  --apex-aura-red: rgba(255, 55, 95, 0.16);
+  --apex-aura-indigo: rgba(94, 92, 230, 0.22);
+  --apex-logo-ink: #ffffff;
+}

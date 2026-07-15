@@ -1,0 +1,343 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/jetbrains-mono';
+@import './styles/tokens.css';
+
+@custom-variant dark (&:is(.dark *));
+
+/* ===========================================================================
+ * Tailwind theme: shadcn semantic tokens are skinned to the ported APEX tokens,
+ * and the status/bg/text tokens are exposed as utilities (bg-apex-*, text-apex-*).
+ * Because the underlying --apex-* vars are themed in tokens.css (.dark), these
+ * mappings are declared once and follow the active theme automatically.
+ * ===========================================================================*/
+@theme inline {
+  /* Fonts — self-hosted */
+  --font-sans: var(--apex-font-sans);
+  --font-heading: var(--apex-font-sans);
+  --font-mono: var(--apex-font-mono);
+
+  /* shadcn semantic tokens (skinned via :root below) */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* APEX utilities — bg-apex-*, text-apex-*, border-apex-*, etc. */
+  --color-apex-canvas: var(--apex-bg-canvas);
+  --color-apex-primary: var(--apex-bg-primary);
+  --color-apex-secondary: var(--apex-bg-secondary);
+  --color-apex-tertiary: var(--apex-bg-tertiary);
+  --color-apex-fg: var(--apex-text-primary);
+  --color-apex-fg-secondary: var(--apex-text-secondary);
+  --color-apex-fg-tertiary: var(--apex-text-tertiary);
+  --color-apex-on-fill: var(--apex-text-on-fill);
+  --color-apex-border: var(--apex-border-default);
+  --color-apex-border-subtle: var(--apex-border-subtle);
+  --color-apex-border-strong: var(--apex-border-strong);
+  --color-apex-green: var(--apex-green);
+  --color-apex-orange: var(--apex-orange);
+  --color-apex-red: var(--apex-red);
+  --color-apex-red-critical: var(--apex-red-critical);
+  --color-apex-blue: var(--apex-blue);
+  --color-apex-yellow: var(--apex-yellow);
+  --color-apex-green-tint: var(--apex-green-tint);
+  --color-apex-orange-tint: var(--apex-orange-tint);
+  --color-apex-red-tint: var(--apex-red-tint);
+  --color-apex-red-critical-tint: var(--apex-red-critical-tint);
+  --color-apex-blue-tint: var(--apex-blue-tint);
+  --color-apex-yellow-tint: var(--apex-yellow-tint);
+  --color-apex-tint-critical: var(--apex-row-critical);
+  --color-apex-tint-danger: var(--apex-row-danger);
+  --color-apex-flash-amber: var(--apex-flash-amber);
+  --color-apex-fill-neutral: var(--apex-fill-neutral);
+  --color-apex-fill-neutral-hover: var(--apex-fill-neutral-hover);
+
+  /* Radius — shadcn scale keyed off --radius (10px = --apex-radius-card) */
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+
+  /* Animations */
+  --animate-apex-pulse: apex-pulse 1.5s var(--apex-ease) infinite;
+  --animate-apex-spin: apex-spin 0.7s linear infinite;
+}
+
+/* shadcn base tokens → APEX skin. Declared on :root only; the referenced
+ * --apex-* vars are themed in tokens.css, so dark follows automatically. */
+:root {
+  --radius: 0.625rem; /* 10px — matches --apex-radius-card */
+  --background: var(--apex-bg-canvas);
+  --foreground: var(--apex-text-primary);
+  --card: var(--apex-bg-primary);
+  --card-foreground: var(--apex-text-primary);
+  --popover: var(--apex-bg-primary);
+  --popover-foreground: var(--apex-text-primary);
+  --primary: var(--apex-fill-neutral);
+  --primary-foreground: var(--apex-text-on-fill);
+  --secondary: var(--apex-bg-secondary);
+  --secondary-foreground: var(--apex-text-primary);
+  --muted: var(--apex-bg-secondary);
+  --muted-foreground: var(--apex-text-secondary);
+  --accent: var(--apex-bg-tertiary);
+  --accent-foreground: var(--apex-text-primary);
+  --destructive: var(--apex-red);
+  --border: var(--apex-border-default);
+  --input: var(--apex-border-default);
+  --ring: var(--apex-blue);
+  --sidebar: var(--apex-bg-primary);
+  --sidebar-foreground: var(--apex-text-primary);
+  --sidebar-primary: var(--apex-fill-neutral);
+  --sidebar-primary-foreground: var(--apex-text-on-fill);
+  --sidebar-accent: var(--apex-bg-tertiary);
+  --sidebar-accent-foreground: var(--apex-text-primary);
+  --sidebar-border: var(--apex-border-subtle);
+  --sidebar-ring: var(--apex-blue);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  html {
+    @apply font-sans;
+  }
+  /* Every ₹ value and every number is JetBrains Mono + tabular (CLAUDE.md law 7).
+   * Mono is the signal that a number is exact. */
+  .apex-tabular {
+    font-family: var(--apex-font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* ===========================================================================
+ * Motion. apex-spin = an in-progress spinner (e.g. a running generate poll);
+ * apex-pulse = a live/attention pulse. Both honour prefers-reduced-motion.
+ * ===========================================================================*/
+@keyframes apex-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+@keyframes apex-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-apex-pulse,
+  .animate-apex-spin,
+  /* tw-animate-css enter/exit (modals, overlays) don't honour reduced-motion
+     on their own. */
+  .animate-in,
+  .animate-out {
+    animation: none !important;
+  }
+}
+
+/* ===========================================================================
+ * Liquid Glass — CHROME ONLY (CLAUDE.md law 9/10). The ambient aurora gives the
+ * frosted panels something to refract; the .apex-glass recipe + variants own
+ * all backdrop-filter / chrome elevation. Data surfaces never use these classes:
+ * where glass and signal compete, signal wins.
+ * ===========================================================================*/
+@layer components {
+  .apex-aura {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .apex-aura > span {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(var(--apex-aura-blur));
+    opacity: var(--apex-aura-opacity);
+  }
+  .apex-aura .a-blue {
+    width: 680px;
+    height: 680px;
+    left: -160px;
+    top: -220px;
+    background: radial-gradient(
+      circle at 30% 30%,
+      var(--apex-aura-blue),
+      transparent 70%
+    );
+  }
+  .apex-aura .a-green {
+    width: 560px;
+    height: 560px;
+    right: -120px;
+    top: -120px;
+    background: radial-gradient(
+      circle at 50% 50%,
+      var(--apex-aura-green),
+      transparent 70%
+    );
+  }
+  .apex-aura .a-red {
+    width: 720px;
+    height: 720px;
+    left: 30%;
+    bottom: -380px;
+    background: radial-gradient(
+      circle at 50% 50%,
+      var(--apex-aura-red),
+      transparent 70%
+    );
+  }
+  .apex-aura .a-indigo {
+    width: 480px;
+    height: 480px;
+    right: 8%;
+    bottom: -200px;
+    background: radial-gradient(
+      circle at 50% 50%,
+      var(--apex-aura-indigo),
+      transparent 70%
+    );
+  }
+
+  .apex-glass {
+    position: relative;
+    background: var(--apex-glass-tint);
+    backdrop-filter: var(--apex-glass-filter);
+    -webkit-backdrop-filter: var(--apex-glass-filter);
+    border: 1px solid var(--apex-glass-border);
+    border-radius: var(--apex-glass-radius);
+    box-shadow: var(--apex-glass-shadow);
+  }
+  .apex-glass::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(
+      155deg,
+      var(--apex-glass-edge),
+      transparent 32%
+    );
+    mix-blend-mode: screen;
+    opacity: 0.9;
+  }
+  .apex-glass > * {
+    position: relative;
+    z-index: 1;
+  }
+  .apex-glass--toolbar {
+    backdrop-filter: blur(var(--apex-glass-blur-md))
+      saturate(var(--apex-glass-saturate));
+    -webkit-backdrop-filter: blur(var(--apex-glass-blur-md))
+      saturate(var(--apex-glass-saturate));
+    box-shadow:
+      var(--apex-elev-2), var(--apex-glass-specular-top),
+      var(--apex-glass-specular-left), var(--apex-glass-inner-glow);
+  }
+  .apex-glass--overlay {
+    background: var(--apex-glass-tint-thin);
+    backdrop-filter: blur(var(--apex-glass-blur-sm))
+      saturate(var(--apex-glass-saturate));
+    -webkit-backdrop-filter: blur(var(--apex-glass-blur-sm))
+      saturate(var(--apex-glass-saturate));
+    border-radius: var(--apex-radius-lg);
+    box-shadow:
+      var(--apex-elev-1), var(--apex-glass-specular-top),
+      var(--apex-glass-specular-left);
+  }
+  .apex-glass--modal {
+    background: var(--apex-glass-tint-strong);
+    backdrop-filter: var(--apex-glass-filter-modal);
+    -webkit-backdrop-filter: var(--apex-glass-filter-modal);
+    box-shadow: var(--apex-glass-shadow-modal);
+  }
+  .apex-glass--danger {
+    background: var(--apex-glass-tint-danger);
+    backdrop-filter: blur(var(--apex-glass-blur-md))
+      saturate(var(--apex-glass-saturate-calm));
+    -webkit-backdrop-filter: blur(var(--apex-glass-blur-md))
+      saturate(var(--apex-glass-saturate-calm));
+    border-color: rgba(255, 55, 95, 0.3);
+  }
+  .apex-glass--interactive {
+    transition: box-shadow var(--apex-dur-hover) var(--apex-ease);
+  }
+  .apex-glass--interactive:hover {
+    box-shadow:
+      var(--apex-elev-4), var(--apex-glass-specular-top),
+      var(--apex-glass-specular-left), var(--apex-glass-inner-glow);
+  }
+}
+
+/* No backdrop-filter support (very rare): fall back to an opaque panel. */
+@supports not (backdrop-filter: blur(1px)) {
+  .apex-glass {
+    background: var(--apex-bg-secondary);
+  }
+}
+
+/* Loading skeleton — flat shimmer on data slots (glass chrome renders
+ * immediately; data fills in). Flat, never glass. */
+@keyframes apex-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+@layer components {
+  .apex-skeleton {
+    border-radius: 6px;
+    background: linear-gradient(
+      90deg,
+      var(--apex-bg-secondary) 25%,
+      var(--apex-bg-tertiary) 38%,
+      var(--apex-bg-secondary) 54%
+    );
+    background-size: 200% 100%;
+    animation: apex-shimmer 1.5s ease-in-out infinite;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .apex-skeleton {
+    animation: none;
+  }
+}
