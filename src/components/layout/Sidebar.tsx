@@ -1,35 +1,20 @@
 import { Link } from '@tanstack/react-router'
-import {
-  Clock,
-  FileText,
-  Gauge,
-  LayoutGrid,
-  PanelLeftClose,
-  PanelLeftOpen,
-} from 'lucide-react'
+import { Clock, FileText, Gauge, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import { Glass, BrandMark, Wordmark } from '@/design-system'
 import { cn } from '@/lib/utils'
 
-// Only routes that EXIST are linked (typed Links). The Brief is the whole app
-// today; History + settings arrive with FIN-149.
+// Only routes that EXIST are linked (typed Links).
 interface NavItem {
   to: string
   label: string
   icon: typeof Gauge
   exact?: boolean
-  devOnly?: boolean
 }
 
 const NAV: NavItem[] = [
   { to: '/', label: 'Readiness', icon: Gauge, exact: true },
   { to: '/brief/today', label: 'Brief', icon: FileText },
   { to: '/history', label: 'History', icon: Clock },
-  {
-    to: '/dev/components',
-    label: 'Components',
-    icon: LayoutGrid,
-    devOnly: true,
-  },
 ]
 
 /**
@@ -45,7 +30,7 @@ export function Sidebar({
   collapsed: boolean
   onToggle: () => void
 }) {
-  const items = NAV.filter((n) => !n.devOnly || import.meta.env.DEV)
+  const items = NAV
   // Icon-only by default (mobile + collapsed); labels appear on hover, and stay
   // visible at lg+ only when NOT collapsed.
   const labelCls = cn(

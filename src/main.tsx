@@ -1,4 +1,3 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import { AppProviders } from '@/app/providers'
@@ -12,10 +11,11 @@ async function enableMocking() {
   await worker.start({ onUnhandledRequest: 'bypass' })
 }
 
+// NOTE: no <StrictMode>. Its dev-only double-mount aborts every query's
+// in-flight request on the first mount's cleanup (React Query passes an
+// AbortSignal), which shows as a "canceled" request per call in dev. Our
+// effects are already guarded (module-level once-guards) + covered by tests, so
+// the double-invoke check earns its keep less than the noise it creates.
 void enableMocking().then(() => {
-  createRoot(document.getElementById('root')!).render(
-    <StrictMode>
-      <AppProviders />
-    </StrictMode>,
-  )
+  createRoot(document.getElementById('root')!).render(<AppProviders />)
 })

@@ -7,6 +7,14 @@ the next. Never close a session with a stale CONTEXT.*
 (market · 9-row scan · deep-set reads) + history, rendered honestly against the REAL degraded
 2026-07-16 brief. PROVEN live for $0. Read this before the next ticket.
 
+⚠️ **No `<StrictMode>`** (removed 2026-07-16): its dev-only double-mount aborted every query's
+in-flight request on the first cleanup (React Query passes an AbortSignal) → a "canceled" request
+per call in dev, which also masked real cancellations while debugging. Our effects are guarded by
+module-level once-guards + covered by tests, so the double-invoke check earned less than its noise.
+Don't re-add it to "fix" a phantom bug — the cancellations were StrictMode, prod was always clean.
+⚠️ **No dev `/dev/components` gallery** (removed 2026-07-16): the route + `design-system/preview/*`
++ all `*.preview.tsx` are gone; the sidebar is Readiness · Brief · History.
+
 **FIN-162 (the brief surface + history) is done and PROVEN against the LIVE API for $0.**
 THE PRODUCT — everything else exists to get Father here. One `BriefRenderer` serves today AND any
 past date (history is the same surface, different date). Lives in `features/brief/*`.
