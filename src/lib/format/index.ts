@@ -9,5 +9,6 @@ export {
   formatSignedNumber,
   formatPct,
   formatPercentile,
+  formatUsd,
 } from './number'
 export { istClock, istTime, istDate, istDateTime } from './time'

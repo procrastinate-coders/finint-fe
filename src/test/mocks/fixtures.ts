@@ -255,3 +255,164 @@ export const kiteRefreshFixture = {
     blocks_on_red: false,
   },
 }
+
+// --- generate (FIN-161) — real shapes from ../finint/docs/api/samples --------
+
+// POST /generate → a fresh run kicked off in the BACKGROUND (generate_run.json).
+export const generateRunFixture = {
+  run_id: 'aa967a32a185',
+  status: 'running',
+  started: true,
+  positioning_only: false,
+}
+
+// POST /generate → positioning-only run (news yielded nothing overnight — the
+// COMMON honest case after FIN-145's freshness filter, not an edge/failure).
+export const generateRunPositioningOnlyFixture = {
+  run_id: 'bb17c0de0001',
+  status: 'running',
+  started: true,
+  positioning_only: true,
+}
+
+// A minimal-but-VALID ServedBrief (matches the generated schema). `guardFailed`
+// toggles the degraded case — today's real run: done + brief_ready + guard_failed.
+function makeBrief(guardFailed: boolean) {
+  return {
+    date: '2026-07-16',
+    label: 'Thursday, 16 Jul 2026',
+    market_open: '09:00 IST',
+    generated_at: '2026-07-16T03:35:00+00:00',
+    schema_version: 'v1',
+    market: {
+      session_read: 'Positioning-led; rupee firm.',
+      regime: {
+        is_new: false,
+        regime_change: false,
+        headline: 'No regime change overnight.',
+        body: null,
+      },
+      backdrop: {
+        usd_inr: { value: 96.15, change_pct: 0.12, note: 'YAHOO_V8' },
+        dxy: { value: 120.5, change_pct: -0.05, note: 'ICE DXY' },
+        risk_tone: { value: 'mixed', note: 'cross-currents' },
+      },
+      catalysts: [],
+      cross_instrument: [],
+    },
+    instruments: [
+      {
+        instrument: 'GOLD',
+        name: 'Gold',
+        tier: 'A',
+        data_tier: 'A',
+        implied_open: null,
+        oi_state: 'NEW_SHORTS',
+        cot_percentile: 0.06,
+        atr: 1800,
+        levels: { support: [140000], resistance: [148000] },
+        factors: { gap: null, oi: 0.5, level: 0.2, vol: 0.1 },
+        ai_read: {
+          what_changed: 'Flat to open.',
+          narrative: 'Crowded short; no fresh catalyst.',
+          positioning: null,
+          cross_instrument_note: null,
+          watch: 'Holds above 140000.',
+          why: 'Positioning-led.',
+          guard_failed: guardFailed, // GOLD read withheld on the degraded run
+        },
+      },
+    ],
+    meta: {
+      deep_set: ['GOLD', 'SILVER'],
+      guard_failed: guardFailed,
+      fabricated_claims: 0,
+    },
+  }
+}
+
+// POST /generate → today's brief already exists → served from store, $0, ZERO
+// LLM calls (generate_already_complete.json). Degraded (guard_failed) — the real
+// 2026-07-16 case: it SUCCEEDED AND IS DEGRADED; both are true.
+export const generateAlreadyCompleteFixture = {
+  status: 'already_complete',
+  brief: makeBrief(true),
+}
+
+export const briefTodayDegradedFixture = makeBrief(true)
+export const briefTodayCleanFixture = makeBrief(false)
+
+const genSteps = (writeState: string, writeDetail: string | null) => [
+  { key: 'fetch', state: 'done', detail: 'Kite · COMEX · USD/INR · DXY · COT' },
+  { key: 'scan', state: 'done', detail: '9 instruments · gap·OI·levels·vol' },
+  { key: 'news', state: 'done', detail: '2 items → 2 catalysts' },
+  { key: 'write', state: writeState, detail: writeDetail },
+]
+
+const genCost = (costUsd: number) => ({
+  total_tokens: 17136,
+  input_tokens: 12035,
+  output_tokens: 5101,
+  cost_usd: costUsd,
+  ceiling: 250000,
+  web_search_calls: 0,
+  retries: 0,
+  stages: [
+    {
+      stage: 'pass1_news_read',
+      input_tokens: 5000,
+      output_tokens: 800,
+      web_search_calls: 0,
+      retries: 0,
+      cost_usd: 0.0229,
+    },
+    {
+      stage: 'instrument.SILVER',
+      input_tokens: 5772,
+      output_tokens: 3548,
+      web_search_calls: 0,
+      retries: 0,
+      cost_usd: 0.070536,
+    },
+  ],
+})
+
+// GET /generate/status — mid-run: fetch/scan/news done, write RUNNING.
+export const generateStatusRunningFixture = {
+  run_id: 'aa967a32a185',
+  date: '2026-07-16',
+  status: 'running',
+  steps: [
+    { key: 'fetch', state: 'done', detail: 'Kite · COMEX · USD/INR · DXY · COT' },
+    { key: 'scan', state: 'done', detail: '9 instruments · gap·OI·levels·vol' },
+    { key: 'news', state: 'running', detail: null },
+    { key: 'write', state: 'pending', detail: null },
+  ],
+  brief_ready: false,
+  reason: null,
+  cost: null,
+}
+
+// GET /generate/status — terminal DONE (generate_status.json shape, real cost).
+export const generateStatusDoneFixture = {
+  run_id: 'aa967a32a185',
+  date: '2026-07-16',
+  status: 'done',
+  steps: genSteps('done', 'session read · backdrop · per-instrument'),
+  brief_ready: true,
+  reason: null,
+  cost: genCost(0.11262),
+}
+
+// GET /generate/status — terminal ERROR (generate_status_error.json): a guard
+// rejected trade language. brief_ready false, reason NAMED, cost REAL (a failed
+// run still spent money — FIN-164).
+export const generateStatusErrorFixture = {
+  run_id: 'fb4022a999a2',
+  date: '2026-07-16',
+  status: 'error',
+  steps: genSteps('error', null),
+  brief_ready: false,
+  reason: "instrument brief GOLD contains trade language: ['buy signal']",
+  cost: genCost(0.114936),
+}

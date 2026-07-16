@@ -10,6 +10,7 @@ import {
   meResponse,
   readinessResponse,
   refreshSpineResponse,
+  servedBrief,
   type GenerateResponse,
   type GenerateStatusResponse,
   type KiteLoginUrlResponse,
@@ -17,6 +18,7 @@ import {
   type LoginResponse,
   type ReadinessResponse,
   type RefreshSpineResponse,
+  type ServedBrief,
   type User,
 } from './contracts'
 
@@ -91,20 +93,30 @@ export function kiteRefresh(
 
 // --- generate (FIN-161; PAID) --------------------------------------------
 
+// POST returns IMMEDIATELY (~3.7s) and the run continues in the BACKGROUND (~3
+// min). NEVER block on it — the response is `{run_id, status:"running", …}` for a
+// fresh run, or `{status:"already_complete", brief}` when today's brief exists
+// (served from store — $0). Poll getGenerateStatus for the fresh-run progress.
 export function generate(): Promise<GenerateResponse> {
   return apiRequest('/generate', generateResponse, { method: 'POST' })
 }
 
 export function getGenerateStatus(
+  runId: string,
   signal?: AbortSignal,
 ): Promise<GenerateStatusResponse> {
-  return apiRequest('/generate/status', generateStatusResponse, { signal })
+  return apiRequest(
+    `/generate/status?run_id=${encodeURIComponent(runId)}`,
+    generateStatusResponse,
+    { signal },
+  )
 }
 
-// --- brief (FIN-162; parsed as unknown until that phase wires ServedBrief) -
+// --- brief (FIN-162 owns the screen; FIN-161 reads today's for the honesty
+// flags at handoff — meta.guard_failed / fabricated_claims) -----------------
 
-export function getBriefToday(signal?: AbortSignal): Promise<unknown> {
-  return apiRequest('/brief/today', z.unknown(), { signal })
+export function getBriefToday(signal?: AbortSignal): Promise<ServedBrief> {
+  return apiRequest('/brief/today', servedBrief, { signal })
 }
 
 export function getBrief(date: string, signal?: AbortSignal): Promise<unknown> {

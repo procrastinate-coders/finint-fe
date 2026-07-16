@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
 import { Loader2 } from 'lucide-react'
-import { toast } from 'sonner'
 import type { ReadinessSource } from '@/lib/api/contracts'
 import { ScreenError, ScreenLoading } from '@/components/common/ScreenState'
 import { queryKeys, useReadiness, useRefreshSpine } from '@/lib/query/hooks'
@@ -13,6 +13,7 @@ import {
 import { RefreshReport } from './RefreshReport'
 import { KiteRefreshModal } from './KiteRefreshModal'
 import { EvidenceCockpit } from './cockpit/EvidenceCockpit'
+import { GenerateFlow } from './generate/GenerateFlow'
 
 /**
  * The readiness/evidence screen — the app's home. It renders the Bento Cockpit
@@ -25,7 +26,9 @@ export function ReadinessScreen() {
   const readiness = useReadiness()
   const refresh = useRefreshSpine()
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
   const [kiteOpen, setKiteOpen] = useState(false)
+  const [generateOpen, setGenerateOpen] = useState(false)
   const [reportDismissed, setReportDismissed] = useState(false)
 
   const sources = readiness.data?.sources
@@ -65,6 +68,9 @@ export function ReadinessScreen() {
   }
 
   const data = readiness.data
+  // Common case after FIN-145's news-freshness filter: nothing crossed the
+  // overnight window → a positioning-only run. An honest outcome, not an edge.
+  const positioningOnly = (data.evidence?.news.fresh_count ?? 0) === 0
 
   // A refreshable source clicked in the rail: Kite opens the daily-login modal;
   // everything else triggers the spine refresh (POST /refresh).
@@ -87,9 +93,7 @@ export function ReadinessScreen() {
       <EvidenceCockpit
         data={data}
         onRefreshKite={() => setKiteOpen(true)}
-        onGenerate={() =>
-          toast.info('Brief generation is coming in the next update.')
-        }
+        onGenerate={() => setGenerateOpen(true)}
         onRefreshSource={onRefreshSource}
       />
 
@@ -131,6 +135,17 @@ export function ReadinessScreen() {
         <KiteRefreshModal
           onClose={() => setKiteOpen(false)}
           onComplete={() => setKiteOpen(false)}
+        />
+      )}
+
+      {generateOpen && (
+        <GenerateFlow
+          positioningOnly={positioningOnly}
+          onClose={() => setGenerateOpen(false)}
+          onViewBrief={() => {
+            setGenerateOpen(false)
+            navigate({ to: '/brief/today' })
+          }}
         />
       )}
     </>

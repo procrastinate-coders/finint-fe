@@ -1,5 +1,9 @@
 import { http, HttpResponse } from 'msw'
 import {
+  briefTodayDegradedFixture,
+  generateRunFixture,
+  generateStatusDoneFixture,
+  generateStatusRunningFixture,
   kiteLoginUrlFixture,
   kiteRefreshFixture,
   loginFixture,
@@ -25,6 +29,9 @@ const WRONG_PASSWORD = 'wrong-password'
 // the password was wrong (task step 8 / backend design).
 const invalidCredentials = () =>
   HttpResponse.json({ detail: 'invalid email or password' }, { status: 401 })
+
+// Poll counter for the stateful generate/status mock (running → done).
+let generateStatusPolls = 0
 
 export const handlers = [
   // --- auth (FIN-157, real shapes) ----------------------------------------
@@ -83,50 +90,40 @@ export const handlers = [
     return HttpResponse.json(kiteRefreshFixture)
   }),
 
-  // --- generate (LIVE, PAID) ----------------------------------------------
-  http.post(`${H}/generate`, () =>
-    HttpResponse.json({ run_id: 'mock-run', status: 'queued' }),
-  ),
-  http.get(`${H}/generate/status`, () =>
-    HttpResponse.json({
-      run_id: 'mock-run',
-      status: 'running',
-      step: 2,
-      steps: [
-        { key: 'scan', label: 'Deterministic scan', status: 'done' },
-        { key: 'market', label: 'Market layer', status: 'running' },
-        { key: 'instruments', label: 'Per-instrument read', status: 'pending' },
-        { key: 'guards', label: 'Substance guards', status: 'pending' },
-      ],
-    }),
-  ),
+  // --- generate (FIN-161; real shapes) ------------------------------------
+  // A fresh run that PROGRESSES: the status poll returns `running` for the first
+  // few reads, then `done` — so `npm run dev:mock` shows the real 4-step screen
+  // advancing, not a frozen frame. POST resets the counter for a repeat run.
+  http.post(`${H}/generate`, () => {
+    generateStatusPolls = 0
+    return HttpResponse.json(generateRunFixture)
+  }),
+  http.get(`${H}/generate/status`, () => {
+    generateStatusPolls += 1
+    return HttpResponse.json(
+      generateStatusPolls <= 3
+        ? generateStatusRunningFixture
+        : generateStatusDoneFixture,
+    )
+  }),
 
-  // --- brief (PLACEHOLDER — the real shape lands with FIN-149) -------------
-  // Minimal stubs so the endpoints resolve. The honesty meta (guard_failed /
-  // fabricated_claims) is first-class UI (law 4) and is carried here already.
+  // --- brief (FIN-161 reads today's for the honesty flags at handoff) ------
+  // A real, VALID ServedBrief — degraded (guard_failed, withheld reads) so the
+  // law-4 honesty banner is exercised in dev:mock. /brief/:date + /briefs stay
+  // minimal (parsed as unknown until FIN-162 wires them).
   http.get(`${H}/brief/today`, () =>
-    HttpResponse.json({
-      date: '2026-07-15',
-      label: 'Today',
-      generated_at: '2026-07-15T08:35:00+05:30',
-      meta: { guard_failed: false, fabricated_claims: 0 },
-    }),
+    HttpResponse.json(briefTodayDegradedFixture),
   ),
   http.get(`${H}/brief/:date`, ({ params }) =>
-    HttpResponse.json({
-      date: String(params.date),
-      label: String(params.date),
-      generated_at: '2026-07-15T08:35:00+05:30',
-      meta: { guard_failed: false, fabricated_claims: 0 },
-    }),
+    HttpResponse.json({ ...briefTodayDegradedFixture, date: String(params.date) }),
   ),
   http.get(`${H}/briefs`, () =>
     HttpResponse.json([
       {
-        date: '2026-07-15',
-        label: 'Today',
-        generated_at: '2026-07-15T08:35:00+05:30',
-        guard_failed: false,
+        date: '2026-07-16',
+        label: 'Thursday, 16 Jul 2026',
+        generated_at: '2026-07-16T03:35:00+00:00',
+        guard_failed: true,
       },
     ]),
   ),

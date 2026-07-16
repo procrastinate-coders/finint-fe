@@ -3,10 +3,50 @@
 *The living state of the build. Updated at the END of every session; read FIRST at the start of
 the next. Never close a session with a stale CONTEXT.*
 
-**Updated:** 2026-07-16 — **BENTO COCKPIT LANDED (FFE-010)** — the readiness home is now the
-non-scroll evidence cockpit, productionized against live `/readiness.evidence` (FIN-169), then
-design-polished (board = per-instrument cards, collapsible sidebar, legible macro). Built on the
-FIN-160 spine (preserved). Read this before starting FIN-161.
+**Updated:** 2026-07-16 — **FIN-161 GENERATE FLOW LANDED** — the Generate button now runs the real
+paid pipeline: confirm (states the ~$0.11 cost) → 4-step progress (polled) → complete/error/409,
+with a degraded/positioning-only brief flagged before handoff. PROVEN live for $0 (today's brief
+exists → served from store). Built on the Bento Cockpit (FFE-010). Read this before FIN-162.
+
+**FIN-161 (generate screen + 4-step progress) is done and PROVEN against the LIVE API for $0.**
+- `POST /generate` is ASYNC — returns in ~120ms then runs ~3 min in the BACKGROUND. We NEVER block
+  on it: the response is either a fresh run (`{run_id, status:"running", positioning_only}`) that we
+  poll, or `{status:"already_complete", brief}` served from store ($0). `useGenerateStatus` polls
+  `GET /generate/status?run_id` and STOPS the instant it's terminal (`refetchInterval`→false on
+  done|error) — no eternal spinner (asserted; FIN-164's `write:running`-after-terminal is guarded by
+  `ProgressSteps` rendering state verbatim).
+- The flow is a glass modal (`features/readiness/generate/GenerateFlow.tsx`) whose phase is DERIVED
+  from the mutation + poll (never stored in an effect, so it can't drift from API truth): **confirm**
+  (cost stated before spend — law 1) · **running** (the 4 real steps fetch→scan→news→write with the
+  API's live `detail`) · **complete** (flags degraded/positioning-only BEFORE the "View brief"
+  handoff) · **error** (NAMES `reason` verbatim + shows the real `cost` — a failed run still spent) ·
+  **blocked** (409 hard-critical red, fail-closed with its detail).
+- **Degraded is flagged, never hidden (law 2/4).** `summarizeDegradation(brief)` surfaces
+  `meta.guard_failed`, `fabricated_claims`, and the per-instrument `ai_read.guard_failed` withheld
+  list. Shown on the completion modal AND on `/brief/today`. ⚠️ **Today's real brief (2026-07-16) IS
+  degraded**: guard_failed true, **2 fabricated claims caught**, reads withheld for **SILVER + GOLD**,
+  session_read itself withheld ("(withheld — failed substance check)"). It SUCCEEDED AND IS
+  degraded — both true; the screen says so.
+- **The live already_complete response** (captured 2026-07-16): `POST /generate → 200 (119ms)`,
+  keys `{status, brief}`, `status:"already_complete"`, NO run_id, `brief.meta.guard_failed:true`,
+  `fabricated_claims:2`. Matches the generated `GenerateResponse` exactly.
+- `positioning_only`: after FIN-145's news filter this is the COMMON honest case (Tier-B is
+  structurally zero-news). Designed with dignity — a real outcome, not a warning. (Today happens to
+  have 2 fresh catalysts, so it's NOT positioning-only right now.)
+- **"View brief" routes to `/brief/today`** — a MINIMAL FIN-162 STUB (`features/brief/BriefScreen`)
+  that surfaces the honesty metrics at the top + session read. The full per-instrument brief screen
+  is FIN-162's to build. Landing-routing (brief-exists detection) is FIN-172 — NOT hand-rolled here
+  (no 404-vs-200 on `/brief/today`); we read the brief only after a confirmed-complete run.
+- New: `formatUsd` (the ONE thing not in ₹ — the LLM cost, 2–4 dp so `$0.1126` shows real
+  precision). Generate fixtures + 15 new tests (degraded · ProgressSteps consistency · the full
+  flow). **75 tests green**, typecheck + lint + build clean.
+- ⚠️ **Branch note:** the ticket said "branch off main", but FIN-161 depends on the cockpit's
+  DecisionBar Generate button — on `feat/fin-161-generate` off `main` (which now HAS FIN-160/170/the
+  cockpit committed). Push held.
+
+**BENTO COCKPIT (FFE-010) — the readiness home** is the non-scroll evidence cockpit, productionized
+against live `/readiness.evidence` (FIN-169), then design-polished (board = per-instrument cards,
+collapsible sidebar, legible macro). Built on the FIN-160 spine (preserved).
 
 **Design-polish pass (2026-07-16, on Father's review):**
 - **Board is now per-instrument CARDS**, grouped by segment (Bullion / Energy / Base metals), one

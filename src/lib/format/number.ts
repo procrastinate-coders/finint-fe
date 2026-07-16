@@ -67,6 +67,23 @@ export function formatNumber(
   return `${neg ? MINUS : ''}${grouped(decimals).format(Math.abs(value))}`
 }
 
+const usd = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 4,
+})
+
+/**
+ * US dollars — the generate run's LLM cost (`cost_usd`). The ONE thing on the
+ * screen that isn't rupees: the API bills in USD. 2–4 dp so `$0.1126` shows its
+ * real precision, never rounded to hide what a run actually spent. null → "—".
+ */
+export function formatUsd(value: number | null | undefined): string {
+  if (isMissing(value)) return DASH
+  return usd.format(value)
+}
+
 /**
  * A signed number (OI change, net flow): `-506` → `−506`, `1240` → `+1,240`.
  * Zero shows no sign. null → "—".

@@ -1,5 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
+  generate,
+  getBriefToday,
+  getGenerateStatus,
   getKiteLoginUrl,
   getMe,
   getReadiness,
@@ -12,6 +15,13 @@ export const queryKeys = {
   me: ['auth', 'me'] as const,
   readiness: ['readiness'] as const,
   kiteLoginUrl: ['kite', 'login-url'] as const,
+  generateStatus: (runId: string) => ['generate', 'status', runId] as const,
+  briefToday: ['brief', 'today'] as const,
+}
+
+/** A generate/status run is finished when it reaches one of these. */
+export function isTerminalStatus(status: string | undefined): boolean {
+  return status === 'done' || status === 'error'
 }
 
 /** The current user (Father) — rehydrates the shell from GET /auth/me. */
@@ -75,5 +85,46 @@ export function useKiteRefresh() {
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.readiness })
     },
+  })
+}
+
+/**
+ * POST /generate — PAID (~$0.11/run). The mutation resolves fast; the run then
+ * proceeds in the BACKGROUND. It returns either a fresh run (`status:"running"`,
+ * `run_id`) to poll, or `status:"already_complete"` with the brief served from
+ * store ($0). We DON'T invalidate readiness here — `can_generate` stays true by
+ * design even after a run (the BE serves from store).
+ */
+export function useGenerate() {
+  return useMutation({ mutationFn: () => generate() })
+}
+
+/**
+ * GET /generate/status?run_id — poll the 4-step progress while the run is live,
+ * and STOP the instant it reaches a terminal state (done|error). No eternal
+ * spinner: `refetchInterval` returns false once terminal, so a finished run is
+ * read exactly once more and then left alone.
+ */
+export function useGenerateStatus(runId: string | null, enabled: boolean) {
+  return useQuery({
+    queryKey: queryKeys.generateStatus(runId ?? ''),
+    queryFn: ({ signal }) => getGenerateStatus(runId as string, signal),
+    enabled: enabled && !!runId,
+    refetchInterval: (query) =>
+      isTerminalStatus(query.state.data?.status) ? false : 2500,
+  })
+}
+
+/**
+ * GET /brief/today → the served brief. FIN-161 reads it ONLY after a confirmed
+ * terminal run, to surface the honesty flags (meta.guard_failed /
+ * fabricated_claims) at handoff (law 4) — NOT to decide landing (that's FIN-172).
+ */
+export function useBriefToday(enabled: boolean) {
+  return useQuery({
+    queryKey: queryKeys.briefToday,
+    queryFn: ({ signal }) => getBriefToday(signal),
+    enabled,
+    staleTime: 60 * 1000,
   })
 }

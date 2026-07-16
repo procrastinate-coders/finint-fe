@@ -59,6 +59,10 @@ export type GenerateResponse = z.infer<typeof schemas.GenerateResponse>
 export type GenerateStatusResponse = z.infer<
   typeof schemas.GenerateStatusResponse
 >
+// The 4 pipeline steps (fetch · scan · news · write) and the cost object the
+// status carries on EVERY terminal state (law: a failed run still spent money).
+export type RunStep = z.infer<typeof schemas.RunStep>
+export type CostReport = z.infer<typeof schemas.CostReport>
 
 // --- brief (FIN-162) — the served brief schema is generated too ----------
 export const servedBrief = schemas.ServedBrief
