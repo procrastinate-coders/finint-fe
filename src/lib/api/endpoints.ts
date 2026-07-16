@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { tokenStore } from '@/lib/auth/session'
 import { apiRequest } from './client'
 import {
+  briefListItem,
   generateResponse,
   generateStatusResponse,
   kiteLoginUrlResponse,
@@ -11,6 +12,7 @@ import {
   readinessResponse,
   refreshSpineResponse,
   servedBrief,
+  type BriefListItem,
   type GenerateResponse,
   type GenerateStatusResponse,
   type KiteLoginUrlResponse,
@@ -21,6 +23,8 @@ import {
   type ServedBrief,
   type User,
 } from './contracts'
+
+const briefListResponse = z.array(briefListItem)
 
 // --- auth (FIN-157) ------------------------------------------------------
 
@@ -119,12 +123,15 @@ export function getBriefToday(signal?: AbortSignal): Promise<ServedBrief> {
   return apiRequest('/brief/today', servedBrief, { signal })
 }
 
-export function getBrief(date: string, signal?: AbortSignal): Promise<unknown> {
-  return apiRequest(`/brief/${encodeURIComponent(date)}`, z.unknown(), {
+export function getBrief(
+  date: string,
+  signal?: AbortSignal,
+): Promise<ServedBrief> {
+  return apiRequest(`/brief/${encodeURIComponent(date)}`, servedBrief, {
     signal,
   })
 }
 
-export function getBriefs(signal?: AbortSignal): Promise<unknown> {
-  return apiRequest('/briefs', z.unknown(), { signal })
+export function getBriefs(signal?: AbortSignal): Promise<BriefListItem[]> {
+  return apiRequest('/briefs', briefListResponse, { signal })
 }

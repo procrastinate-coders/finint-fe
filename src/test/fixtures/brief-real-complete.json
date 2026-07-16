@@ -1,0 +1,378 @@
+{
+  "date": "2026-07-16",
+  "label": "Thursday, 16 Jul 2026",
+  "market_open": "09:00 IST",
+  "generated_at": "2026-07-16T14:04:08.127639+00:00",
+  "schema_version": "v1",
+  "sources": [
+    {
+      "key": "usd_inr",
+      "status": "green",
+      "note": "YAHOO_V8 @ 2026-07-16"
+    },
+    {
+      "key": "dxy",
+      "status": "green",
+      "note": "stored macro_daily (FRED_CARRIED)"
+    },
+    {
+      "key": "news",
+      "status": "green",
+      "note": "2 catalyst(s), freshest 22h"
+    },
+    {
+      "key": "cot",
+      "status": "green",
+      "note": "5 Tier-A COT"
+    },
+    {
+      "key": "price",
+      "status": "green",
+      "note": "stored snapshot (live in 5b)"
+    },
+    {
+      "key": "oi",
+      "status": "green",
+      "note": "stored snapshot (live in 5b)"
+    }
+  ],
+  "market": {
+    "session_read": "(withheld — failed substance check)",
+    "regime": {
+      "is_new": false,
+      "regime_change": false,
+      "headline": "(withheld — failed substance check)",
+      "body": null
+    },
+    "backdrop": {
+      "usd_inr": {
+        "value": 96.33499908447266,
+        "change_pct": -0.09364919073284449,
+        "note": "YAHOO_V8 @ 2026-07-16"
+      },
+      "dxy": {
+        "value": 120.505,
+        "change_pct": 0,
+        "note": "stored macro_daily (FRED_CARRIED)"
+      },
+      "risk_tone": {
+        "value": "risk-off",
+        "note": "Disinflationary US PPI surprise is driving long liquidation in gold and new short entries in silver, dominating the session tone despite isolated pockets of short-covering in base metals."
+      }
+    },
+    "catalysts": [
+      {
+        "direction": "bearish",
+        "headline": "US Producer Price Index falls 0.3% in June, below expectations — disinflationary signal weighing on commodities",
+        "instruments": [
+          "GOLD",
+          "SILVER",
+          "CRUDEOIL"
+        ],
+        "source": {
+          "name": "benzinga.com",
+          "url": "https://www.benzinga.com/markets/market-summary/26/07/60476239/crude-oil-moves-lower-us-producer-prices-fall-0-3-in-june"
+        },
+        "hours_old": 22,
+        "is_new": true,
+        "age_label": "NEW · 22h ago"
+      },
+      {
+        "direction": "bullish",
+        "headline": "US threatens 100% tariff on Indian imports of Russian crude; Russia supplied over half of India's June crude imports — potential supply disruption of ~2.6 mn bpd flagged",
+        "instruments": [
+          "CRUDEOIL"
+        ],
+        "source": {
+          "name": "financialexpress.com",
+          "url": "https://www.financialexpress.com/policy/economy/100-tariff-threat-tests-indias-russian-crude-strategy/4292733/"
+        },
+        "hours_old": 22,
+        "is_new": true,
+        "age_label": "NEW · 22h ago"
+      }
+    ],
+    "cross_instrument": [
+      "Silver (~-1.8% implied open, NEW_SHORTS) is underperforming gold (~-1.1% implied open, LONG_LIQUIDATION), suggesting incremental speculative pressure beyond the shared disinflationary catalyst.",
+      "Copper is bucking the precious metals weakness with a ~+1.0% implied open and OI showing long liquidation — the positive gap despite liquidation suggests base demand support, though COT at 86th percentile flags a crowded long and the move should be read with that tension in mind.",
+      "Crude oil (NEW_LONGS, COT at 100th percentile, ~+0.5% implied open) is seeing fresh long entries against an already maximally crowded positioning backdrop — the US tariff threat on Indian imports of Russian crude (~2.6 mn bpd) is the proximate bullish catalyst, but historically crowded COT is a structural tension."
+    ]
+  },
+  "scan": [
+    {
+      "rank": 1,
+      "instrument": "SILVER",
+      "name": "Silver",
+      "tier": "A",
+      "implied_open_pct": -1.8280919919172924,
+      "oi_state": "NEW_SHORTS",
+      "cot_percentile": 0.7381,
+      "factors": {
+        "gap": 0.6425220755127713,
+        "oi": 1,
+        "level": 0,
+        "vol": 0
+      }
+    },
+    {
+      "rank": 2,
+      "instrument": "GOLD",
+      "name": "Gold",
+      "tier": "A",
+      "implied_open_pct": -1.119130210163102,
+      "oi_state": "LONG_LIQUIDATION",
+      "cot_percentile": 0.0583,
+      "factors": {
+        "gap": 0.6265832674748995,
+        "oi": 0.5,
+        "level": 0.5984323152716087,
+        "vol": 0
+      }
+    },
+    {
+      "rank": 3,
+      "instrument": "COPPER",
+      "name": "Copper",
+      "tier": "A",
+      "implied_open_pct": 1.008031475186462,
+      "oi_state": "LONG_LIQUIDATION",
+      "cot_percentile": 0.855,
+      "factors": {
+        "gap": 0.6888490498876665,
+        "oi": 0.28070511592259056,
+        "level": 0,
+        "vol": 0
+      }
+    },
+    {
+      "rank": 4,
+      "instrument": "NATURALGAS",
+      "name": "Natural Gas",
+      "tier": "A",
+      "implied_open_pct": 0.512510913301672,
+      "oi_state": "SHORT_COVERING",
+      "cot_percentile": 0.2097,
+      "factors": {
+        "gap": 0.1391812662296862,
+        "oi": 0.5,
+        "level": 0,
+        "vol": 0
+      }
+    },
+    {
+      "rank": 5,
+      "instrument": "LEAD",
+      "name": "Lead",
+      "tier": "B",
+      "implied_open_pct": null,
+      "oi_state": "SHORT_COVERING",
+      "cot_percentile": null,
+      "factors": {
+        "gap": null,
+        "oi": 0.40348101265822783,
+        "level": 0,
+        "vol": 0.38423754070312954
+      }
+    },
+    {
+      "rank": 6,
+      "instrument": "NICKEL",
+      "name": "Nickel",
+      "tier": "B",
+      "implied_open_pct": null,
+      "oi_state": "SHORT_COVERING",
+      "cot_percentile": null,
+      "factors": {
+        "gap": null,
+        "oi": 0.5,
+        "level": 0,
+        "vol": 0
+      }
+    },
+    {
+      "rank": 7,
+      "instrument": "ZINC",
+      "name": "Zinc",
+      "tier": "B",
+      "implied_open_pct": null,
+      "oi_state": "NEW_LONGS",
+      "cot_percentile": null,
+      "factors": {
+        "gap": null,
+        "oi": 0.41370106761565834,
+        "level": 0,
+        "vol": 0
+      }
+    },
+    {
+      "rank": 8,
+      "instrument": "CRUDEOIL",
+      "name": "Crude Oil",
+      "tier": "A",
+      "implied_open_pct": 0.4643922727264318,
+      "oi_state": "NEW_LONGS",
+      "cot_percentile": 1,
+      "factors": {
+        "gap": 0.13358398522400053,
+        "oi": 0.14227322747995597,
+        "level": 0.0517333333333333,
+        "vol": 0
+      }
+    },
+    {
+      "rank": 9,
+      "instrument": "ALUMINIUM",
+      "name": "Aluminium",
+      "tier": "B",
+      "implied_open_pct": null,
+      "oi_state": "SHORT_COVERING",
+      "cot_percentile": null,
+      "factors": {
+        "gap": null,
+        "oi": 0.24611856033874382,
+        "level": 0,
+        "vol": 0
+      }
+    }
+  ],
+  "instruments": [
+    {
+      "instrument": "SILVER",
+      "name": "Silver",
+      "tier": "A",
+      "data_tier": "A",
+      "implied_open": {
+        "implied_open_pct": -1.8280919919172924,
+        "intl_change_pct": -1.8298055900443533,
+        "usdinr_change_pct": -0.09364919073284739
+      },
+      "oi_state": "NEW_SHORTS",
+      "cot_percentile": 0.7381,
+      "atr": 6164.142857142857,
+      "levels": {
+        "support": [
+          213265
+        ],
+        "resistance": [
+          253504
+        ]
+      },
+      "factors": {
+        "gap": 0.6425220755127713,
+        "oi": 1,
+        "level": 0,
+        "vol": 0
+      },
+      "ai_read": {
+        "what_changed": "(withheld — failed substance check)",
+        "narrative": "The disinflationary signal from the US Producer Price Index falling 0.3% in June, below expectations, is weighing on silver as a commodity. Risk-off conditions and a strong DXY at 120.505 compound the pressure. What makes this read more complex is the OI state: NEW_SHORTS. Fresh short positioning is entering into a down move, which at the 74th COT percentile — already an elevated managed-money long stance — creates a crowded-long-meets-new-short dynamic. The market is not in orderly liquidation; it is being actively pressed lower by new entrants on the short side even as a significant long base remains in place. That is an unstable configuration.",
+        "positioning": {
+          "oi_state": "NEW_SHORTS",
+          "cot_stance": "Bearish lean — at the 74th percentile, managed-money longs remain elevated, meaning the long side of this market is still crowded and vulnerable to further unwinding if the disinflationary tone persists.",
+          "cot_percentile": 0.7381,
+          "divergence_flag": true,
+          "divergence_note": "Tension: the OI state is NEW_SHORTS — fresh shorts are being added — yet the COT sits at the 74th percentile, signalling an still-elevated legacy long base. New shorts pressing into a crowded long is classic divergence between positioning layers and raises the risk of a disorderly move in either direction."
+        },
+        "cross_instrument_note": "Gold is also under pressure, implied open -1.12%, with its OI state reading LONG_LIQUIDATION — longs exiting passively. Silver's NEW_SHORTS state is more aggressive in character: silver is being actively shorted, not merely liquidated, while gold longs are simply leaving. Silver is showing heavier near-term pressure than gold on a positioning basis, despite both sitting in a risk-off, disinflationary tape.",
+        "watch": "The key level on the downside is support at 213265. Implied open at approximately 212691 puts price opening fractionally below that support on the data provided — watch whether silver can reclaim 213265 in early trade or continues to compress beneath it.",
+        "why": "Silver opens below its key support level in a NEW_SHORTS OI state against a still-crowded 74th-percentile long base — a structurally unstable configuration worth watching closely.",
+        "guard_failed": true
+      }
+    },
+    {
+      "instrument": "GOLD",
+      "name": "Gold",
+      "tier": "A",
+      "data_tier": "A",
+      "implied_open": {
+        "implied_open_pct": -1.119130210163102,
+        "intl_change_pct": -1.1201792489645146,
+        "usdinr_change_pct": -0.09364919073284739
+      },
+      "oi_state": "LONG_LIQUIDATION",
+      "cot_percentile": 0.0583,
+      "atr": 2510.162142857142,
+      "levels": {
+        "support": [
+          140036
+        ],
+        "resistance": [
+          152831
+        ]
+      },
+      "factors": {
+        "gap": 0.6265832674748995,
+        "oi": 0.5,
+        "level": 0.5984323152716087,
+        "vol": 0
+      },
+      "ai_read": {
+        "what_changed": "(withheld — failed substance check)",
+        "narrative": "(withheld — failed substance check)",
+        "positioning": {
+          "oi_state": "LONG_LIQUIDATION",
+          "cot_stance": "Bullish by disposition — at the 6th percentile, speculative positioning is historically very lean, meaning the fuel for a positioning-driven selloff is limited; this is not a crowded long being unwound.",
+          "cot_percentile": 0.0583,
+          "divergence_flag": true,
+          "divergence_note": "The PPI catalyst is bearish for commodities and the implied open is lower, but COT at the 6th percentile means there is almost no speculative long positioning left to liquidate. LONG_LIQUIDATION OI state with near-historic-low COT length is a tension: the bearish catalyst is arriving into already-washed-out positioning, which historically limits downside follow-through even when the directional news is negative."
+        },
+        "cross_instrument_note": "Silver is opening down harder at -1.83% with NEW_SHORTS building — fresh short interest is entering silver while gold is seeing long liquidation. Silver's more aggressive OI dynamic (new shorts vs gold's exiting longs) suggests the industrial/commodity complex is under more active selling pressure in silver; gold's relative resilience in OI terms may reflect residual safe-haven demand in the risk-off backdrop.",
+        "watch": "Watch whether the implied open near 138,967 holds above the support level at 140,036 — note the implied open is already trading through that support, so the key question at the open is whether price can reclaim 140,036 or whether that level now acts as resistance on any bounce. The next material resistance above is a distant 152,831.",
+        "why": "(withheld — failed substance check)",
+        "guard_failed": true
+      }
+    },
+    {
+      "instrument": "COPPER",
+      "name": "Copper",
+      "tier": "A",
+      "data_tier": "A",
+      "implied_open": {
+        "implied_open_pct": 1.008031475186462,
+        "intl_change_pct": 1.008976373394832,
+        "usdinr_change_pct": -0.09364919073284739
+      },
+      "oi_state": "LONG_LIQUIDATION",
+      "cot_percentile": 0.855,
+      "atr": 19.171428571428578,
+      "levels": {
+        "support": [
+          1240.15
+        ],
+        "resistance": [
+          1351.05
+        ]
+      },
+      "factors": {
+        "gap": 0.6888490498876665,
+        "oi": 0.28070511592259056,
+        "level": 0,
+        "vol": 0
+      },
+      "ai_read": {
+        "what_changed": "Copper is implied to open ~+1.01% higher at approximately 1323.31, a meaningful bounce off the prior close of 1310.1 — though no specific catalyst has been tagged to the instrument overnight.",
+        "narrative": "The implied gap higher sits in an uncomfortable context: OI is in LONG_LIQUIDATION, meaning the dominant positioning flow has been exits from longs rather than fresh accumulation. With COT at the 86th percentile, the speculative long book remains historically stretched. The backdrop is risk-off with a strong DXY (120.505) and USD/INR at 96.335, a combination that typically weighs on INR-denominated commodity imports. The positive open therefore looks positioning-led on no tagged catalyst — a bounce within a structure where the crowd is already heavily long and actively reducing exposure. That tension between price attempting a recovery and the underlying liquidation in OI is the key read here.",
+        "positioning": {
+          "oi_state": "LONG_LIQUIDATION",
+          "cot_stance": "Bearish — at the 86th percentile, speculative longs are near a crowded extreme. With OI simultaneously in LONG_LIQUIDATION, the positioning setup suggests vulnerability rather than fuel for a sustained rally.",
+          "cot_percentile": 0.855,
+          "divergence_flag": true,
+          "divergence_note": "Price is implied higher (+1.01%) but OI is in LONG_LIQUIDATION and COT sits at the 86th percentile — a crowded long book that is actively unwinding. A positive open into this structure is a tension signal, not a confirmation of strength."
+        },
+        "cross_instrument_note": "Copper stands out negatively relative to peers: ZINC is attracting NEW_LONGS while ALUMINIUM, LEAD, and NICKEL are all in SHORT_COVERING — all three peer states imply some degree of fresh or returning demand-side interest. Copper's LONG_LIQUIDATION OI state is the weakest positioning profile in the complex.",
+        "watch": "Watch whether price can hold above the prior close of 1310.1 on any intraday pullback. The resistance to clear is 1351.05; support below is a distant 1240.15. A failure to sustain above 1310.1 on the open would reinforce the liquidation narrative.",
+        "why": "A stretched COT long (86th percentile) actively liquidating into a no-catalyst bounce, in a risk-off, strong-DXY session, while peers show healthier positioning — the divergence between price and positioning structure makes this the most contested read in the complex today.",
+        "guard_failed": false
+      }
+    }
+  ],
+  "meta": {
+    "deep_set": [
+      "SILVER",
+      "GOLD",
+      "COPPER"
+    ],
+    "guard_failed": true,
+    "fabricated_claims": 2
+  }
+}

@@ -1,7 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   generate,
+  getBrief,
   getBriefToday,
+  getBriefs,
   getGenerateStatus,
   getKiteLoginUrl,
   getMe,
@@ -17,6 +19,8 @@ export const queryKeys = {
   kiteLoginUrl: ['kite', 'login-url'] as const,
   generateStatus: (runId: string) => ['generate', 'status', runId] as const,
   briefToday: ['brief', 'today'] as const,
+  brief: (date: string) => ['brief', date] as const,
+  briefs: ['briefs'] as const,
 }
 
 /** A generate/status run is finished when it reaches one of these. */
@@ -125,6 +129,24 @@ export function useBriefToday(enabled: boolean) {
     queryKey: queryKeys.briefToday,
     queryFn: ({ signal }) => getBriefToday(signal),
     enabled,
+    staleTime: 60 * 1000,
+  })
+}
+
+/** GET /brief/{date} — a past brief (history). Same renderer, different date. */
+export function useBrief(date: string) {
+  return useQuery({
+    queryKey: queryKeys.brief(date),
+    queryFn: ({ signal }) => getBrief(date, signal),
+    staleTime: 5 * 60 * 1000,
+  })
+}
+
+/** GET /briefs — the history list ({date, label, generated_at, guard_failed}). */
+export function useBriefs() {
+  return useQuery({
+    queryKey: queryKeys.briefs,
+    queryFn: ({ signal }) => getBriefs(signal),
     staleTime: 60 * 1000,
   })
 }

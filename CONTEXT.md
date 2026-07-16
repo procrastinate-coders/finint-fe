@@ -3,10 +3,69 @@
 *The living state of the build. Updated at the END of every session; read FIRST at the start of
 the next. Never close a session with a stale CONTEXT.*
 
-**Updated:** 2026-07-16 — **FIN-161 GENERATE FLOW LANDED** — the Generate button now runs the real
-paid pipeline: confirm (states the ~$0.11 cost) → 4-step progress (polled) → complete/error/409,
-with a degraded/positioning-only brief flagged before handoff. PROVEN live for $0 (today's brief
-exists → served from store). Built on the Bento Cockpit (FFE-010). Read this before FIN-162.
+**Updated:** 2026-07-16 — **FIN-162 THE BRIEF SURFACE LANDED** — THE PRODUCT. The layered brief
+(market · 9-row scan · deep-set reads) + history, rendered honestly against the REAL degraded
+2026-07-16 brief. PROVEN live for $0. Read this before the next ticket.
+
+**FIN-162 (the brief surface + history) is done and PROVEN against the LIVE API for $0.**
+THE PRODUCT — everything else exists to get Father here. One `BriefRenderer` serves today AND any
+past date (history is the same surface, different date). Lives in `features/brief/*`.
+- ⚠️ **WITHHELD FIELDS RENDER AS A STATE, NOT THE STRING** (the single most product-defining
+  decision). When a guard fails closed the backend sets a field's VALUE to the literal
+  "(withheld — failed substance check)". `features/brief/sentinel.ts` `isWithheld()` detects it
+  (robust to dash variants); `Withheld.tsx` `<Prose>` renders it as a visible held-back STATE
+  ("a substance guard caught something here and held it back") — NEVER the raw string in a
+  paragraph. Verified: the literal sentinel is absent from the live DOM.
+- ⚠️ **The real 2026-07-16 brief is DEGRADED and that is the representative case.** session_read
+  AND regime.headline withheld; deep_set = [SILVER, GOLD, COPPER]; SILVER 1 field withheld, GOLD 3
+  withheld (what_changed/narrative/why), COPPER clean; meta.guard_failed true, fabricated_claims 2.
+  It SUCCEEDED AND IS DEGRADED — the honesty banner (law 2/4) says so up front: guard fired · "N
+  text fields caught and withheld (degradation count)" · "reads withheld: SILVER, GOLD".
+- **All 9 mains on the board**, ranked by HOW MUCH MOVED (not a recommendation — law 4). Non-deep
+  rows show NUMBERS WITH NO NARRATIVE (correct, not empty). Tier-B (ZINC/ALU/LEAD/NICKEL) implied
+  open "—" + COT "no ref" BY DESIGN (LME-priced), with a footnote — never fabricated, never hidden.
+- **Deep-set cards** (numbers left, prose right — trader layout). OI state surfaced BIG (Father's
+  core read). **DIVERGENCE gets its own weighted yellow block** ("tension, not confirmation") — the
+  point of the instrument pass, not a flattened field. Every text field withheld-aware.
+- **PARTIAL runs render honestly**: a deep_set name absent from `instruments` (the run died
+  mid-write) → a "read not produced" placeholder card, never a crash, never a fabricated read.
+  Proven live on 2026-07-15 (SILVER present + partly-withheld; GOLD/COPPER read-not-produced).
+- **Catalysts LINK to their sources** (benzinga / financialexpress …) — a claim without a
+  traceable source is the disease. Backdrop carries PROVENANCE per number. Regime-change flagged.
+- **positioning_only** flagged when catalysts is empty (`isPositioningOnly`) — a common, honest read.
+- **History**: `/history` (GET /briefs) lists past briefs (degraded badge) → `/brief/$date` (GET
+  /brief/{date}) renders the same surface. Sidebar gains **Brief** + **History** nav.
+- **DESIGN (redesigned on Father's review — the first pass was a cluttered full-width wall):** now a
+  professional research NOTE — a single centered reading column (`max-w-[1160px]`, prose capped at
+  ~70ch), one visual anchor per section (no label-soup, no nested cards), and consistent 8pt rhythm.
+  INTERACTIONS: a sticky scroll-spy jump-nav (`BriefNav` + `useScrollSpy`, sticks at `top-[84px]`
+  under the app header) — Market · Board · <instruments> with withheld dots; clicking a deep-set
+  board row smooth-scrolls to that instrument's card; staggered motion-safe entrance (`Reveal`).
+  Deep-read cards are a stat RAIL (OI state hero) + a readable prose column; divergence is a
+  left-accent callout; the withheld state is ONE clean amber chip (was a box + duplicate chip).
+  ⚠️ dev:mock serves the small `briefTodayDegradedFixture` (NOT the real JSON) — importing the
+  9-instrument fixture JSON into the browser bundle trips MSW's module interception in dev:mock; the
+  real samples are covered by tests + the LIVE API.
+- **Screen-matched loading skeletons** (the generic grey-bars loader was replaced): `CockpitSkeleton`
+  (readiness — decision bar + rail/board/news+macro grid), `BriefSkeleton` (reading column + lead
+  card + board + deep-card silhouettes), `HistorySkeleton` — each mirrors its screen so loading→loaded
+  doesn't jump. The old `ScreenLoading` is now unused.
+- **History redesigned**: a designed list in a reading column — status-accented cards (orange
+  left-rail + ShieldAlert for degraded, green + ShieldCheck for clean), a Degraded/Clean pill, hover
+  "Read →", staggered entrance, and a proper empty state.
+- **Shared domain util**: `lib/mcx/oi-state.ts` (oiStateInfo / cotMeaning) is now the ONE source of
+  truth for OI-state meaning — cockpit + brief both import it (cockpit's `provenance.ts` re-exports).
+  **Shared honesty**: `lib/brief/honesty.ts` (summarizeDegradation / isPositioningOnly) — generate
+  flow + brief both use it.
+- New: `formatUsd` was FIN-161; here `getBrief`/`getBriefs` are typed (ServedBrief / BriefListItem[]),
+  `useBrief`/`useBriefs` added, `resolveJsonModule` enabled for the committed real-brief fixtures.
+  ⚠️ **No buy/sell language** — grepped clean (OI states like "New longs" are Father's language,
+  descriptive, NOT recommendations). **90 tests green**, typecheck + lint + build clean.
+- ⚠️ **Branch note:** on `feat/fin-162-brief` off `main` (FIN-161 is on main). Push held.
+
+**FIN-161 (generate flow) is on main.** The Generate button runs the real paid pipeline: confirm
+(states the ~$0.11 cost) → 4-step progress (polled) → complete/error/409, with a degraded/
+positioning-only brief flagged before handoff. PROVEN live for $0.
 
 **FIN-161 (generate screen + 4-step progress) is done and PROVEN against the LIVE API for $0.**
 - `POST /generate` is ASYNC — returns in ~120ms then runs ~3 min in the BACKGROUND. We NEVER block

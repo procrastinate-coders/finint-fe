@@ -107,22 +107,24 @@ export const handlers = [
     )
   }),
 
-  // --- brief (FIN-161 reads today's for the honesty flags at handoff) ------
-  // A real, VALID ServedBrief — degraded (guard_failed, withheld reads) so the
-  // law-4 honesty banner is exercised in dev:mock. /brief/:date + /briefs stay
-  // minimal (parsed as unknown until FIN-162 wires them).
-  http.get(`${H}/brief/today`, () =>
-    HttpResponse.json(briefTodayDegradedFixture),
-  ),
+  // --- brief (FIN-162) ----------------------------------------------------
+  // A valid DEGRADED ServedBrief so dev:mock exercises the honesty banner +
+  // withheld states. (The real 9-instrument samples live in test fixtures and
+  // are covered by BriefRenderer.test.tsx / the LIVE API — importing that JSON
+  // into the browser bundle trips MSW's module interception in dev:mock.)
+  http.get(`${H}/brief/today`, () => HttpResponse.json(briefTodayDegradedFixture)),
   http.get(`${H}/brief/:date`, ({ params }) =>
-    HttpResponse.json({ ...briefTodayDegradedFixture, date: String(params.date) }),
+    HttpResponse.json({
+      ...briefTodayDegradedFixture,
+      date: String(params.date),
+    }),
   ),
   http.get(`${H}/briefs`, () =>
     HttpResponse.json([
       {
-        date: '2026-07-16',
-        label: 'Thursday, 16 Jul 2026',
-        generated_at: '2026-07-16T03:35:00+00:00',
+        date: briefTodayDegradedFixture.date,
+        label: briefTodayDegradedFixture.label,
+        generated_at: briefTodayDegradedFixture.generated_at,
         guard_failed: true,
       },
     ]),

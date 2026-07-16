@@ -1,5 +1,12 @@
 import { Link } from '@tanstack/react-router'
-import { Gauge, LayoutGrid, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
+import {
+  Clock,
+  FileText,
+  Gauge,
+  LayoutGrid,
+  PanelLeftClose,
+  PanelLeftOpen,
+} from 'lucide-react'
 import { Glass, BrandMark, Wordmark } from '@/design-system'
 import { cn } from '@/lib/utils'
 
@@ -15,6 +22,8 @@ interface NavItem {
 
 const NAV: NavItem[] = [
   { to: '/', label: 'Readiness', icon: Gauge, exact: true },
+  { to: '/brief/today', label: 'Brief', icon: FileText },
+  { to: '/history', label: 'History', icon: Clock },
   {
     to: '/dev/components',
     label: 'Components',

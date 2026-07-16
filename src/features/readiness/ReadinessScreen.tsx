@@ -3,7 +3,8 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { Loader2 } from 'lucide-react'
 import type { ReadinessSource } from '@/lib/api/contracts'
-import { ScreenError, ScreenLoading } from '@/components/common/ScreenState'
+import { ScreenError } from '@/components/common/ScreenState'
+import { CockpitSkeleton } from './cockpit/CockpitSkeleton'
 import { queryKeys, useReadiness, useRefreshSpine } from '@/lib/query/hooks'
 import {
   hasAttemptedOnLandRefresh,
@@ -60,7 +61,7 @@ export function ReadinessScreen() {
     return () => clearTimeout(id)
   }, [refresh.data, queryClient])
 
-  if (readiness.isPending) return <ScreenLoading />
+  if (readiness.isPending) return <CockpitSkeleton />
   if (readiness.isError) {
     return (
       <ScreenError error={readiness.error} onRetry={() => readiness.refetch()} />
