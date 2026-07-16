@@ -34,6 +34,9 @@ export type User = z.infer<typeof schemas.MeResponse>
 export const readinessResponse = schemas.ReadinessResponse
 export type ReadinessResponse = z.infer<typeof schemas.ReadinessResponse>
 export type ReadinessSource = z.infer<typeof schemas.SourceHealthModel>
+// FIN-172: readiness now carries a top-level brief STATUS — the FE decides the
+// CTA off it (exists · is_complete drive View-brief vs Generate).
+export type ReadinessBrief = z.infer<typeof schemas.BriefStatus>
 
 // --- readiness evidence (FIN-169) — the layered brief inputs the cockpit
 // renders: the per-instrument board, the macro backdrop, and the news window.

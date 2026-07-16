@@ -24,11 +24,13 @@ export function EvidenceCockpit({
   data,
   onRefreshKite,
   onGenerate,
+  onViewBrief,
   onRefreshSource,
 }: {
   data: ReadinessResponse
   onRefreshKite?: () => void
   onGenerate?: () => void
+  onViewBrief?: () => void
   onRefreshSource?: (source: ReadinessSource) => void
 }) {
   const [hoveredSource, setHoveredSource] = useState<string | null>(null)
@@ -40,6 +42,7 @@ export function EvidenceCockpit({
   return (
     <div className="flex flex-col gap-3.5 lg:h-[calc(100svh-150px)] lg:min-h-[600px]">
       <DecisionBar
+        brief={data.brief ?? null}
         canGenerate={data.can_generate}
         blockedReason={data.blocked_reason ?? null}
         positioningOnly={positioningOnly}
@@ -47,6 +50,7 @@ export function EvidenceCockpit({
         sources={data.sources}
         onRefreshKite={onRefreshKite}
         onGenerate={onGenerate}
+        onViewBrief={onViewBrief}
       />
 
       <div className="grid min-h-0 flex-1 grid-cols-1 gap-3.5 lg:grid-cols-[244px_minmax(0,1fr)_340px]">

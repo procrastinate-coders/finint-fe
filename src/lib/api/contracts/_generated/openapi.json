@@ -654,6 +654,51 @@
         ],
         "title": "BriefListItem"
       },
+      "BriefStatus": {
+        "properties": {
+          "exists": {
+            "type": "boolean",
+            "title": "Exists"
+          },
+          "date": {
+            "type": "string",
+            "title": "Date"
+          },
+          "generated_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Generated At"
+          },
+          "is_complete": {
+            "type": "boolean",
+            "title": "Is Complete"
+          },
+          "guard_failed": {
+            "type": "boolean",
+            "title": "Guard Failed"
+          },
+          "positioning_only": {
+            "type": "boolean",
+            "title": "Positioning Only"
+          }
+        },
+        "type": "object",
+        "required": [
+          "exists",
+          "date",
+          "is_complete",
+          "guard_failed",
+          "positioning_only"
+        ],
+        "title": "BriefStatus",
+        "description": "FIN-172: whether today's brief already exists (so the FE lands on it, not a Generate button\nit doesn't know re-serves at $0). `is_complete` is `store.is_complete` \u2014 the SAME predicate\n`plan_generate` serves-from-store with. exists:false is a NORMAL morning (no brief yet)."
+      },
       "CostReport": {
         "properties": {
           "total_tokens": {
@@ -1452,6 +1497,16 @@
             "anyOf": [
               {
                 "$ref": "#/components/schemas/ReadinessEvidence"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "brief": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BriefStatus"
               },
               {
                 "type": "null"

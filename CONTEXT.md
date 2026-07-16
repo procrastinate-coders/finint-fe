@@ -3,9 +3,26 @@
 *The living state of the build. Updated at the END of every session; read FIRST at the start of
 the next. Never close a session with a stale CONTEXT.*
 
-**Updated:** 2026-07-16 — **FIN-162 THE BRIEF SURFACE LANDED** — THE PRODUCT. The layered brief
-(market · 9-row scan · deep-set reads) + history, rendered honestly against the REAL degraded
-2026-07-16 brief. PROVEN live for $0. Read this before the next ticket.
+**Updated:** 2026-07-16 — **FIN-172-fe: ONE TAB + the CTA matrix.** `/readiness` now carries a
+top-level `brief` STATUS block (`BriefStatus` = exists · date · generated_at · is_complete ·
+guard_failed · positioning_only), and the FE drives the CTA off it:
+- **complete brief** → **View brief**, NOT Generate (generating re-serves it for $0, so
+  "Generate ≈$0.12" would be a false statement — copy says "$0 to open"). Verified live.
+- **incomplete brief** (positioning-only / partial) → **BOTH** View brief AND "Re-generate · ≈$0.12"
+  (it genuinely re-runs once news returns — FIN-154). The difference is made obvious.
+- **no brief** → the original readiness gate + Generate.
+The CTA lives in `DecisionBar` (driven by `data.brief`); `onViewBrief` navigates to `/brief/today`.
+A degraded brief (`guard_failed`) is FLAGGED on the bar (never hidden). The EVIDENCE (cockpit board
+/ macro / news) stays fully reachable — a brief existing doesn't strand Father from the numbers.
+**ONE destination**: the home IS the "Morning brief" (route title + header renamed from "Readiness";
+the cockpit is its "not yet" state). Sidebar dropped the separate **Brief** tab → now just **Morning
+brief · History**. (Components was already removed in a prior change — not re-added despite the
+ticket text.) MSW mocks all 3 brief shapes (`readinessBriefCompleteFixture` /
+`readinessBriefIncompleteFixture` / base `readinessFixture` exists:false); dev:mock defaults to the
+complete → View-brief state. All 3 CTA states unit-tested (`DecisionBar.test.tsx`). **95 tests green.**
+
+**FIN-162 THE BRIEF SURFACE** — THE PRODUCT. The layered brief (market · 9-row scan · deep-set
+reads) + history, rendered honestly against the REAL degraded 2026-07-16 brief. PROVEN live for $0.
 
 ⚠️ **No `<StrictMode>`** (removed 2026-07-16): its dev-only double-mount aborted every query's
 in-flight request on the first cleanup (React Query passes an AbortSignal) → a "canceled" request

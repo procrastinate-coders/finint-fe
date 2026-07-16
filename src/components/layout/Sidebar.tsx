@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { Clock, FileText, Gauge, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
+import { Clock, FileText, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import { Glass, BrandMark, Wordmark } from '@/design-system'
 import { cn } from '@/lib/utils'
 
@@ -7,13 +7,14 @@ import { cn } from '@/lib/utils'
 interface NavItem {
   to: string
   label: string
-  icon: typeof Gauge
+  icon: typeof FileText
   exact?: boolean
 }
 
+// ONE destination (FIN-172): the home IS the Morning brief — the cockpit is its
+// "not yet" state. No separate Brief tab; you reach the read via "View brief".
 const NAV: NavItem[] = [
-  { to: '/', label: 'Readiness', icon: Gauge, exact: true },
-  { to: '/brief/today', label: 'Brief', icon: FileText },
+  { to: '/', label: 'Morning brief', icon: FileText, exact: true },
   { to: '/history', label: 'History', icon: Clock },
 ]
 

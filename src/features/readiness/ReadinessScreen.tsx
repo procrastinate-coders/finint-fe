@@ -95,6 +95,7 @@ export function ReadinessScreen() {
         data={data}
         onRefreshKite={() => setKiteOpen(true)}
         onGenerate={() => setGenerateOpen(true)}
+        onViewBrief={() => navigate({ to: '/brief/today' })}
         onRefreshSource={onRefreshSource}
       />
 

@@ -8,7 +8,7 @@ import {
   kiteRefreshFixture,
   loginFixture,
   meFixture,
-  readinessFixture,
+  readinessBriefCompleteFixture,
   refreshFixture,
   refreshSpineFixture,
 } from './fixtures'
@@ -65,7 +65,11 @@ export const handlers = [
   http.get(`${H}/auth/me`, () => HttpResponse.json(meFixture)),
 
   // --- readiness (LIVE today) ---------------------------------------------
-  http.get(`${H}/readiness`, () => HttpResponse.json(readinessFixture)),
+  // dev:mock defaults to a COMPLETE brief existing → the "View brief" CTA
+  // (matches today's live state). Tests override per-case for the other states.
+  http.get(`${H}/readiness`, () =>
+    HttpResponse.json(readinessBriefCompleteFixture),
+  ),
 
   // --- spine refresh + kite (FIN-156, real shapes) ------------------------
   http.post(`${H}/refresh`, () => HttpResponse.json(refreshSpineFixture)),

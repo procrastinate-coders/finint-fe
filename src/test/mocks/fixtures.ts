@@ -118,9 +118,47 @@ export const readinessFixture = {
   can_generate: true,
   blocked_reason: null,
   fresh_count: '7/8',
+  // FIN-172: default = NO brief yet → the Generate path (existing tests rely on this).
+  brief: {
+    exists: false,
+    date: '2026-07-16',
+    generated_at: null,
+    is_complete: false,
+    guard_failed: false,
+    positioning_only: false,
+  },
 }
 
 // --- readiness variants (for tests) ---------------------------------------
+
+// FIN-172 CTA matrix: a COMPLETE brief exists → "View brief", NOT Generate. And
+// it is DEGRADED (guard_failed) — today's real, representative case; must still
+// flag, never hide behind a clean CTA.
+export const readinessBriefCompleteFixture = {
+  ...readinessFixture,
+  brief: {
+    exists: true,
+    date: '2026-07-16',
+    generated_at: '2026-07-16T14:04:08Z',
+    is_complete: true,
+    guard_failed: true,
+    positioning_only: false,
+  },
+}
+
+// FIN-172: an INCOMPLETE brief exists (positioning-only) → BOTH "View brief" AND
+// Generate (~$0.12 re-run to improve once news returns).
+export const readinessBriefIncompleteFixture = {
+  ...readinessFixture,
+  brief: {
+    exists: true,
+    date: '2026-07-16',
+    generated_at: '2026-07-16T14:04:08Z',
+    is_complete: false,
+    guard_failed: false,
+    positioning_only: true,
+  },
+}
 
 // Every source amber AND non-critical — the trap state. macro_continuity is
 // structurally amber; a naive "not green → refresh" would fire on every mount. Must

@@ -254,6 +254,16 @@ const ReadinessEvidence = z
     news: NewsEvidence,
   })
   .passthrough()
+const BriefStatus = z
+  .object({
+    exists: z.boolean(),
+    date: z.string(),
+    generated_at: z.union([z.string(), z.null()]).optional(),
+    is_complete: z.boolean(),
+    guard_failed: z.boolean(),
+    positioning_only: z.boolean(),
+  })
+  .passthrough()
 const ReadinessResponse = z
   .object({
     sources: z.array(SourceHealthModel),
@@ -261,6 +271,7 @@ const ReadinessResponse = z
     blocked_reason: z.union([z.string(), z.null()]).optional(),
     fresh_count: z.string(),
     evidence: z.union([ReadinessEvidence, z.null()]).optional(),
+    brief: z.union([BriefStatus, z.null()]).optional(),
   })
   .passthrough()
 const KiteRefreshBody = z
@@ -415,6 +426,7 @@ export const schemas = {
   NewsArticleEvidence,
   NewsEvidence,
   ReadinessEvidence,
+  BriefStatus,
   ReadinessResponse,
   KiteRefreshBody,
   KiteRefreshResponse,
