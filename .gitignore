@@ -43,4 +43,12 @@ Thumbs.db
 
 # Claude Code — personal overrides only
 .claude/settings.local.json
+# Per-developer symlinks the `skills` CLI writes into .claude/skills/ (they point
+# into the ignored .agents/ install dir — committing them would dangle).
+.claude/skills/
 .gstack/
+
+# Agent skills installed locally via the `skills` CLI (e.g. hallmark) — tooling,
+# not FININT source. `skills-lock.json` (the manifest) is what you commit if you
+# want the team to reproduce the install with `npx skills install`.
+.agents/

@@ -35,6 +35,14 @@ export const readinessResponse = schemas.ReadinessResponse
 export type ReadinessResponse = z.infer<typeof schemas.ReadinessResponse>
 export type ReadinessSource = z.infer<typeof schemas.SourceHealthModel>
 
+// --- readiness evidence (FIN-169) — the layered brief inputs the cockpit
+// renders: the per-instrument board, the macro backdrop, and the news window.
+export type ReadinessEvidence = z.infer<typeof schemas.ReadinessEvidence>
+export type BoardRow = z.infer<typeof schemas.BoardRow>
+export type MacroRow = z.infer<typeof schemas.MacroRow>
+export type NewsEvidence = z.infer<typeof schemas.NewsEvidence>
+export type NewsArticleEvidence = z.infer<typeof schemas.NewsArticleEvidence>
+
 // --- spine refresh / kite / generate (FIN-160/161) -----------------------
 // `RefreshResponse` in the spec is the SPINE refresh (POST /refresh) — distinct
 // from the auth token refresh above.

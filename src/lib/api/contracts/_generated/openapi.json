@@ -479,6 +479,146 @@
         ],
         "title": "Backdrop"
       },
+      "BoardRow": {
+        "properties": {
+          "instrument_id": {
+            "type": "string",
+            "title": "Instrument Id"
+          },
+          "segment": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Segment"
+          },
+          "data_tier": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Tier"
+          },
+          "contract": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contract"
+          },
+          "close": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Close"
+          },
+          "as_of": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "As Of"
+          },
+          "oi": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oi"
+          },
+          "oi_change": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oi Change"
+          },
+          "oi_state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oi State"
+          },
+          "cot_percentile": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cot Percentile"
+          },
+          "cot_as_of": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cot As Of"
+          },
+          "is_fresh": {
+            "type": "boolean",
+            "title": "Is Fresh"
+          },
+          "age_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age Days"
+          }
+        },
+        "type": "object",
+        "required": [
+          "instrument_id",
+          "is_fresh"
+        ],
+        "title": "BoardRow",
+        "description": "One main. A MISSING instrument is a row of NULLS, not an absent row (GOLD-only board is\nvisible). oi_state is classify_oi_state (scan.py:351), NOT the dead oi_daily.oi_state column."
+      },
       "BriefListItem": {
         "properties": {
           "date": {
@@ -951,6 +1091,57 @@
         ],
         "title": "MacroRefresh"
       },
+      "MacroRow": {
+        "properties": {
+          "indicator": {
+            "type": "string",
+            "title": "Indicator"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "as_of": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "As Of"
+          },
+          "carried_forward": {
+            "type": "boolean",
+            "title": "Carried Forward"
+          }
+        },
+        "type": "object",
+        "required": [
+          "indicator",
+          "carried_forward"
+        ],
+        "title": "MacroRow"
+      },
       "MeResponse": {
         "properties": {
           "id": {
@@ -978,6 +1169,132 @@
           "created_at"
         ],
         "title": "MeResponse"
+      },
+      "NewsArticleEvidence": {
+        "properties": {
+          "headline": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Headline"
+          },
+          "source_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Name"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url"
+          },
+          "published_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Published At"
+          },
+          "age_hours": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age Hours"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "NewsArticleEvidence"
+      },
+      "NewsEvidence": {
+        "properties": {
+          "fetched_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fetched At"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "fresh_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fresh Count"
+          },
+          "window": {
+            "$ref": "#/components/schemas/NewsWindow"
+          },
+          "articles": {
+            "items": {
+              "$ref": "#/components/schemas/NewsArticleEvidence"
+            },
+            "type": "array",
+            "title": "Articles"
+          }
+        },
+        "type": "object",
+        "required": [
+          "count",
+          "window",
+          "articles"
+        ],
+        "title": "NewsEvidence"
       },
       "NewsRefresh": {
         "properties": {
@@ -1047,6 +1364,62 @@
         ],
         "title": "NewsRefresh"
       },
+      "NewsWindow": {
+        "properties": {
+          "rule": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rule"
+          },
+          "threshold": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Threshold"
+          }
+        },
+        "type": "object",
+        "title": "NewsWindow"
+      },
+      "ReadinessEvidence": {
+        "properties": {
+          "board": {
+            "items": {
+              "$ref": "#/components/schemas/BoardRow"
+            },
+            "type": "array",
+            "title": "Board"
+          },
+          "macro": {
+            "items": {
+              "$ref": "#/components/schemas/MacroRow"
+            },
+            "type": "array",
+            "title": "Macro"
+          },
+          "news": {
+            "$ref": "#/components/schemas/NewsEvidence"
+          }
+        },
+        "type": "object",
+        "required": [
+          "board",
+          "macro",
+          "news"
+        ],
+        "title": "ReadinessEvidence"
+      },
       "ReadinessResponse": {
         "properties": {
           "sources": {
@@ -1074,6 +1447,16 @@
           "fresh_count": {
             "type": "string",
             "title": "Fresh Count"
+          },
+          "evidence": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReadinessEvidence"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "type": "object",

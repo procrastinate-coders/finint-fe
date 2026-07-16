@@ -1,12 +1,13 @@
 import { http, HttpResponse } from 'msw'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { server } from '@/test/mocks/server'
 import {
   readinessAllAmberFixture,
   readinessColdFixture,
+  readinessCriticalAmberFixture,
   readinessFixture,
   refreshAlreadyRunningFixture,
   refreshPartialFixture,
@@ -33,7 +34,7 @@ afterEach(() => resetOnLandRefresh())
 describe('ReadinessScreen — registry-driven, honest, quota-safe', () => {
   it('maps EVERY source from the array — no hardcoded list (8 sources)', async () => {
     renderReadiness()
-    await screen.findByText('Data sources')
+    await screen.findByText('Sources')
     for (const label of [
       'Kite (price/OI)',
       'COMEX (overnight)',
@@ -69,7 +70,9 @@ describe('ReadinessScreen — registry-driven, honest, quota-safe', () => {
     server.use(http.get('*/readiness', () => HttpResponse.json(withNinth)))
     renderReadiness()
     expect(await screen.findByText('X sentiment')).toBeInTheDocument()
-    expect(screen.getByText('8/9 fresh')).toBeInTheDocument()
+    // the decision bar's fresh count reflects the registry, not a hardcoded 8
+    expect(screen.getByText('8/9')).toBeInTheDocument()
+    expect(screen.getByText('9 inputs')).toBeInTheDocument()
   })
 
   it('a red blocks_on_red source blocks generate + shows blocked_reason', async () => {
@@ -83,7 +86,7 @@ describe('ReadinessScreen — registry-driven, honest, quota-safe', () => {
     }
     server.use(http.get('*/readiness', () => HttpResponse.json(boardBlocked)))
     renderReadiness()
-    const btn = await screen.findByRole('button', { name: /generate brief/i })
+    const btn = await screen.findByRole('button', { name: /^generate$/i })
     expect(btn).toBeDisabled()
     expect(
       screen.getByText('Board incomplete — a backfill is needed'),
@@ -102,10 +105,32 @@ describe('ReadinessScreen — registry-driven, honest, quota-safe', () => {
       }),
     )
     renderReadiness()
-    await screen.findByText('Data sources')
+    await screen.findByText('Sources')
     // The on-land effect has run by the time the sources render; amber must NOT
     // fire it — a naive rule would exhaust the 100/day quota on every mount.
     expect(refreshCalls).toBe(0)
+  })
+
+  it('⚠️ a CRITICAL AMBER source fires EXACTLY ONE refresh + shows a CTA (FIN-170 replay)', async () => {
+    // 2026-07-16: USD/INR amber+critical blocked generate with no button, no auto-fix.
+    // Now it must auto-refresh on land (exactly once) AND render a Refresh CTA on its row.
+    let refreshCalls = 0
+    server.use(
+      http.get('*/readiness', () =>
+        HttpResponse.json(readinessCriticalAmberFixture),
+      ),
+      http.post('*/refresh', () => {
+        refreshCalls += 1
+        return HttpResponse.json(refreshSpineFixture)
+      }),
+    )
+    renderReadiness()
+    await screen.findByText('Sources')
+    // auto-refresh fires — exactly once (the once-guard + single-flight prevent a storm).
+    await waitFor(() => expect(refreshCalls).toBe(1))
+    // USD/INR's row is present and, because the backend now marks it action:'refresh', it is an
+    // actionable CTA in the cockpit (SourcesRail) — asserted directly in SourcesRail.test.tsx.
+    expect(screen.getByRole('button', { name: /USD\/INR/i })).toBeInTheDocument()
   })
 
   it('a partial refresh NAMES the failed source, not a generic failure', async () => {

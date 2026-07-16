@@ -3,19 +3,60 @@
 *The living state of the build. Updated at the END of every session; read FIRST at the start of
 the next. Never close a session with a stale CONTEXT.*
 
-**Updated:** 2026-07-16 — **FIN-160 LANDED** (readiness screen + stale-gated on-land refresh +
-Kite modal). Read this before starting FIN-161.
+**Updated:** 2026-07-16 — **BENTO COCKPIT LANDED (FFE-010)** — the readiness home is now the
+non-scroll evidence cockpit, productionized against live `/readiness.evidence` (FIN-169), then
+design-polished (board = per-instrument cards, collapsible sidebar, legible macro). Built on the
+FIN-160 spine (preserved). Read this before starting FIN-161.
+
+**Design-polish pass (2026-07-16, on Father's review):**
+- **Board is now per-instrument CARDS**, grouped by segment (Bullion / Energy / Base metals), one
+  reflowing grid → NEVER a horizontal table-scroll (a hidden sideways-scroll is the UX we killed).
+  Each card is info-rich: price + as-of/freshness dot, OI + ΔOI, positioning STATE + the observed
+  px/OI move (two neutral arrows — descriptive, not a pick, law 2/8), and the COT crowding marker
+  (Tier-B shows "no int'l reference", law 3). Hover still opens the plain-words focus footer. Fits
+  a tall desktop without scroll; scrolls vertically only on short/narrow viewports (never sideways).
+- **Sidebar collapse** — a persisted manual toggle (`localStorage finint.sidebar_collapsed`, state
+  in `AppShell`). Below lg the rail is ALWAYS the 64px icon-rail (mobile has no room to expand);
+  at lg+ the toggle decides. ⚠️ The trap fixed here: `pl-[260px]` with no responsive fallback
+  squeezed the whole page to ~110px on mobile — the content padding is now `pl-[104px]` by default,
+  `lg:pl-[260px]` only when expanded.
+- **Macro tile** — even padded cells (no odd empty slot in a hairline-gap grid), readable labels
+  (fg-secondary, not the near-invisible tertiary), and each value now carries its source + as-of.
+- **Every response field is surfaced** — board (tier, segment, freshness, as-of, OI/ΔOI, oi_state,
+  cot_percentile + cot_as_of on hover), macro (source, as-of, carried_forward), news (fetched_at +
+  the full window rule on hover), sources (critical→"core", blocks_on_red→"gates generation").
 
 ---
 
 ## WHERE WE ARE
 
-**FIN-160 (readiness + on-land refresh + Kite modal) is done and PROVEN against the live API.**
-The readiness screen is the home (`/`): it maps over `readiness.sources` (never hardcoded — a 9th
-source appears with no code change), renders the six-colour status dots (amber→yellow), the
-`critical` tag, the note VERBATIM (including the backend's honest `-82791s ago` future-stamp bug —
-we do NOT sanitise it), and registry-driven CTAs. Generate is gated on `can_generate` +
-`blocked_reason` (inert here — wiring is FIN-161).
+**The readiness home (`/`) is the Bento Cockpit (FFE-010) — done and PROVEN against LIVE data.**
+A single non-scroll (on lg+) command centre: a glass DECISION bar on top (generate / "Refresh Kite
+token" / 8-dot verdict strip + count-up), then three flat tiles — SOURCES rail | BOARD (hero) |
+NEWS-over-MACRO. It renders the live `/readiness` response including FIN-169's additive `evidence`
+block (per-instrument board, macro backdrop, news window). Interactions: hovering a source lights
+the evidence tile it PRODUCES ("← from X" + a plain-words provenance/meaning focus footer — "where
+the board comes from"); hovering a board row explains its numbers (from Kite, as-of, the OI-state
+meaning, the COT crowding). Clicking a refreshable red source acts (Kite → modal, else spine
+refresh). Discipline held: `null`→"—", no buy/sell (positioning described never endorsed; colour =
+state never a pick), Tier-B COT "—" by design, glass only on the decision bar (tiles are flat
+hairline data), registry-driven rail (a 9th source needs no code change). Lives at
+`features/readiness/cockpit/*` and consumes ONLY generated contract types (FFE-004):
+`ReadinessResponse` + `BoardRow`/`MacroRow`/`NewsEvidence`/`NewsArticleEvidence` — regenerate with
+`npm run gen:contracts`. Mobile (< lg): stacks + scrolls, the board scrolls inside its own tile (no
+page-level horizontal scroll). **Verified live 2026-07-16:** the cockpit renders today's fresh
+board (GOLD ₹1,41,370 NEW SHORTS, ZINC/ALU LONG LIQUIDATION, USD/INR "lagging", 0 fresh news →
+"positioning-only"), lineage + provenance footers work on live data, the news window text is
+derived from the live threshold. The throwaway brainstorm fixture + `/dev/evidence` preview are
+DELETED. **55 tests green**, typecheck + lint + build clean.
+
+**FIN-160 (the readiness spine) is PRESERVED UNDER the cockpit and PROVEN against the live API.**
+The `ReadinessScreen` container still owns the data fetch, loading/error (`ScreenState`), the
+stale-gated on-land refresh, the `already_running` bounded re-read, the honest `RefreshReport`
+(now floated bottom-right so it never disturbs the non-scroll grid), and the Kite modal. Only the
+flat "Data sources" `SourceRow` list + standalone "Generate brief" button are GONE — the cockpit's
+decision bar + rail supersede them. It still maps over `readiness.sources` (never hardcoded), and
+Generate is gated on `can_generate` + `blocked_reason` (inert — a toast — until FIN-161).
 
 - **On-land refresh is STALE-GATED (FFE-006):** fire POST /refresh ONLY if news/comex/usdinr/dxy/cot
   is RED — never on amber, never for macro_continuity/kite/board. A module once-guard survives

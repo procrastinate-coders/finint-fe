@@ -194,12 +194,73 @@ const SourceHealthModel = z
     blocks_on_red: z.boolean().optional().default(false),
   })
   .passthrough()
+const BoardRow = z
+  .object({
+    instrument_id: z.string(),
+    segment: z.union([z.string(), z.null()]).optional(),
+    data_tier: z.union([z.string(), z.null()]).optional(),
+    contract: z.union([z.string(), z.null()]).optional(),
+    close: z.union([z.number(), z.null()]).optional(),
+    as_of: z.union([z.string(), z.null()]).optional(),
+    oi: z.union([z.number(), z.null()]).optional(),
+    oi_change: z.union([z.number(), z.null()]).optional(),
+    oi_state: z.union([z.string(), z.null()]).optional(),
+    cot_percentile: z.union([z.number(), z.null()]).optional(),
+    cot_as_of: z.union([z.string(), z.null()]).optional(),
+    is_fresh: z.boolean(),
+    age_days: z.union([z.number(), z.null()]).optional(),
+  })
+  .passthrough()
+const MacroRow = z
+  .object({
+    indicator: z.string(),
+    value: z.union([z.number(), z.null()]).optional(),
+    source: z.union([z.string(), z.null()]).optional(),
+    as_of: z.union([z.string(), z.null()]).optional(),
+    carried_forward: z.boolean(),
+  })
+  .passthrough()
+const NewsWindow = z
+  .object({
+    rule: z.union([z.string(), z.null()]),
+    threshold: z.union([z.string(), z.null()]),
+  })
+  .partial()
+  .passthrough()
+const NewsArticleEvidence = z
+  .object({
+    headline: z.union([z.string(), z.null()]).optional(),
+    source_name: z.union([z.string(), z.null()]).optional(),
+    url: z.union([z.string(), z.null()]).optional(),
+    published_at: z.union([z.string(), z.null()]).optional(),
+    age_hours: z.union([z.number(), z.null()]).optional(),
+    status: z.string(),
+    reason: z.union([z.string(), z.null()]).optional(),
+  })
+  .passthrough()
+const NewsEvidence = z
+  .object({
+    fetched_at: z.union([z.string(), z.null()]).optional(),
+    count: z.number().int(),
+    fresh_count: z.union([z.number(), z.null()]).optional(),
+    window: NewsWindow,
+    articles: z.array(NewsArticleEvidence),
+  })
+  .passthrough()
+const ReadinessEvidence = z
+  .object({
+    board: z.array(BoardRow),
+    macro: z.array(MacroRow),
+    news: NewsEvidence,
+  })
+  .passthrough()
 const ReadinessResponse = z
   .object({
     sources: z.array(SourceHealthModel),
     can_generate: z.boolean(),
     blocked_reason: z.union([z.string(), z.null()]).optional(),
     fresh_count: z.string(),
+    evidence: z.union([ReadinessEvidence, z.null()]).optional(),
   })
   .passthrough()
 const KiteRefreshBody = z
@@ -348,6 +409,12 @@ export const schemas = {
   ServedBrief,
   BriefListItem,
   SourceHealthModel,
+  BoardRow,
+  MacroRow,
+  NewsWindow,
+  NewsArticleEvidence,
+  NewsEvidence,
+  ReadinessEvidence,
   ReadinessResponse,
   KiteRefreshBody,
   KiteRefreshResponse,

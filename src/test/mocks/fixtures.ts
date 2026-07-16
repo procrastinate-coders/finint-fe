@@ -50,8 +50,8 @@ export const readinessFixture = {
       status: 'green',
       note: 'Fresh · 2h ago',
       critical: true,
-      human_refreshable: false,
-      action: null,
+      human_refreshable: true,
+      action: 'refresh',
       blocks_on_red: false,
     },
     {
@@ -60,8 +60,8 @@ export const readinessFixture = {
       status: 'green',
       note: 'Fresh · 17h ago',
       critical: true,
-      human_refreshable: false,
-      action: null,
+      human_refreshable: true,
+      action: 'refresh',
       blocks_on_red: false,
     },
     {
@@ -70,8 +70,8 @@ export const readinessFixture = {
       status: 'green',
       note: 'Fresh · 3d ago',
       critical: false,
-      human_refreshable: false,
-      action: null,
+      human_refreshable: true,
+      action: 'refresh',
       blocks_on_red: false,
     },
     {
@@ -80,8 +80,8 @@ export const readinessFixture = {
       status: 'green',
       note: 'As-of 2026-07-10 — next release Fri',
       critical: false,
-      human_refreshable: false,
-      action: null,
+      human_refreshable: true,
+      action: 'refresh',
       blocks_on_red: false,
     },
     {
@@ -111,7 +111,7 @@ export const readinessFixture = {
       note: '18 stored articles · fetched 16:50 IST',
       critical: true,
       human_refreshable: true,
-      action: 'news_refresh',
+      action: 'refresh',
       blocks_on_red: false,
     },
   ],
@@ -122,15 +122,35 @@ export const readinessFixture = {
 
 // --- readiness variants (for tests) ---------------------------------------
 
-// Every source amber — the trap state. macro_continuity is structurally amber;
-// a naive "not green → refresh" would fire on every mount. Must trigger ZERO
-// refresh (FFE-006).
+// Every source amber AND non-critical — the trap state. macro_continuity is
+// structurally amber; a naive "not green → refresh" would fire on every mount. Must
+// trigger ZERO refresh (FFE-006). Non-critical is the point: a CRITICAL amber SHOULD
+// fire (FIN-170) — that's the readinessCriticalAmberFixture below, not this quota guard.
 export const readinessAllAmberFixture = {
   ...readinessFixture,
-  sources: readinessFixture.sources.map((s) => ({ ...s, status: 'amber' })),
+  sources: readinessFixture.sources.map((s) => ({
+    ...s,
+    status: 'amber',
+    critical: false,
+  })),
   can_generate: false,
   blocked_reason: 'Some sources are stale',
   fresh_count: '0/8',
+}
+
+// FIN-170: USD/INR amber AND critical — blocks generate AND is refreshable via POST
+// /refresh. The 2026-07-16 case that stranded the board with no button, no auto-fix.
+// On land this must fire EXACTLY ONE refresh; the row must show a Refresh CTA.
+export const readinessCriticalAmberFixture = {
+  ...readinessFixture,
+  sources: readinessFixture.sources.map((s) =>
+    s.key === 'usdinr'
+      ? { ...s, status: 'amber', note: 'Stale · 41h ago' }
+      : s,
+  ),
+  can_generate: false,
+  blocked_reason: 'USD/INR unavailable — Stale · 41h ago (refresh to generate)',
+  fresh_count: '6/8',
 }
 
 // The real COLD board (from docs/api/samples/readiness.json): everything red,
@@ -138,12 +158,15 @@ export const readinessAllAmberFixture = {
 export const readinessColdFixture = {
   sources: readinessFixture.sources.map((s) => {
     if (s.key === 'board') {
+      // FIN-170: board is NOT refreshable — a stale main needs a price/OI backfill,
+      // which POST /refresh does not do. No FE action. The cold-board on-land refresh
+      // fires from the RED macro sources (comex/usdinr, action:'refresh'), not board.
       return {
         ...s,
         status: 'red',
-        note: 'missing/stale movers: GOLD stale 13d; SILVER stale 13d — refresh',
-        human_refreshable: true,
-        action: 'refresh',
+        note: 'missing/stale movers: GOLD stale 13d; SILVER stale 13d — needs a price/OI backfill',
+        human_refreshable: false,
+        action: null,
       }
     }
     if (s.key === 'kite') {

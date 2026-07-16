@@ -127,3 +127,34 @@ carries no accent. A proper pictorial mark, if ever wanted, is a later design de
 block the build.
 Consequences: `design-system/brand` exports `Wordmark` / `BrandMark` / `BrandLockup` only. A future
 pictorial mark supersedes this with a new FFE + a design pass.
+
+## FFE-010 — The readiness home is the Bento Cockpit; the flat source list is superseded
+Status: LOCKED
+Date: 2026-07-16
+Decision: The home route (`/`) renders the **Bento Cockpit** — a single, non-scroll (on lg+)
+command centre: a glass DECISION bar on top (generate / unblock / 8-dot verdict strip), then three
+flat data tiles below — SOURCES rail | BOARD (hero) | NEWS-over-MACRO. It renders the live
+`/readiness` response including FIN-169's additive `evidence` block (per-instrument board, macro
+backdrop, news window). FIN-160's flat "Data sources" `SourceRow` list + standalone "Generate brief"
+button are **removed** — every input now lives in one surface. The cockpit lives at
+`features/readiness/cockpit/*` (intra-feature, so it may compose the readiness spine — on-land
+refresh, `KiteRefreshModal`, `RefreshReport` — without crossing the feature boundary, CLAUDE.md
+law 11). It consumes ONLY generated contract types (FFE-004): `ReadinessResponse` + `BoardRow` /
+`MacroRow` / `NewsEvidence` / `NewsArticleEvidence`.
+Rationale: Confirmed with Udit over three design rounds (brainstorm → "Direction 1" → polish →
+productionize). Requirements he drilled in: a NON-scroll "Jarvis" cockpit; interactive + animated;
+a first-time user must SEE where the board comes from (data lineage — hovering a source lights the
+evidence it PRODUCES, with a plain-words provenance/meaning focus footer); bigger, legible type;
+rich and spacious at once. The old flat list showed source health but not the evidence itself, and
+buried "where the board comes from". Discipline held: never-fabricate (`null` → "—"), no buy/sell
+language (positioning is described, never endorsed; colour encodes state, never a pick — law 2/8),
+Tier-B COT gaps rendered honestly ("—", "no COT"), glass-on-chrome / flat-on-data (law 9/10 — only
+the decision bar is glass; tiles are flat hairline surfaces), registry-driven sources (law 5 — the
+rail maps `response.sources`, a 9th appears with no code change).
+Consequences: Supersedes FIN-160's `ReadinessScreen` body (the container — data fetch, loading/error
+via `ScreenState`, stale-gated on-land refresh (FFE-006), `already_running` bounded re-read, the
+`RefreshReport`, the Kite modal — is PRESERVED; only the flat presentation is replaced). The
+throwaway brainstorm fixture (`features/evidence/sample.ts`) and the DEV-gated `/dev/evidence`
+preview are DELETED. On mobile (< lg) the cockpit stacks and scrolls, and the board scrolls
+horizontally within its own tile (no page-level horizontal scroll). Generate remains inert (a toast)
+until FIN-161 wires `/generate`. Backend: FIN-169 (`evidence`), FIN-161 (`/generate`).

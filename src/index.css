@@ -158,10 +158,24 @@
     transform: rotate(360deg);
   }
 }
+/* A calm "alive" breath for a ready/idle status — never on data. */
+@keyframes finint-breathe {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+.finint-breathe {
+  animation: finint-breathe 2.4s var(--apex-ease) infinite;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .animate-apex-pulse,
   .animate-apex-spin,
+  .finint-breathe,
   /* tw-animate-css enter/exit (modals, overlays) don't honour reduced-motion
      on their own. */
   .animate-in,

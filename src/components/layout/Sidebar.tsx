@@ -1,10 +1,7 @@
 import { Link } from '@tanstack/react-router'
-import { Gauge, LayoutGrid } from 'lucide-react'
+import { Gauge, LayoutGrid, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import { Glass, BrandMark, Wordmark } from '@/design-system'
 import { cn } from '@/lib/utils'
-
-// ≤1280px the glass sidebar collapses to icons (64px) and expands on hover.
-const labelCls = 'max-xl:hidden max-xl:group-hover:inline whitespace-nowrap'
 
 // Only routes that EXIST are linked (typed Links). The Brief is the whole app
 // today; History + settings arrive with FIN-149.
@@ -26,14 +23,35 @@ const NAV: NavItem[] = [
   },
 ]
 
-export function Sidebar() {
+/**
+ * The glass sidebar. `collapsed` (persisted in AppShell) is the manual state —
+ * icon-only at 64px; it still expands on hover so a collapsed rail stays
+ * navigable (the rail is `fixed`, so a hover-expand overlays content, never
+ * shoves it). Labels show when expanded OR on hover.
+ */
+export function Sidebar({
+  collapsed,
+  onToggle,
+}: {
+  collapsed: boolean
+  onToggle: () => void
+}) {
   const items = NAV.filter((n) => !n.devOnly || import.meta.env.DEV)
+  // Icon-only by default (mobile + collapsed); labels appear on hover, and stay
+  // visible at lg+ only when NOT collapsed.
+  const labelCls = cn(
+    'whitespace-nowrap hidden group-hover:inline',
+    !collapsed && 'lg:inline',
+  )
 
   return (
     <Glass
       variant="sidebar"
       as="aside"
-      className="group fixed bottom-5 left-5 top-5 z-20 flex w-[220px] flex-col overflow-hidden transition-[width] duration-200 ease-out max-xl:w-[64px] max-xl:hover:w-[220px]"
+      className={cn(
+        'group fixed bottom-5 left-5 top-5 z-20 flex w-[64px] flex-col overflow-hidden transition-[width] duration-200 ease-out hover:w-[220px]',
+        !collapsed && 'lg:w-[220px]',
+      )}
     >
       <div className="flex h-[60px] items-center gap-3 px-4">
         <BrandMark size={26} />
@@ -55,11 +73,29 @@ export function Sidebar() {
         ))}
       </nav>
 
-      <div className="border-t-[0.5px] border-apex-border-subtle px-4 py-3">
+      <div className="flex items-center justify-between gap-2 border-t-[0.5px] border-apex-border-subtle px-3 py-3">
         {/* Read-only is the product: FININT frames the morning; Father decides. */}
-        <span className="inline-flex items-center gap-2 text-[11px] font-medium text-apex-fg-tertiary">
-          <span className={labelCls}>Read-only · pre-market</span>
+        <span
+          className={cn(
+            'inline-flex items-center gap-2 pl-1 text-[11px] font-medium text-apex-fg-tertiary',
+            labelCls,
+          )}
+        >
+          Read-only · pre-market
         </span>
+        <button
+          type="button"
+          onClick={onToggle}
+          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          className="flex size-8 shrink-0 items-center justify-center rounded-[8px] text-apex-fg-tertiary transition-colors hover:bg-white/[0.05] hover:text-apex-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-apex-blue"
+        >
+          {collapsed ? (
+            <PanelLeftOpen className="size-4" aria-hidden />
+          ) : (
+            <PanelLeftClose className="size-4" aria-hidden />
+          )}
+        </button>
       </div>
     </Glass>
   )

@@ -7,21 +7,31 @@ import type { ReadinessSource } from '@/lib/api/contracts'
  * morning brief fails. React StrictMode double-mounts in dev; the backend's
  * Redis single-flight guard is a BACKSTOP, not our design.
  *
- * THE RULE, derived from what `refresh_spine` actually fixes (macro[comex/usdinr/
- * dxy] · COT · news · token-status): refresh ONLY IF one of those is RED.
- *  - NEVER on amber alone (macro_continuity is PERMANENTLY amber by design → a
- *    naive "not green → refresh" would fire on every mount, forever).
- *  - NEVER for kite red  → needs the manual login modal; a refresh won't fix it.
- *  - NEVER for board red → needs a backfill; there is no FE refresh action.
+ * THE RULE (FIN-170): refresh on-land iff some source is REFRESHABLE VIA POST
+ * /refresh **and** (it's RED **or** it's CRITICAL and not green).
  *
- * These keys are a domain fact about what POST /refresh repairs — NOT the source
- * list (which is registry-driven and mapped over for rendering, law 5).
+ * "Refreshable via /refresh" is DERIVED from the backend flag `action === 'refresh'`
+ * — the single source of truth for what `refresh_spine` covers (comex/usdinr/dxy ·
+ * COT · news). We no longer hardcode that key list here: FIN-170 fixed the backend to
+ * stamp the flag from `refresh_spine`'s coverage, so trusting it keeps the FE from
+ * drifting (the very bug we're fixing). This naturally excludes:
+ *  - `kite` (action `kite_refresh`) → the manual login modal; a refresh won't fix it,
+ *  - `board` / `macro_continuity` (action `null`) → a backfill / structural FRED lag,
+ *  - any unknown source the backend does NOT mark refreshable.
+ *
+ * The critical-AND-not-green arm is the FIN-160 hole: a CRITICAL AMBER source (USD/INR
+ * on 2026-07-16) already BLOCKS generate, yet the old red-only rule left it stranded —
+ * blocked, no button, no auto-fix. A non-critical amber still never fires (quota safe).
  */
-const REFRESH_FIXABLE_KEYS = new Set(['news', 'comex', 'usdinr', 'dxy', 'cot'])
+function isRefreshable(s: ReadinessSource): boolean {
+  return s.action === 'refresh'
+}
 
 export function shouldRefreshOnLand(sources: ReadinessSource[]): boolean {
   return sources.some(
-    (s) => REFRESH_FIXABLE_KEYS.has(s.key) && s.status === 'red',
+    (s) =>
+      isRefreshable(s) &&
+      (s.status === 'red' || (s.critical && s.status !== 'green')),
   )
 }
 

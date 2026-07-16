@@ -96,3 +96,25 @@ export function formatPct(
   const sign = value > 0 ? '+' : value < 0 ? MINUS : ''
   return `${sign}${magnitude}%`
 }
+
+/**
+ * A COT percentile: the backend ships a 0–1 fraction (0.7381) → "74th". null →
+ * "—" (Tier-B has no CFTC COT, by design — that is honest, not an error).
+ */
+export function formatPercentile(value: number | null | undefined): string {
+  if (isMissing(value)) return DASH
+  const n = Math.round(value * 100)
+  const rem100 = n % 100
+  const rem10 = n % 10
+  const suffix =
+    rem100 >= 11 && rem100 <= 13
+      ? 'th'
+      : rem10 === 1
+        ? 'st'
+        : rem10 === 2
+          ? 'nd'
+          : rem10 === 3
+            ? 'rd'
+            : 'th'
+  return `${n}${suffix}`
+}
