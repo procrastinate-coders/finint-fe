@@ -116,7 +116,7 @@ export function DecisionBar({
         </div>
       </div>
 
-      <div className="flex w-full items-center justify-between gap-4 sm:ml-auto sm:w-auto sm:justify-end">
+      <div className="flex w-full flex-wrap items-center justify-between gap-x-4 gap-y-2 sm:ml-auto sm:w-auto sm:flex-nowrap sm:justify-end">
         {complete && (
           <Button size="lg" onClick={onViewBrief}>
             <FileText aria-hidden />

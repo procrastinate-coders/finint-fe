@@ -34,13 +34,16 @@ export function ScanBoard({
       title="The board"
       subtitle="all 9 mains · ranked by how much moved"
     >
-      <div className="max-w-[760px] overflow-hidden rounded-[14px] border-[0.5px] border-apex-border bg-apex-primary">
-        <div
-          className={cn(
-            COLS,
-            'border-b-[0.5px] border-apex-border-subtle px-4 py-2.5 text-[10px] font-medium uppercase tracking-[0.05em] text-apex-fg-tertiary',
-          )}
-        >
+      {/* max-w on desktop; on mobile the 5-col grid scrolls WITHIN its own
+          bounded card (visible scrollbar) rather than clipping the COT column. */}
+      <div className="max-w-[760px] overflow-x-auto rounded-[14px] border-[0.5px] border-apex-border bg-apex-primary">
+        <div className="min-w-[480px]">
+          <div
+            className={cn(
+              COLS,
+              'border-b-[0.5px] border-apex-border-subtle px-4 py-2.5 text-[10px] font-medium uppercase tracking-[0.05em] text-apex-fg-tertiary',
+            )}
+          >
           <span className="text-right">#</span>
           <span>Instrument</span>
           <span>Positioning</span>
@@ -131,6 +134,7 @@ export function ScanBoard({
             </div>
           )
         })}
+        </div>
       </div>
       <p className="mt-2.5 max-w-[760px] text-[11px] leading-[15px] text-apex-fg-tertiary">
         Tier-B (ZINC · ALUMINIUM · LEAD · NICKEL) is LME-priced — no international

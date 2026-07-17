@@ -25,6 +25,7 @@ function readCollapsed(): boolean {
 /** Authenticated shell: floating glass sidebar + glass toolbar over the aura. */
 export function AppShell({ children }: { children: ReactNode }) {
   const [collapsed, setCollapsed] = useState(readCollapsed)
+  const [mobileOpen, setMobileOpen] = useState(false)
 
   function toggle() {
     setCollapsed((v) => {
@@ -39,16 +40,32 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="relative min-h-svh overflow-x-clip bg-apex-canvas text-apex-fg">
       <Aura />
-      <Sidebar collapsed={collapsed} onToggle={toggle} />
-      {/* Below lg the rail is always icon-only (no room to expand), so the
-          content clears 104px; at lg+ the manual `collapsed` state decides. */}
+      <Sidebar
+        collapsed={collapsed}
+        onToggle={toggle}
+        mobileOpen={mobileOpen}
+        onMobileClose={() => setMobileOpen(false)}
+      />
+
+      {/* Scrim behind the mobile drawer (lg hides it — the rail is persistent). */}
+      {mobileOpen && (
+        <button
+          type="button"
+          aria-label="Close menu"
+          onClick={() => setMobileOpen(false)}
+          className="fixed inset-0 z-20 bg-black/50 lg:hidden"
+        />
+      )}
+
+      {/* Content clears the rail at lg (104px collapsed / 260px expanded); on
+          mobile it's full-width (px-5) — the drawer is off-canvas. */}
       <div
         className={cn(
-          'relative z-10 pl-[104px] pr-5 transition-[padding] duration-200 ease-out',
-          !collapsed && 'lg:pl-[260px]',
+          'relative z-10 px-5 transition-[padding] duration-200 ease-out',
+          collapsed ? 'lg:pl-[104px]' : 'lg:pl-[260px]',
         )}
       >
-        <Header />
+        <Header onMobileMenu={() => setMobileOpen(true)} />
         <main className="mx-auto max-w-[1600px] pb-10 pt-6">{children}</main>
       </div>
     </div>

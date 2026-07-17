@@ -163,7 +163,7 @@ function Count({ n }: { n: number }) {
 
 function BackdropCell({ label, macro }: { label: string; macro?: Macro | null }) {
   return (
-    <div className="border-b-[0.5px] border-apex-border-subtle bg-apex-secondary/30 px-3.5 py-2.5 sm:border-b-0 sm:border-r-[0.5px]">
+    <div className="min-w-0 border-b-[0.5px] border-apex-border-subtle bg-apex-secondary/30 px-3.5 py-2.5 sm:border-b-0 sm:border-r-[0.5px]">
       <div className="flex items-baseline justify-between gap-2">
         <span className="text-[10px] font-medium uppercase tracking-[0.05em] text-apex-fg-tertiary">
           {label}

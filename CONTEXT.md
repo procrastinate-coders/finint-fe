@@ -3,7 +3,18 @@
 *The living state of the build. Updated at the END of every session; read FIRST at the start of
 the next. Never close a session with a stale CONTEXT.*
 
-**Updated:** 2026-07-16 — **FIN-172-fe: ONE TAB + the CTA matrix.** `/readiness` now carries a
+**Updated:** 2026-07-17 — **MOBILE RESPONSIVENESS pass.** The fixed 64px icon-rail + `pl-[104px]`
+was eating ~1/3 of a phone screen and breaking layouts. Now: below `lg` the sidebar is an OFF-CANVAS
+DRAWER (hidden, a hamburger in the header opens it as an overlay with a scrim; a link/scrim tap
+closes it) so content gets full width; at `lg+` it stays the persistent rail (collapse toggle intact).
+`overflow-x: clip` added to html+body (gate 34). The brief's 5-col scan board scrolls WITHIN its own
+bounded card on mobile (COT no longer clips) instead of overflowing. Backdrop cells got `min-w-0` so
+long provenance notes truncate. DecisionBar action row wraps on narrow screens (the incomplete-brief
+2-button state). Verified no page h-scroll + layouts hold at 320 / 375 / 414 / 768; login, cockpit,
+brief, history all clean. ⚠️ Tailwind v4 note: `-translate-x-[…]` uses the `translate` property, so
+`getComputedStyle().transform` reads "none" even when translated — check `.left`/rect, not transform.
+
+**FIN-172-fe: ONE TAB + the CTA matrix.** `/readiness` now carries a
 top-level `brief` STATUS block (`BriefStatus` = exists · date · generated_at · is_complete ·
 guard_failed · positioning_only), and the FE drives the CTA off it:
 - **complete brief** → **View brief**, NOT Generate (generating re-serves it for $0, so

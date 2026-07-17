@@ -1,10 +1,10 @@
 import { useMatches, useNavigate } from '@tanstack/react-router'
-import { LogOut } from 'lucide-react'
+import { LogOut, Menu } from 'lucide-react'
 import { Glass, IstClock, Skeleton } from '@/design-system'
 import { useAuth } from '@/lib/auth'
 import { useMe } from '@/lib/query/hooks'
 
-export function Header() {
+export function Header({ onMobileMenu }: { onMobileMenu: () => void }) {
   const matches = useMatches()
   const title =
     [...matches].reverse().find((m) => m.staticData?.title)?.staticData
@@ -24,8 +24,18 @@ export function Header() {
       as="header"
       className="sticky top-5 z-10 mb-5 flex h-[64px] items-center justify-between gap-3 px-4 sm:px-6"
     >
-      <div className="truncate text-[15px] font-medium text-apex-fg">
-        {title}
+      <div className="flex min-w-0 items-center gap-2.5">
+        <button
+          type="button"
+          onClick={onMobileMenu}
+          aria-label="Open menu"
+          className="-ml-1 inline-flex size-9 shrink-0 items-center justify-center rounded-[8px] text-apex-fg-secondary transition-colors hover:bg-white/[0.05] hover:text-apex-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-apex-blue lg:hidden"
+        >
+          <Menu className="size-5" aria-hidden />
+        </button>
+        <div className="truncate text-[15px] font-medium text-apex-fg">
+          {title}
+        </div>
       </div>
       <div className="flex shrink-0 items-center gap-4">
         <span className="hidden sm:block">

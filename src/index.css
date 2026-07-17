@@ -128,9 +128,11 @@
     @apply bg-background text-foreground;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: clip;
   }
   html {
     @apply font-sans;
+    overflow-x: clip;
   }
   /* Every ₹ value and every number is JetBrains Mono + tabular (CLAUDE.md law 7).
    * Mono is the signal that a number is exact. */
