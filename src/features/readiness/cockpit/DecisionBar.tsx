@@ -1,4 +1,12 @@
-import { Ban, Check, FileText, RotateCw, Sparkles, TriangleAlert } from 'lucide-react'
+import {
+  Ban,
+  Check,
+  FileText,
+  Loader2,
+  RotateCw,
+  Sparkles,
+  TriangleAlert,
+} from 'lucide-react'
 import { Glass, StatusDot } from '@/design-system'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -25,6 +33,8 @@ export function DecisionBar({
   positioningOnly,
   freshCount,
   sources,
+  refreshing,
+  onRefresh,
   onRefreshKite,
   onGenerate,
   onViewBrief,
@@ -35,6 +45,8 @@ export function DecisionBar({
   positioningOnly: boolean
   freshCount: string
   sources: ReadinessSource[]
+  refreshing?: boolean
+  onRefresh?: () => void
   onRefreshKite?: () => void
   onGenerate?: () => void
   onViewBrief?: () => void
@@ -117,22 +129,44 @@ export function DecisionBar({
       </div>
 
       <div className="flex w-full flex-wrap items-center justify-between gap-x-4 gap-y-2 sm:ml-auto sm:w-auto sm:flex-nowrap sm:justify-end">
-        {complete && (
-          <Button size="lg" onClick={onViewBrief}>
-            <FileText aria-hidden />
-            View brief
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Standing manual Refresh (FIN-174) — ALWAYS visible, whatever the
+              source statuses (green included). Nothing fetches without this click:
+              the on-land auto-refresh is gone, so Father alone decides when to
+              spend the GNews quota. In-flight → disabled, so the FE never double-
+              fires; the backend's single-flight guard is a backstop, not our gate. */}
+          <Button
+            size="lg"
+            variant="outline"
+            onClick={onRefresh}
+            disabled={refreshing}
+            aria-busy={refreshing}
+          >
+            {refreshing ? (
+              <Loader2 className="animate-spin" aria-hidden />
+            ) : (
+              <RotateCw aria-hidden />
+            )}
+            {refreshing ? 'Refreshing…' : 'Refresh'}
           </Button>
-        )}
-        {incomplete && (
-          <>
+
+          {complete && (
             <Button size="lg" onClick={onViewBrief}>
               <FileText aria-hidden />
               View brief
             </Button>
-            {generateAction}
-          </>
-        )}
-        {!hasBrief && generateAction}
+          )}
+          {incomplete && (
+            <>
+              <Button size="lg" onClick={onViewBrief}>
+                <FileText aria-hidden />
+                View brief
+              </Button>
+              {generateAction}
+            </>
+          )}
+          {!hasBrief && generateAction}
+        </div>
 
         <div className="flex items-center gap-3 border-l-[0.5px] border-apex-border-subtle pl-4">
           <div className="flex items-center gap-1">

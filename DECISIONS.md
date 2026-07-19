@@ -67,7 +67,7 @@ Note (open): Vercel serves the FE publicly — anyone with the URL loads the she
 no data without a token, so this is accepted, but it is a conscious call, not a default.
 
 ## FFE-006 — On-land auto-refresh, but ONLY when actually stale
-Status: LOCKED
+Status: SUPERSEDED by FFE-011 (FIN-174) — on-land auto-refresh removed; refresh is now manual only.
 Date: 2026-07-15
 Decision: Landing reads `GET /readiness` and fires `POST /refresh` only if a source is genuinely
 stale — never unconditionally on mount.
@@ -158,3 +158,28 @@ throwaway brainstorm fixture (`features/evidence/sample.ts`) and the DEV-gated `
 preview are DELETED. On mobile (< lg) the cockpit stacks and scrolls, and the board scrolls
 horizontally within its own tile (no page-level horizontal scroll). Generate remains inert (a toast)
 until FIN-161 wires `/generate`. Backend: FIN-169 (`evidence`), FIN-161 (`/generate`).
+
+## FFE-011 — Refresh is MANUAL only; the on-land auto-refresh is removed (supersedes FFE-006)
+Status: LOCKED
+Date: 2026-07-20
+Decision: Nothing fetches the spine without a user action. The `ReadinessScreen` no longer fires
+`POST /refresh` on mount — the stale-gated on-land `useEffect` and the whole `on-land.ts` module
+(`shouldRefreshOnLand` + the once-guard) are DELETED. In their place the DECISION bar carries one
+**standing "Refresh" CTA that is ALWAYS visible** — whatever the source statuses, all-green
+included — wired to the existing `useRefreshSpine` (`POST /refresh`, FIN-156). While a refresh is in
+flight the button disables itself, so the FE never double-fires; the backend's Redis single-flight
+guard stays a backstop, not our first line. The refreshable source-row click in the SourcesRail is
+KEPT as-is (it also routes Kite → the login modal), so it and the standing CTA share one
+`runRefresh()`.
+Rationale: FFE-006's on-land model spent the GNews quota (100/day, ~6 per `refresh_spine`) on a read
+that Father may not even want that morning, and coupled a fetch to navigation. FININT is a
+point-in-time pre-open read (law 6) — a fetch is a deliberate act, not a side effect of landing.
+Making it a single explicit CTA puts the quota decision where it belongs: with Father. No FE timer,
+interval, `refetchInterval`, or `refetchOnWindowFocus` exists or is added — automatic fetching is
+gone entirely.
+Consequences: The FE staleness-mirroring rule (FFE-006's `on-land.ts`) is deleted, removing a source
+of FE/BE drift. No backend contract change — `POST /refresh` already returns `RefreshResponse` and
+the FE renders it (the honest `RefreshReport` + `already_running` bounded re-read are unchanged). The
+trace also surfaced two BACKEND bugs the CTA does NOT fix (negative freshness-age "Fresh · -53562s
+ago"; macro `on_conflict_do_nothing` reporting `rows: 0` while leaving stale values) — separate
+FININT tickets. Backend: FIN-174, FIN-156.

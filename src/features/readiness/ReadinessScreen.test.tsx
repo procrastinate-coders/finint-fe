@@ -1,11 +1,10 @@
-import { http, HttpResponse } from 'msw'
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { delay, http, HttpResponse } from 'msw'
+import { describe, expect, it } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { server } from '@/test/mocks/server'
 import {
-  readinessAllAmberFixture,
   readinessColdFixture,
   readinessCriticalAmberFixture,
   readinessFixture,
@@ -13,7 +12,6 @@ import {
   refreshPartialFixture,
   refreshSpineFixture,
 } from '@/test/mocks/fixtures'
-import { resetOnLandRefresh } from './on-land'
 import { ReadinessScreen } from './ReadinessScreen'
 
 function renderReadiness() {
@@ -27,11 +25,15 @@ function renderReadiness() {
   )
 }
 
-// The on-land guard is module state — reset it so each test lands fresh.
-beforeEach(() => resetOnLandRefresh())
-afterEach(() => resetOnLandRefresh())
+// All sources green — the state where nothing is stale, yet the manual Refresh
+// must STILL be offered (FIN-174: Father can always force a fetch).
+const allGreenFixture = {
+  ...readinessFixture,
+  sources: readinessFixture.sources.map((s) => ({ ...s, status: 'green' })),
+  fresh_count: '8/8',
+}
 
-describe('ReadinessScreen — registry-driven, honest, quota-safe', () => {
+describe('ReadinessScreen — registry-driven, honest, manual-refresh only (FIN-174)', () => {
   it('maps EVERY source from the array — no hardcoded list (8 sources)', async () => {
     renderReadiness()
     await screen.findByText('Sources')
@@ -93,12 +95,12 @@ describe('ReadinessScreen — registry-driven, honest, quota-safe', () => {
     ).toBeInTheDocument()
   })
 
-  it('⚠️ all-amber board triggers ZERO refresh calls (the GNews quota test)', async () => {
+  it('⚠️ landing on the screen fires ZERO /refresh — no on-land auto-refresh, even on a cold red board (FIN-174)', async () => {
+    // The cold board (red, refreshable comex/usdinr) is exactly what USED to
+    // auto-fire on land. Now NOTHING fetches without a click — the whole point.
     let refreshCalls = 0
     server.use(
-      http.get('*/readiness', () =>
-        HttpResponse.json(readinessAllAmberFixture),
-      ),
+      http.get('*/readiness', () => HttpResponse.json(readinessColdFixture)),
       http.post('*/refresh', () => {
         refreshCalls += 1
         return HttpResponse.json(refreshSpineFixture)
@@ -106,14 +108,14 @@ describe('ReadinessScreen — registry-driven, honest, quota-safe', () => {
     )
     renderReadiness()
     await screen.findByText('Sources')
-    // The on-land effect has run by the time the sources render; amber must NOT
-    // fire it — a naive rule would exhaust the 100/day quota on every mount.
+    // the Refresh CTA is rendered — but it has NOT been clicked, so no fetch
+    await screen.findByRole('button', { name: /^refresh$/i })
     expect(refreshCalls).toBe(0)
   })
 
-  it('⚠️ a CRITICAL AMBER source fires EXACTLY ONE refresh + shows a CTA (FIN-170 replay)', async () => {
-    // 2026-07-16: USD/INR amber+critical blocked generate with no button, no auto-fix.
-    // Now it must auto-refresh on land (exactly once) AND render a Refresh CTA on its row.
+  it('a CRITICAL AMBER source no longer self-heals on land (FIN-174); its row still renders', async () => {
+    // 2026-07-16: USD/INR amber+critical. Pre-FIN-174 this auto-fired once on land.
+    // Now it does NOT — Father decides — but the row and its per-source CTA remain.
     let refreshCalls = 0
     server.use(
       http.get('*/readiness', () =>
@@ -126,27 +128,55 @@ describe('ReadinessScreen — registry-driven, honest, quota-safe', () => {
     )
     renderReadiness()
     await screen.findByText('Sources')
-    // auto-refresh fires — exactly once (the once-guard + single-flight prevent a storm).
-    await waitFor(() => expect(refreshCalls).toBe(1))
-    // USD/INR's row is present and, because the backend now marks it action:'refresh', it is an
-    // actionable CTA in the cockpit (SourcesRail) — asserted directly in SourcesRail.test.tsx.
+    await screen.findByRole('button', { name: /^refresh$/i })
+    expect(refreshCalls).toBe(0)
     expect(screen.getByRole('button', { name: /USD\/INR/i })).toBeInTheDocument()
   })
 
-  it('a partial refresh NAMES the failed source, not a generic failure', async () => {
-    // Cold board (red fixable sources) → on-land refresh fires → partial report.
+  it('the standing Refresh CTA is PRESENT and ENABLED even when every source is green', async () => {
+    server.use(http.get('*/readiness', () => HttpResponse.json(allGreenFixture)))
+    renderReadiness()
+    const btn = await screen.findByRole('button', { name: /^refresh$/i })
+    expect(btn).toBeEnabled()
+  })
+
+  it('clicking Refresh fires EXACTLY ONE /refresh; a second click while in-flight does not double-fire', async () => {
+    let refreshCalls = 0
+    server.use(
+      http.get('*/readiness', () => HttpResponse.json(allGreenFixture)),
+      http.post('*/refresh', async () => {
+        refreshCalls += 1
+        await delay(200) // hold it in-flight so we can attempt a second click
+        return HttpResponse.json(refreshSpineFixture)
+      }),
+    )
+    // pointerEventsCheck off: attempt the 2nd click even over the disabled control.
+    const user = userEvent.setup({ pointerEventsCheck: 0 })
+    renderReadiness()
+    const btn = await screen.findByRole('button', { name: /^refresh$/i })
+    await user.click(btn)
+    await waitFor(() => expect(refreshCalls).toBe(1))
+    // in-flight → the CTA disables itself, so the FE cannot fire a second /refresh
+    expect(btn).toBeDisabled()
+    await user.click(btn)
+    expect(refreshCalls).toBe(1)
+  })
+
+  it('clicking Refresh surfaces a PARTIAL report that NAMES the failed source, not a generic failure', async () => {
     server.use(
       http.get('*/readiness', () => HttpResponse.json(readinessColdFixture)),
       http.post('*/refresh', () => HttpResponse.json(refreshPartialFixture)),
     )
     renderReadiness()
+    const btn = await screen.findByRole('button', { name: /^refresh$/i })
+    await userEvent.click(btn)
     expect(await screen.findByText(/partial refresh/i)).toBeInTheDocument()
     expect(screen.getByText(/comex fetch timed out/i)).toBeInTheDocument()
     // COT "skipped" must NOT read as a failure.
     expect(screen.queryByText(/cot failed/i)).not.toBeInTheDocument()
   })
 
-  it('already_running shows a bounded wait keyed on started_at', async () => {
+  it('clicking Refresh, then already_running, shows a bounded wait keyed on started_at', async () => {
     server.use(
       http.get('*/readiness', () => HttpResponse.json(readinessColdFixture)),
       http.post('*/refresh', () =>
@@ -154,11 +184,12 @@ describe('ReadinessScreen — registry-driven, honest, quota-safe', () => {
       ),
     )
     renderReadiness()
+    const btn = await screen.findByRole('button', { name: /^refresh$/i })
+    await userEvent.click(btn)
     expect(await screen.findByText(/already running/i)).toBeInTheDocument()
   })
 
-  it('the Kite source CTA opens the refresh modal', async () => {
-    // kite red but no fixable-5 red → the kite CTA shows and NO on-land refresh.
+  it('the Kite source CTA opens the refresh modal (a login, not a spine fetch)', async () => {
     const kiteRed = {
       ...readinessFixture,
       sources: readinessFixture.sources.map((s) =>

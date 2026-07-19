@@ -22,12 +22,16 @@ import { sourceFeeds } from './provenance'
  */
 export function EvidenceCockpit({
   data,
+  refreshing,
+  onRefresh,
   onRefreshKite,
   onGenerate,
   onViewBrief,
   onRefreshSource,
 }: {
   data: ReadinessResponse
+  refreshing?: boolean
+  onRefresh?: () => void
   onRefreshKite?: () => void
   onGenerate?: () => void
   onViewBrief?: () => void
@@ -48,6 +52,8 @@ export function EvidenceCockpit({
         positioningOnly={positioningOnly}
         freshCount={data.fresh_count}
         sources={data.sources}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
         onRefreshKite={onRefreshKite}
         onGenerate={onGenerate}
         onViewBrief={onViewBrief}

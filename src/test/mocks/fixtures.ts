@@ -197,8 +197,9 @@ export const readinessColdFixture = {
   sources: readinessFixture.sources.map((s) => {
     if (s.key === 'board') {
       // FIN-170: board is NOT refreshable — a stale main needs a price/OI backfill,
-      // which POST /refresh does not do. No FE action. The cold-board on-land refresh
-      // fires from the RED macro sources (comex/usdinr, action:'refresh'), not board.
+      // which POST /refresh does not do. No FE action. A manual /refresh (the only
+      // trigger now — FIN-174) covers the RED macro sources (comex/usdinr,
+      // action:'refresh'), not board.
       return {
         ...s,
         status: 'red',

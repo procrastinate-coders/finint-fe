@@ -6,11 +6,6 @@ import type { ReadinessSource } from '@/lib/api/contracts'
 import { ScreenError } from '@/components/common/ScreenState'
 import { CockpitSkeleton } from './cockpit/CockpitSkeleton'
 import { queryKeys, useReadiness, useRefreshSpine } from '@/lib/query/hooks'
-import {
-  hasAttemptedOnLandRefresh,
-  markOnLandRefreshAttempted,
-  shouldRefreshOnLand,
-} from './on-land'
 import { RefreshReport } from './RefreshReport'
 import { KiteRefreshModal } from './KiteRefreshModal'
 import { EvidenceCockpit } from './cockpit/EvidenceCockpit'
@@ -18,10 +13,12 @@ import { GenerateFlow } from './generate/GenerateFlow'
 
 /**
  * The readiness/evidence screen — the app's home. It renders the Bento Cockpit
- * (FIN-169's `evidence`) over the FIN-160 spine: a stale-gated on-land refresh,
- * the honest per-source refresh report, and the Kite daily-login modal. The
- * cockpit's decision bar + sources rail SUPERSEDE the old flat source list —
- * every input is now in one non-scroll surface (FFE-010).
+ * (FIN-169's `evidence`) over the FIN-160 spine: a STANDING manual refresh (the
+ * only way the spine fetches — FIN-174 killed the on-land auto-refresh so nothing
+ * spends the GNews quota without Father's click), the honest per-source refresh
+ * report, and the Kite daily-login modal. The cockpit's decision bar + sources
+ * rail SUPERSEDE the old flat source list — every input is in one non-scroll
+ * surface (FFE-010).
  */
 export function ReadinessScreen() {
   const readiness = useReadiness()
@@ -31,19 +28,6 @@ export function ReadinessScreen() {
   const [kiteOpen, setKiteOpen] = useState(false)
   const [generateOpen, setGenerateOpen] = useState(false)
   const [reportDismissed, setReportDismissed] = useState(false)
-
-  const sources = readiness.data?.sources
-
-  // On-land auto-refresh — STALE-GATED, at most once per session (FFE-006). The
-  // module guard survives StrictMode's double-mount and cannot loop if a source
-  // stays red after the refresh. All-amber → shouldRefreshOnLand is false → zero
-  // calls (the GNews quota is 100/day; a naive rule exhausts it).
-  useEffect(() => {
-    if (!sources || hasAttemptedOnLandRefresh()) return
-    if (!shouldRefreshOnLand(sources)) return
-    markOnLandRefreshAttempted()
-    refresh.mutate()
-  }, [sources, refresh])
 
   // already_running → bound the wait with started_at (refresh_spine runs ~7s),
   // then re-read ONCE. Never poll forever.
@@ -73,6 +57,13 @@ export function ReadinessScreen() {
   // overnight window → a positioning-only run. An honest outcome, not an edge.
   const positioningOnly = (data.evidence?.news.fresh_count ?? 0) === 0
 
+  // The one place the spine fetches: a user action. Both the standing Refresh CTA
+  // and a refreshable source-row click land here — never a timer, never on-land.
+  function runRefresh() {
+    setReportDismissed(false)
+    refresh.mutate()
+  }
+
   // A refreshable source clicked in the rail: Kite opens the daily-login modal;
   // everything else triggers the spine refresh (POST /refresh).
   function onRefreshSource(source: ReadinessSource) {
@@ -80,8 +71,7 @@ export function ReadinessScreen() {
       setKiteOpen(true)
       return
     }
-    setReportDismissed(false)
-    refresh.mutate()
+    runRefresh()
   }
 
   const showFeedback =
@@ -93,6 +83,8 @@ export function ReadinessScreen() {
     <>
       <EvidenceCockpit
         data={data}
+        refreshing={refresh.isPending}
+        onRefresh={runRefresh}
         onRefreshKite={() => setKiteOpen(true)}
         onGenerate={() => setGenerateOpen(true)}
         onViewBrief={() => navigate({ to: '/brief/today' })}

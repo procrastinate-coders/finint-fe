@@ -166,8 +166,9 @@ collapsible sidebar, legible macro). Built on the FIN-160 spine (preserved).
 ## WHERE WE ARE
 
 **The readiness home (`/`) is the Bento Cockpit (FFE-010) — done and PROVEN against LIVE data.**
-A single non-scroll (on lg+) command centre: a glass DECISION bar on top (generate / "Refresh Kite
-token" / 8-dot verdict strip + count-up), then three flat tiles — SOURCES rail | BOARD (hero) |
+A single non-scroll (on lg+) command centre: a glass DECISION bar on top (a standing manual
+**Refresh** CTA / generate / "Refresh Kite token" / 8-dot verdict strip + count-up), then three flat
+tiles — SOURCES rail | BOARD (hero) |
 NEWS-over-MACRO. It renders the live `/readiness` response including FIN-169's additive `evidence`
 block (per-instrument board, macro backdrop, news window). Interactions: hovering a source lights
 the evidence tile it PRODUCES ("← from X" + a plain-words provenance/meaning focus footer — "where
@@ -186,18 +187,23 @@ derived from the live threshold. The throwaway brainstorm fixture + `/dev/eviden
 DELETED. **55 tests green**, typecheck + lint + build clean.
 
 **FIN-160 (the readiness spine) is PRESERVED UNDER the cockpit and PROVEN against the live API.**
-The `ReadinessScreen` container still owns the data fetch, loading/error (`ScreenState`), the
-stale-gated on-land refresh, the `already_running` bounded re-read, the honest `RefreshReport`
-(now floated bottom-right so it never disturbs the non-scroll grid), and the Kite modal. Only the
-flat "Data sources" `SourceRow` list + standalone "Generate brief" button are GONE — the cockpit's
-decision bar + rail supersede them. It still maps over `readiness.sources` (never hardcoded), and
-Generate is gated on `can_generate` + `blocked_reason` (inert — a toast — until FIN-161).
+The `ReadinessScreen` container still owns the data fetch, loading/error (`ScreenState`), a
+**standing manual Refresh** (FIN-174 replaced the on-land auto-refresh), the `already_running`
+bounded re-read, the honest `RefreshReport` (now floated bottom-right so it never disturbs the
+non-scroll grid), and the Kite modal. Only the flat "Data sources" `SourceRow` list + standalone
+"Generate brief" button are GONE — the cockpit's decision bar + rail supersede them. It still maps
+over `readiness.sources` (never hardcoded), and Generate is gated on `can_generate` +
+`blocked_reason`.
 
-- **On-land refresh is STALE-GATED (FFE-006):** fire POST /refresh ONLY if news/comex/usdinr/dxy/cot
-  is RED — never on amber, never for macro_continuity/kite/board. A module once-guard survives
-  StrictMode and can't loop. ⚠️ Tested: all-amber board → **ZERO** refresh calls (the GNews quota
-  test). The refresh report shows the honest per-source truth (a partial NAMES the failed source;
-  COT "skipped" reads as success; already_running bounds the wait on `started_at`).
+- **Refresh is MANUAL only (FFE-011 / FIN-174 — supersedes FFE-006):** nothing fetches the spine
+  without a user action. The on-land `useEffect` + the whole `on-land.ts` stale-gate module are
+  DELETED. The DECISION bar carries one **always-visible Refresh CTA** (whatever the source statuses,
+  all-green included) → the existing `useRefreshSpine` (POST /refresh). In-flight → the button
+  disables, so the FE never double-fires (the backend Redis single-flight guard is a backstop). The
+  refreshable source-row click is KEPT (it also routes Kite → modal); both share one `runRefresh()`.
+  NO timer / interval / refetchInterval / refetchOnWindowFocus anywhere. The refresh report still
+  shows the honest per-source truth (a partial NAMES the failed source; COT "skipped" reads as
+  success; already_running bounds the wait on `started_at`).
 - **Kite modal:** GET /kite/login-url → open → the honest broken-redirect warning (the localhost:8080
   page WON'T load — that's normal; the token is in the address bar) → paste request_token (or the
   whole URL) → POST /kite/refresh → uses the returned kite dot + re-reads readiness. Glass chrome.
@@ -257,15 +263,21 @@ The readiness gate returns **8 sources** and `can_generate: true`.
 2. ~~**FIN-149 Phase 1 — auth wire + app shell + pages**~~ ✅ **DONE** (this session). Follow-up:
    run `vercel --prod` to deploy (deferred).
 3. ~~**FIN-160 — Readiness screen + Kite refresh modal**~~ ✅ **DONE** (this session).
-4. **FIN-161 — Generate + progress** ← **START HERE.** ⚠️ First real money (~$0.06/run). The
-   Generate button already renders + is gated on `can_generate` in the readiness screen — wire its
-   onClick to POST /generate → poll GET /generate/status (4 steps; the design's "Generating" state
-   is in `docs/designs/FinintBrief.jsx`). ⚠️ Real `/generate` response carries `started` +
-   `positioning_only` (see `../finint/docs/api/samples/generate_run_real_*.json`) — reconcile
-   `GenerateResponse` (regenerate if the backend types it). Don't block on the POST (it takes minutes).
-5. **FIN-162 — The brief surface.** ⚠️ Build against the DEGRADED sample too, not just the complete
-   fixture — the honest-degradation case is a core law. (Ask the backend which real brief samples exist.)
-6. **Cutover:** add `finint.apextrader.trade` to the Vercel project → repoint DNS
+4. ~~**FIN-161 — Generate + progress**~~ ✅ **DONE** — POST /generate → poll GET /generate/status
+   (4 steps: fetch/scan/news/write), cost object, degraded flagged, already_complete $0 path, brief
+   handoff. Merged to main.
+5. ~~**FIN-162 — The brief surface + history**~~ ✅ **DONE** — the layered brief (market + per-
+   instrument read), withheld fields render as a STATE not a literal string, honesty metrics
+   surfaced, History. Redesigned as a research note. Merged to main.
+6. ~~**FIN-172 — one tab + the readiness `brief` CTA matrix**~~ ✅ **DONE** — dropped the Brief nav,
+   `/readiness` now returns a top-level `brief` block driving the DecisionBar CTA (complete → View;
+   incomplete → View + re-generate ≈$0.12; none → Generate). Merged to main.
+7. ~~**FIN-174 — kill on-land auto-refresh, add a standing manual Refresh CTA**~~ ✅ **DONE** (this
+   session) — FFE-011 supersedes FFE-006. See the readiness section above. ⚠️ The FIN-174 trace also
+   surfaced TWO backend bugs the FE cannot fix — negative freshness-age ("Fresh · -53562s ago") and
+   macro `on_conflict_do_nothing` reporting `rows: 0` while leaving stale values — **open FININT
+   tickets** (evidence FILE:LINE captured in the session trace).
+8. **Cutover:** add `finint.apextrader.trade` to the Vercel project → repoint DNS
    (A→EC2 becomes CNAME→Vercel) → **then** flip the Kite redirect URL (LAST — one-way).
 
 ---
@@ -301,8 +313,10 @@ fixed on 2026-07-15).
   `Authorization` on preflight. If it 401s, every cross-origin call fails and it LOOKS like a
   CORS bug. Hours lost chasing the wrong thing. ✅ VERIFIED live 2026-07-15: preflight → 200
   unauthed, `Allow-Origin: http://localhost:5173`, `Authorization` in `Allow-Headers`.
-- **On-land refresh must be stale-gated** — GNews is 100/day, ~6 per refresh. StrictMode
-  double-mounts. See FFE-006.
+- **Refresh burns GNews quota (100/day, ~6 per refresh) → it must stay a DELIBERATE user action.**
+  FIN-174 removed the on-land auto-refresh entirely; do NOT reintroduce any automatic trigger
+  (timer, interval, `refetchInterval`, `refetchOnWindowFocus`, or a mount `useEffect`). The only
+  spine fetch is the standing Refresh CTA (or a source-row click). See FFE-011 (supersedes FFE-006).
 - **`/generate` takes minutes** (LLM calls). nginx `proxy_read_timeout` is already 300s. The FE
   must not assume a fast response — poll `/generate/status`, don't block on the POST.
 - **Tier-B `implied_open: null` is CORRECT** (ZINC/ALUMINIUM/LEAD/NICKEL are LME-priced, no

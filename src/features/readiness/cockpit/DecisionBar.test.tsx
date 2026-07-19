@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import type { ReadinessBrief, ReadinessSource } from '@/lib/api/contracts'
 import { DecisionBar } from './DecisionBar'
 
@@ -89,5 +90,46 @@ describe('DecisionBar — the CTA matrix (FIN-172)', () => {
     renderBar({ ...complete, guard_failed: true })
     expect(screen.getByText(/degraded/i)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /view brief/i })).toBeInTheDocument()
+  })
+})
+
+describe('DecisionBar — the standing manual Refresh CTA (FIN-174)', () => {
+  it('is ALWAYS present regardless of brief state — complete, incomplete, or none', () => {
+    for (const brief of [complete, incomplete, null]) {
+      const { unmount } = render(
+        <DecisionBar
+          brief={brief}
+          canGenerate
+          blockedReason={null}
+          positioningOnly={false}
+          freshCount="8/8"
+          sources={sources}
+          onRefresh={vi.fn()}
+        />,
+      )
+      expect(
+        screen.getByRole('button', { name: /^refresh$/i }),
+      ).toBeInTheDocument()
+      unmount()
+    }
+  })
+
+  it('calls onRefresh when clicked, and is enabled with all sources green', async () => {
+    const onRefresh = vi.fn()
+    renderBar(null, { onRefresh })
+    const btn = screen.getByRole('button', { name: /^refresh$/i })
+    expect(btn).toBeEnabled()
+    await userEvent.click(btn)
+    expect(onRefresh).toHaveBeenCalledTimes(1)
+  })
+
+  it('is disabled + relabelled while a refresh is in flight (no FE double-fire)', () => {
+    renderBar(null, { refreshing: true })
+    const btn = screen.getByRole('button', { name: /refreshing/i })
+    expect(btn).toBeDisabled()
+    // the idle label is gone — the same control is now the busy state
+    expect(
+      screen.queryByRole('button', { name: /^refresh$/i }),
+    ).not.toBeInTheDocument()
   })
 })
