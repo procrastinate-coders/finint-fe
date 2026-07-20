@@ -197,13 +197,16 @@ over `readiness.sources` (never hardcoded), and Generate is gated on `can_genera
 
 - **Refresh is MANUAL only (FFE-011 / FIN-174 — supersedes FFE-006):** nothing fetches the spine
   without a user action. The on-land `useEffect` + the whole `on-land.ts` stale-gate module are
-  DELETED. The DECISION bar carries one **always-visible Refresh CTA** (whatever the source statuses,
-  all-green included) → the existing `useRefreshSpine` (POST /refresh). In-flight → the button
-  disables, so the FE never double-fires (the backend Redis single-flight guard is a backstop). The
-  refreshable source-row click is KEPT (it also routes Kite → modal); both share one `runRefresh()`.
-  NO timer / interval / refetchInterval / refetchOnWindowFocus anywhere. The refresh report still
-  shows the honest per-source truth (a partial NAMES the failed source; COT "skipped" reads as
-  success; already_running bounds the wait on `started_at`).
+  DELETED. The DECISION bar carries a **manual Refresh CTA** → the existing `useRefreshSpine` (POST
+  /refresh). It renders regardless of source STATUS (all-green included), but rides WITH the generate
+  action — refresh freshens the INPUTS that feed generation, so it shows at the pre-brief gate and on
+  an incomplete brief (freshen news → Re-generate), and is **HIDDEN once a COMPLETE brief exists**
+  (final read, $0 to open, nothing to (re)generate → a Refresh beside "View brief" is a dead-end).
+  In-flight → the button disables, so the FE never double-fires (the backend Redis single-flight
+  guard is a backstop). The refreshable source-row click is KEPT (it also routes Kite → modal); both
+  share one `runRefresh()`. NO timer / interval / refetchInterval / refetchOnWindowFocus anywhere.
+  The refresh report still shows the honest per-source truth (a partial NAMES the failed source; COT
+  "skipped" reads as success; already_running bounds the wait on `started_at`).
 - **Kite modal:** GET /kite/login-url → open → the honest broken-redirect warning (the localhost:8080
   page WON'T load — that's normal; the token is in the address bar) → paste request_token (or the
   whole URL) → POST /kite/refresh → uses the returned kite dot + re-reads readiness. Glass chrome.

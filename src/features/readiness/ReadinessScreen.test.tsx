@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { server } from '@/test/mocks/server'
 import {
+  readinessBriefCompleteFixture,
   readinessColdFixture,
   readinessCriticalAmberFixture,
   readinessFixture,
@@ -133,11 +134,29 @@ describe('ReadinessScreen — registry-driven, honest, manual-refresh only (FIN-
     expect(screen.getByRole('button', { name: /USD\/INR/i })).toBeInTheDocument()
   })
 
-  it('the standing Refresh CTA is PRESENT and ENABLED even when every source is green', async () => {
+  it('the Refresh CTA is PRESENT and ENABLED at the pre-brief gate even when every source is green', async () => {
+    // allGreenFixture spreads readinessFixture → brief.exists:false (no brief yet).
     server.use(http.get('*/readiness', () => HttpResponse.json(allGreenFixture)))
     renderReadiness()
     const btn = await screen.findByRole('button', { name: /^refresh$/i })
     expect(btn).toBeEnabled()
+  })
+
+  it('a COMPLETE brief HIDES the Refresh CTA — the read is final, View brief is the action', async () => {
+    server.use(
+      http.get('*/readiness', () =>
+        HttpResponse.json(readinessBriefCompleteFixture),
+      ),
+    )
+    renderReadiness()
+    // View brief proves the complete-brief bar rendered…
+    expect(
+      await screen.findByRole('button', { name: /view brief/i }),
+    ).toBeInTheDocument()
+    // …and Refresh is not offered next to it (nothing to (re)generate).
+    expect(
+      screen.queryByRole('button', { name: /^refresh$/i }),
+    ).not.toBeInTheDocument()
   })
 
   it('clicking Refresh fires EXACTLY ONE /refresh; a second click while in-flight does not double-fire', async () => {

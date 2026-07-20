@@ -93,9 +93,9 @@ describe('DecisionBar — the CTA matrix (FIN-172)', () => {
   })
 })
 
-describe('DecisionBar — the standing manual Refresh CTA (FIN-174)', () => {
-  it('is ALWAYS present regardless of brief state — complete, incomplete, or none', () => {
-    for (const brief of [complete, incomplete, null]) {
+describe('DecisionBar — the manual Refresh CTA rides with generate (FIN-174)', () => {
+  it('is present while there is NO brief or an INCOMPLETE one (freshen inputs before (re)generate)', () => {
+    for (const brief of [null, incomplete]) {
       const { unmount } = render(
         <DecisionBar
           brief={brief}
@@ -114,7 +114,18 @@ describe('DecisionBar — the standing manual Refresh CTA (FIN-174)', () => {
     }
   })
 
-  it('calls onRefresh when clicked, and is enabled with all sources green', async () => {
+  it('is HIDDEN once a COMPLETE brief exists — the read is final, View brief is the only action', () => {
+    renderBar(complete, { onRefresh: vi.fn() })
+    expect(
+      screen.queryByRole('button', { name: /^refresh$/i }),
+    ).not.toBeInTheDocument()
+    // the complete-brief CTA is still there — we removed a dead-end, not the surface
+    expect(
+      screen.getByRole('button', { name: /view brief/i }),
+    ).toBeInTheDocument()
+  })
+
+  it('calls onRefresh when clicked, and is enabled with all sources green (no-brief gate)', async () => {
     const onRefresh = vi.fn()
     renderBar(null, { onRefresh })
     const btn = screen.getByRole('button', { name: /^refresh$/i })

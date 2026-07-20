@@ -164,13 +164,16 @@ Status: LOCKED
 Date: 2026-07-20
 Decision: Nothing fetches the spine without a user action. The `ReadinessScreen` no longer fires
 `POST /refresh` on mount — the stale-gated on-land `useEffect` and the whole `on-land.ts` module
-(`shouldRefreshOnLand` + the once-guard) are DELETED. In their place the DECISION bar carries one
-**standing "Refresh" CTA that is ALWAYS visible** — whatever the source statuses, all-green
-included — wired to the existing `useRefreshSpine` (`POST /refresh`, FIN-156). While a refresh is in
+(`shouldRefreshOnLand` + the once-guard) are DELETED. In their place the DECISION bar carries a
+manual **"Refresh" CTA** — wired to the existing `useRefreshSpine` (`POST /refresh`, FIN-156). It
+renders regardless of source STATUS (all-green included — Father can always force a fetch), but it
+rides WITH the generate action, because a refresh freshens the INPUTS that feed generation: it shows
+while there is no brief (freshen before Generate) or an incomplete one (freshen news before
+Re-generate), and is HIDDEN once a COMPLETE brief exists — that read is final ($0 to open), there is
+nothing to (re)generate, so a Refresh beside "View brief" would be a dead-end. While a refresh is in
 flight the button disables itself, so the FE never double-fires; the backend's Redis single-flight
 guard stays a backstop, not our first line. The refreshable source-row click in the SourcesRail is
-KEPT as-is (it also routes Kite → the login modal), so it and the standing CTA share one
-`runRefresh()`.
+KEPT as-is (it also routes Kite → the login modal), so it and the CTA share one `runRefresh()`.
 Rationale: FFE-006's on-land model spent the GNews quota (100/day, ~6 per `refresh_spine`) on a read
 that Father may not even want that morning, and coupled a fetch to navigation. FININT is a
 point-in-time pre-open read (law 6) — a fetch is a deliberate act, not a side effect of landing.

@@ -130,25 +130,30 @@ export function DecisionBar({
 
       <div className="flex w-full flex-wrap items-center justify-between gap-x-4 gap-y-2 sm:ml-auto sm:w-auto sm:flex-nowrap sm:justify-end">
         <div className="flex flex-wrap items-center gap-2">
-          {/* Standing manual Refresh (FIN-174) — ALWAYS visible, whatever the
-              source statuses (green included). Nothing fetches without this click:
-              the on-land auto-refresh is gone, so Father alone decides when to
-              spend the GNews quota. In-flight → disabled, so the FE never double-
-              fires; the backend's single-flight guard is a backstop, not our gate. */}
-          <Button
-            size="lg"
-            variant="outline"
-            onClick={onRefresh}
-            disabled={refreshing}
-            aria-busy={refreshing}
-          >
-            {refreshing ? (
-              <Loader2 className="animate-spin" aria-hidden />
-            ) : (
-              <RotateCw aria-hidden />
-            )}
-            {refreshing ? 'Refreshing…' : 'Refresh'}
-          </Button>
+          {/* Manual Refresh (FIN-174) freshens the INPUTS that feed generation,
+              so it rides WITH the generate action: shown while there's no brief
+              (freshen before Generate) or an incomplete one (freshen news before
+              Re-generate), and HIDDEN once a COMPLETE brief exists — that read is
+              final ($0 to open), there's nothing to (re)generate, so a refresh
+              would be a dead-end next to "View brief". It renders regardless of
+              source status (all-green included). In-flight → disabled, so the FE
+              never double-fires; the backend guard is a backstop, not our gate. */}
+          {!complete && (
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={onRefresh}
+              disabled={refreshing}
+              aria-busy={refreshing}
+            >
+              {refreshing ? (
+                <Loader2 className="animate-spin" aria-hidden />
+              ) : (
+                <RotateCw aria-hidden />
+              )}
+              {refreshing ? 'Refreshing…' : 'Refresh'}
+            </Button>
+          )}
 
           {complete && (
             <Button size="lg" onClick={onViewBrief}>
