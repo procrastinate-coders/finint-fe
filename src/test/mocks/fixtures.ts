@@ -251,6 +251,8 @@ export const refreshSpineFixture = {
     board: { ok: true, advanced: 9 },
     // FIN-142: the LME base-metal context leg (metals.dev, isolated + non-blocking).
     lme: { ok: true, stored: 5, as_of: '2026-07-15', usdinr: 96.47 },
+    // FIN-188: the EIA weekly energy-inventory leg (weekly cadence; skipped when current).
+    eia: { ok: true, action: 'skipped', as_of: '2026-07-10' },
     token: { valid: true, ttl_hours: 9.4 },
   },
 }
@@ -267,6 +269,7 @@ export const refreshPartialFixture = {
     board: { ok: true, advanced: 9 },
     // the LME leg is ISOLATED — macro can fail while LME context still lands.
     lme: { ok: true, stored: 5, as_of: '2026-07-15', usdinr: 96.47 },
+    eia: { ok: true, action: 'skipped', as_of: '2026-07-10' },
     token: { valid: false, ttl_hours: -0.0 },
   },
 }

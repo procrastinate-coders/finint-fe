@@ -120,3 +120,125 @@ describe('BoardTile — LME 3M reference tied to each base-metal card (FIN-142)'
     expect(lmeRow.textContent).not.toMatch(/[+−]/)
   })
 })
+
+// --- FIN-188: EIA inventory line on the energy cards -----------------------
+
+function energyRow(over: Partial<BoardRow> = {}): BoardRow {
+  return boardRow({
+    instrument_id: 'CRUDEOIL',
+    segment: 'energy',
+    data_tier: 'A',
+    contract: 'CRUDEOIL26AUG',
+    close: 8237.0,
+    oi_state: 'shorts_covering',
+    cot_percentile: 0.42,
+    ...over,
+  })
+}
+function eiaRow(
+  indicator: string,
+  value: number | null,
+  wow: number | null = null,
+  wow_direction: string | null = null,
+): MacroRow {
+  return { indicator, value, wow, wow_direction, source: 'EIA', as_of: '2026-07-10', carried_forward: false }
+}
+// Live EIA block (confirmed 2026-07-22).
+const EIA_MACRO: MacroRow[] = [
+  eiaRow('EIA_CRUDE_STOCKS', 409665, -1692, 'draw'),
+  eiaRow('EIA_NATGAS_STORAGE', 3024, 41, 'build'),
+]
+
+describe('BoardTile — EIA inventory line tied to the energy cards (FIN-188)', () => {
+  it('CRUDEOIL renders the crude line (level + WoW + draw); NATURALGAS renders natgas', () => {
+    renderTile(
+      [
+        energyRow({ instrument_id: 'CRUDEOIL' }),
+        energyRow({ instrument_id: 'NATURALGAS', contract: 'NATURALGAS26AUG' }),
+      ],
+      EIA_MACRO,
+    )
+    const crude = cardFor('CRUDEOIL')
+    expect(within(crude).getByText('EIA crude stocks')).toBeInTheDocument()
+    expect(within(crude).getByText(/409\.7M bbl/)).toBeInTheDocument()
+    expect(within(crude).getByText(/−1\.69M bbl w\/w/)).toBeInTheDocument()
+    expect(within(crude).getByText('draw')).toBeInTheDocument()
+
+    const gas = cardFor('NATURALGAS')
+    expect(within(gas).getByText('EIA natgas storage')).toBeInTheDocument()
+    expect(within(gas).getByText(/3,024 Bcf/)).toBeInTheDocument()
+    expect(within(gas).getByText(/\+41 Bcf w\/w/)).toBeInTheDocument()
+    expect(within(gas).getByText('build')).toBeInTheDocument()
+  })
+
+  it('the mapping is per-instrument — CRUDEOIL shows crude stocks, never natgas storage', () => {
+    renderTile(
+      [
+        energyRow({ instrument_id: 'CRUDEOIL' }),
+        energyRow({ instrument_id: 'NATURALGAS', contract: 'NATURALGAS26AUG' }),
+      ],
+      EIA_MACRO,
+    )
+    const crude = cardFor('CRUDEOIL')
+    expect(within(crude).queryByText('EIA natgas storage')).not.toBeInTheDocument()
+    expect(within(crude).queryByText(/3,024 Bcf/)).not.toBeInTheDocument()
+  })
+
+  it('draw vs build is taken from the backend wow_direction word', () => {
+    // same crude card, but a BUILD this week
+    renderTile(
+      [energyRow({ instrument_id: 'CRUDEOIL' })],
+      [eiaRow('EIA_CRUDE_STOCKS', 411357, 1692, 'build')],
+    )
+    const crude = cardFor('CRUDEOIL')
+    expect(within(crude).getByText('build')).toBeInTheDocument()
+    expect(within(crude).queryByText('draw')).not.toBeInTheDocument()
+    expect(within(crude).getByText(/\+1\.69M bbl w\/w/)).toBeInTheDocument()
+  })
+
+  it('no EIA row for the instrument → NO line fabricated (fail-closed)', () => {
+    // crude present as a card, but its EIA row is missing from macro.
+    renderTile(
+      [energyRow({ instrument_id: 'CRUDEOIL' })],
+      [eiaRow('EIA_NATGAS_STORAGE', 3024, 41, 'build')],
+    )
+    const crude = cardFor('CRUDEOIL')
+    expect(within(crude).queryByText('EIA crude stocks')).not.toBeInTheDocument()
+    expect(within(crude).queryByText(/M bbl/)).not.toBeInTheDocument()
+  })
+
+  it('ONLY CRUDEOIL/NATURALGAS get the EIA line — other cards are unaffected', () => {
+    // a base metal + gold rendered alongside; neither gets an EIA line.
+    renderTile(
+      [
+        energyRow({ instrument_id: 'CRUDEOIL' }),
+        boardRow({ instrument_id: 'GOLD', segment: 'bullion', data_tier: 'A', cot_percentile: 0.7 }),
+      ],
+      EIA_MACRO,
+    )
+    expect(
+      within(cardFor('CRUDEOIL')).getByText('EIA crude stocks'),
+    ).toBeInTheDocument()
+    expect(
+      within(cardFor('GOLD')).queryByText(/EIA/),
+    ).not.toBeInTheDocument()
+  })
+
+  it('hovering the EIA source LIGHTS the inventory line (lineage, like other sources)', () => {
+    const eiaLineRow = () =>
+      within(cardFor('CRUDEOIL'))
+        .getByText('EIA crude stocks')
+        .closest('div')?.parentElement as HTMLElement
+
+    const { unmount } = renderTile(
+      [energyRow({ instrument_id: 'CRUDEOIL' })],
+      EIA_MACRO,
+      null,
+    )
+    expect(eiaLineRow().className).not.toContain('bg-apex-blue-tint')
+    unmount()
+
+    renderTile([energyRow({ instrument_id: 'CRUDEOIL' })], EIA_MACRO, 'eia')
+    expect(eiaLineRow().className).toContain('bg-apex-blue-tint')
+  })
+})

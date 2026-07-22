@@ -31,6 +31,7 @@ export function sourceFeeds(key: string): EvidenceTile | null {
     case 'cot':
     case 'board':
     case 'lme': // FIN-142: LME source produces the cards' LME 3M reference line
+    case 'eia': // FIN-188: EIA source produces the energy cards' inventory line
       return 'board'
     case 'comex':
     case 'usdinr':

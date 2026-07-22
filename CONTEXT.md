@@ -196,6 +196,19 @@ fabricated). COPPER is Tier-A so it gets the LME line alongside its COT. NOT wir
 openapi (a backend follow-up to expose it). Regenerating contracts also caught unrelated drift now
 typed: the `RefreshReport.board`/`.lme` legs and `CostReport`/`StageCost.regenerates`.
 
+**FIN-188 — CRUDEOIL + NATURALGAS cards carry their EIA weekly inventory line.** Same pattern as
+LME (`lib/mcx/eia.ts` mirrors `lme.ts`): CRUDEOIL→`EIA_CRUDE_STOCKS`, NATURALGAS→`EIA_NATGAS_STORAGE`.
+Rendered as a RELEASED FACT: level + WoW + draw/build, e.g. "EIA crude stocks · 409.7M bbl · −1.69M
+bbl w/w (draw)". ⚠️ The WoW was NOT in the served contract (macro rows shipped value only, like LME's
+d/d); the **backend** (this session) added `MacroRow.wow` + `MacroRow.wow_direction` (backend-computed
+— the FE NEVER diffs weeks; law 3). Units: crude MBBL→M bbl (÷1000, a display unit conversion the
+backend grounding uses too), natgas Bcf as-shipped. draw/build is the backend's `wow_direction` word,
+shown NEUTRALLY (descriptive, never a pick — law 2/8). Fail-closed: no row → no line; null wow →
+level only. Hovering the `eia` source lights the line (lineage, like LME). The `eia` dot is
+registry-driven + refreshable via the FIN-192 filtered path (`{"sources":["eia"]}`). Regen also added
+the required `RefreshReport.eia` leg (fixtures updated). NOT wired: the brief `InstrumentCard`'s
+`eia_context` (internal-only, same as `lme_context`).
+
 **FIN-160 (the readiness spine) is PRESERVED UNDER the cockpit and PROVEN against the live API.**
 The `ReadinessScreen` container still owns the data fetch, loading/error (`ScreenState`), a
 **standing manual Refresh** (FIN-174 replaced the on-land auto-refresh), the `already_running`

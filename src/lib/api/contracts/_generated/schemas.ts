@@ -218,6 +218,8 @@ const MacroRow = z
     source: z.union([z.string(), z.null()]).optional(),
     as_of: z.union([z.string(), z.null()]).optional(),
     carried_forward: z.boolean(),
+    wow: z.union([z.number(), z.null()]).optional(),
+    wow_direction: z.union([z.string(), z.null()]).optional(),
   })
   .passthrough()
 const NewsWindow = z
@@ -348,6 +350,17 @@ const LmeRefresh = z
     skipped: z.union([z.boolean(), z.null()]).optional(),
   })
   .passthrough()
+const EiaRefresh = z
+  .object({
+    ok: z.boolean(),
+    action: z.union([z.string(), z.null()]).optional(),
+    stored: z.union([z.number(), z.null()]).optional(),
+    as_of: z.union([z.string(), z.null()]).optional(),
+    reason: z.union([z.string(), z.null()]).optional(),
+    error: z.union([z.string(), z.null()]).optional(),
+    skipped: z.union([z.boolean(), z.null()]).optional(),
+  })
+  .passthrough()
 const TokenStatus = z
   .object({
     valid: z.boolean(),
@@ -364,6 +377,7 @@ const RefreshReport = z
     news: NewsRefresh,
     board: BoardRefresh,
     lme: LmeRefresh,
+    eia: EiaRefresh,
     token: TokenStatus,
   })
   .passthrough()
@@ -473,6 +487,7 @@ export const schemas = {
   NewsRefresh,
   BoardRefresh,
   LmeRefresh,
+  EiaRefresh,
   TokenStatus,
   RefreshReport,
   RefreshResponse,

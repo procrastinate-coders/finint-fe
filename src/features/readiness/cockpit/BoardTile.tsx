@@ -9,6 +9,7 @@ import {
   istDate,
 } from '@/lib/format'
 import { type LmeRef, lmeRefFor } from '@/lib/mcx/lme'
+import { type EiaRef, eiaRefFor, formatEia } from '@/lib/mcx/eia'
 import { cn } from '@/lib/utils'
 import { PercentileMarker } from './PercentileMarker'
 import { Tile } from './Tile'
@@ -88,6 +89,8 @@ export function BoardTile({
   // FIN-142: hovering the LME source lights each base metal's LME 3M line — the
   // same lineage affordance the other sources get.
   const lmeLit = hoveredSource === 'lme'
+  // FIN-188: hovering the EIA source lights the CRUDEOIL/NATURALGAS inventory line.
+  const eiaLit = hoveredSource === 'eia'
 
   const focus = rows.find((r) => r.instrument_id === hoverId) ?? null
   const groups = groupBySegment(rows)
@@ -105,13 +108,15 @@ export function BoardTile({
           )}
         </span>
       }
-      lit={priceLit || cotLit || lmeLit}
+      lit={priceLit || cotLit || lmeLit || eiaLit}
       litLabel={
         hoveredSource === 'cot'
           ? 'CFTC'
           : hoveredSource === 'lme'
             ? 'LME'
-            : 'Kite'
+            : hoveredSource === 'eia'
+              ? 'EIA'
+              : 'Kite'
       }
       delayMs={delayMs}
       bodyClassName="flex flex-col"
@@ -137,11 +142,13 @@ export function BoardTile({
                   key={r.instrument_id}
                   row={r}
                   lme={lmeRefFor(r.instrument_id, macro)}
+                  eia={eiaRefFor(r.instrument_id, macro)}
                   on={hoverId === r.instrument_id}
                   onHover={setHoverId}
                   priceLit={priceLit}
                   cotLit={cotLit}
                   lmeLit={lmeLit}
+                  eiaLit={eiaLit}
                 />
               ))}
             </div>
@@ -153,6 +160,7 @@ export function BoardTile({
       <FocusFooter
         row={focus}
         lme={focus ? lmeRefFor(focus.instrument_id, macro) : null}
+        eia={focus ? eiaRefFor(focus.instrument_id, macro) : null}
       />
     </Tile>
   )
@@ -161,19 +169,23 @@ export function BoardTile({
 function InstrumentCard({
   row,
   lme,
+  eia,
   on,
   onHover,
   priceLit,
   cotLit,
   lmeLit,
+  eiaLit,
 }: {
   row: BoardRow
   lme: LmeRef | null
+  eia: EiaRef | null
   on: boolean
   onHover: (id: string | null) => void
   priceLit: boolean
   cotLit: boolean
   lmeLit: boolean
+  eiaLit: boolean
 }) {
   const info = oiStateInfo(row.oi_state)
   const building = info?.building ?? false
@@ -306,7 +318,44 @@ function InstrumentCard({
           </span>
         </div>
       )}
+
+      {/* EIA weekly inventory (FIN-188) — the energy card's international leg,
+          previously stranded in the macro list. A RELEASED FACT: the level + the
+          backend-computed WoW, with the backend's draw/build word shown NEUTRALLY
+          (descriptive of the inventory move, never a buy/sell read — law 2/8).
+          Fail-closed: no EIA row → no line (never fabricated). */}
+      {eia && <EiaCardLine eia={eia} lit={eiaLit} />}
     </button>
+  )
+}
+
+/** The EIA inventory line on a CRUDEOIL / NATURALGAS card (FIN-188). */
+function EiaCardLine({ eia, lit }: { eia: EiaRef; lit: boolean }) {
+  const line = formatEia(eia)
+  return (
+    <div
+      className={cn(
+        '-mx-1 rounded px-1 py-0.5 transition-colors',
+        lit && 'bg-apex-blue-tint',
+      )}
+    >
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-[9.5px] font-medium uppercase tracking-[0.05em] text-apex-fg-tertiary">
+          {line.label}
+        </span>
+        {line.direction && (
+          <span className="rounded-[4px] bg-apex-tertiary px-1 text-[9px] font-medium uppercase tracking-[0.03em] text-apex-fg-secondary">
+            {line.direction}
+          </span>
+        )}
+      </div>
+      <div className="apex-tabular mt-px text-[11px] text-apex-fg-secondary">
+        {line.level}
+        {line.wow && (
+          <span className="text-apex-fg-tertiary"> · {line.wow}</span>
+        )}
+      </div>
+    </div>
   )
 }
 
@@ -393,14 +442,16 @@ function MoveGlyph({
 function FocusFooter({
   row,
   lme,
+  eia,
 }: {
   row: BoardRow | null
   lme: LmeRef | null
+  eia: EiaRef | null
 }) {
   return (
     <div className="min-h-[76px] border-t-[0.5px] border-apex-border-subtle bg-apex-secondary/40 px-4 py-3">
       {row ? (
-        <FocusContent row={row} lme={lme} />
+        <FocusContent row={row} lme={lme} eia={eia} />
       ) : (
         <p className="text-[12px] leading-[16px] text-apex-fg-tertiary">
           Hover an instrument to see where the numbers come from and what the
@@ -411,8 +462,17 @@ function FocusFooter({
   )
 }
 
-function FocusContent({ row, lme }: { row: BoardRow; lme: LmeRef | null }) {
+function FocusContent({
+  row,
+  lme,
+  eia,
+}: {
+  row: BoardRow
+  lme: LmeRef | null
+  eia: EiaRef | null
+}) {
   const info = oiStateInfo(row.oi_state)
+  const eiaLine = eia ? formatEia(eia) : null
   return (
     <div>
       <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
@@ -448,6 +508,15 @@ function FocusContent({ row, lme }: { row: BoardRow; lme: LmeRef | null }) {
           LME 3M reference {formatLmeLevel(lme.value)} USD/t — an international
           context level (metals.dev
           {lme.asOf && `, as-of ${istDate(lme.asOf)}`}), not an implied open.
+        </p>
+      )}
+      {eiaLine && (
+        <p className="mt-0.5 text-[11px] leading-[15px] text-apex-fg-tertiary">
+          {eiaLine.label} {eiaLine.level}
+          {eiaLine.wow && `, ${eiaLine.wow}`}
+          {eiaLine.direction && ` (${eiaLine.direction})`} — a released EIA weekly
+          fact
+          {eia?.asOf && `, week-ending ${istDate(eia.asOf)}`}, not an implied open.
         </p>
       )}
     </div>

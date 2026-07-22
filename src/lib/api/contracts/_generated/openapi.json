@@ -941,6 +941,86 @@
         ],
         "title": "CotRefresh"
       },
+      "EiaRefresh": {
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "title": "Ok"
+          },
+          "action": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Action"
+          },
+          "stored": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stored"
+          },
+          "as_of": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "As Of"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "skipped": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Skipped"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ok"
+        ],
+        "title": "EiaRefresh",
+        "description": "FIN-188: the EIA weekly energy-inventory leg (crude stocks + natgas storage; no Kite token).\nWEEKLY cadence-aware \u2014 `action:\"skipped\"` when the stored week is current (no new release, no\nfetch). `ok:false` + `error` when EIA is down/misconfigured (context OMITTED, dot goes red) \u2014\nisolated to this leg. NOT an implied open; released data surfaced as a FACT."
+      },
       "GenerateResponse": {
         "properties": {
           "run_id": {
@@ -1403,6 +1483,28 @@
           "carried_forward": {
             "type": "boolean",
             "title": "Carried Forward"
+          },
+          "wow": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wow"
+          },
+          "wow_direction": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wow Direction"
           }
         },
         "type": "object",
@@ -1790,6 +1892,9 @@
           "lme": {
             "$ref": "#/components/schemas/LmeRefresh"
           },
+          "eia": {
+            "$ref": "#/components/schemas/EiaRefresh"
+          },
           "token": {
             "$ref": "#/components/schemas/TokenStatus"
           }
@@ -1802,6 +1907,7 @@
           "news",
           "board",
           "lme",
+          "eia",
           "token"
         ],
         "title": "RefreshReport"
