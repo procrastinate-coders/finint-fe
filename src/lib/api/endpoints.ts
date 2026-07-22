@@ -76,8 +76,22 @@ export function getReadiness(signal?: AbortSignal): Promise<ReadinessResponse> {
 
 // --- spine refresh + kite (FIN-160) --------------------------------------
 
-export function refreshSpine(): Promise<RefreshSpineResponse> {
-  return apiRequest('/refresh', refreshSpineResponse, { method: 'POST' })
+/**
+ * POST /refresh. Bare (no `sources`) refreshes EVERY leg — the "refresh all" /
+ * on-land path, backward-compatible. FIN-192: pass `sources` (readiness dot-keys,
+ * e.g. `['lme']`) to refresh ONLY that source's leg, so a single stale dot never
+ * spends every quota-limited API. 'kite' is NOT a valid source here (the backend
+ * 400s it — it's a Kite login, handled by the kite modal), so callers must not
+ * send it.
+ */
+export function refreshSpine(
+  sources?: string[],
+): Promise<RefreshSpineResponse> {
+  const filtered = sources != null && sources.length > 0
+  return apiRequest('/refresh', refreshSpineResponse, {
+    method: 'POST',
+    ...(filtered ? { body: { sources } } : {}),
+  })
 }
 
 export function getKiteLoginUrl(

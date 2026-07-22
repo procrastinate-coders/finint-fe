@@ -8,7 +8,7 @@ import type { RefreshSpineResponse } from '@/lib/api/contracts'
  * the product's honesty in miniature.
  */
 export interface RefreshLine {
-  key: 'macro' | 'cot' | 'news' | 'token'
+  key: 'macro' | 'cot' | 'news' | 'lme' | 'token'
   label: string
   ok: boolean
   detail: string
@@ -41,7 +41,7 @@ export function summarizeRefresh(res: RefreshSpineResponse): RefreshSummary {
     }
   }
 
-  const { macro, cot, news, token } = report
+  const { macro, cot, news, lme, token } = report
 
   const macroLine: RefreshLine = {
     key: 'macro',
@@ -74,6 +74,17 @@ export function summarizeRefresh(res: RefreshSpineResponse): RefreshSummary {
       : `failed${news.error ? ` — ${news.error}` : ''}`,
   }
 
+  // FIN-142/192: the LME base-metal context leg. A refreshable dot in its own
+  // right, so a filtered `{"sources":["lme"]}` refresh shows its own result line.
+  const lmeLine: RefreshLine = {
+    key: 'lme',
+    label: 'LME context',
+    ok: lme.ok,
+    detail: lme.ok
+      ? `refreshed${lme.stored != null ? ` · ${lme.stored} metals` : ''}`
+      : `failed${lme.error ? ` — ${lme.error}` : ''}`,
+  }
+
   // The token is a STATUS check, not something refresh_spine can fix (Kite needs
   // a manual login). So an invalid token is NOT a "partial failure" — it's a
   // separate signal that routes to the Kite modal.
@@ -84,12 +95,28 @@ export function summarizeRefresh(res: RefreshSpineResponse): RefreshSummary {
     detail: token.valid ? 'valid' : 'expired — daily login required',
   }
 
+  // FIN-192: a filtered refresh returns the legs it did NOT run as `skipped`
+  // (ok:true, skipped:true). A skipped leg is neither an update nor a failure —
+  // it was not part of this refresh — so drop it from the report entirely (never
+  // a false "updated", never counted as a failure). A bare refresh runs every
+  // leg → nothing is skipped → the full report stands. `token` has no skipped
+  // state (always a cheap status readout).
+  const legs: Array<{ line: RefreshLine; skipped: boolean }> = [
+    { line: macroLine, skipped: !!macro.skipped },
+    { line: cotLine, skipped: !!cot.skipped },
+    { line: newsLine, skipped: !!news.skipped },
+    { line: lmeLine, skipped: !!lme.skipped },
+  ]
+  const ranLegs = legs.filter((l) => !l.skipped)
+
   return {
     status: res.status,
     alreadyRunning,
     startedAt: res.started_at ?? null,
-    anyFailed: !macro.ok || !cot.ok || !news.ok,
+    // only the legs that actually RAN can be a partial failure; a skipped leg is
+    // ok:true anyway, so it can never flip this.
+    anyFailed: ranLegs.some((l) => !l.line.ok),
     tokenInvalid: !token.valid,
-    lines: [macroLine, cotLine, newsLine, tokenLine],
+    lines: [...ranLegs.map((l) => l.line), tokenLine],
   }
 }

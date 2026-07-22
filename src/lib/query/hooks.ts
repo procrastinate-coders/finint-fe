@@ -49,15 +49,18 @@ export function useReadiness() {
 
 /**
  * POST /refresh — trigger `refresh_spine` (macro + COT + news + token status).
- * On success, re-read /readiness so the dots reflect the new state. The caller
- * inspects the returned RefreshResponse to render the honest per-source truth
- * (refreshed / already_running / a partial with a named failed source) — this
- * mutation deliberately does NOT flatten a partial into a toast.
+ * The mutation variable is the optional dot-key list (FIN-192): `mutate()` /
+ * `mutate(undefined)` refreshes EVERY leg (the "refresh all" path); `mutate(['lme'])`
+ * refreshes only that source's leg. On success, re-read /readiness so the dots
+ * reflect the new state. The caller inspects the returned RefreshResponse to
+ * render the honest per-source truth (refreshed / already_running / a partial with
+ * a named failed source; a filtered refresh returns the other legs `skipped`) —
+ * this mutation deliberately does NOT flatten a partial into a toast.
  */
 export function useRefreshSpine() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: () => refreshSpine(),
+    mutationFn: (sources?: string[]) => refreshSpine(sources),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.readiness })
     },

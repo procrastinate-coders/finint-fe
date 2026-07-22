@@ -213,10 +213,20 @@ over `readiness.sources` (never hardcoded), and Generate is gated on `can_genera
   an incomplete brief (freshen news → Re-generate), and is **HIDDEN once a COMPLETE brief exists**
   (final read, $0 to open, nothing to (re)generate → a Refresh beside "View brief" is a dead-end).
   In-flight → the button disables, so the FE never double-fires (the backend Redis single-flight
-  guard is a backstop). The refreshable source-row click is KEPT (it also routes Kite → modal); both
-  share one `runRefresh()`. NO timer / interval / refetchInterval / refetchOnWindowFocus anywhere.
+  guard is a backstop). NO timer / interval / refetchInterval / refetchOnWindowFocus anywhere.
   The refresh report still shows the honest per-source truth (a partial NAMES the failed source; COT
   "skipped" reads as success; already_running bounds the wait on `started_at`).
+- **Refresh is FILTERED per dot (FIN-192):** `refreshSpine(sources?)` → `useRefreshSpine`
+  `mutate([keys])` sends `{"sources":[…]}` (filtered) vs `mutate(undefined)` (bare = every leg).
+  Two entry points: (a) a refreshable DOT's row-click in the SourcesRail → filtered to that one key;
+  (b) the standing "Refresh" CTA opens a **scope modal** (`RefreshScopeModal`) that reads the
+  `sources`, splits the `action:'refresh'` ones into stale (`status!=='green'`) vs fresh, and offers
+  three scopes — refresh ONE, refresh the STALE SUBSET (`{"sources":[staleKeys]}`, the recommended
+  quota-saving path), or ALL (bare). Nothing fetches until a scope is chosen. Kite is NOT a valid
+  source (backend 400s `{"sources":["kite"]}`) — excluded from the modal; its dot routes to the
+  login modal. A filtered response returns the un-run legs as `{ok:true, skipped:true, reason}`;
+  `summarizeRefresh` DROPS skipped legs (never a false "updated", never a failure) and added an
+  `lme` line so a filtered LME refresh shows its own result.
 - **Kite modal:** GET /kite/login-url → open → the honest broken-redirect warning (the localhost:8080
   page WON'T load — that's normal; the token is in the address bar) → paste request_token (or the
   whole URL) → POST /kite/refresh → uses the returned kite dot + re-reads readiness. Glass chrome.

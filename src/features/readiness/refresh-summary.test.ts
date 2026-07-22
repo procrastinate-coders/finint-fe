@@ -20,10 +20,51 @@ const full = (
 })
 
 describe('summarizeRefresh — honest per-source truth (never a generic failure)', () => {
-  it('a clean refresh reports every source as ok', () => {
+  it('a clean (bare) refresh reports every leg as ok', () => {
     const s = summarizeRefresh(full())
     expect(s.anyFailed).toBe(false)
-    expect(s.lines.map((l) => l.ok)).toEqual([true, true, true, true])
+    expect(s.lines.map((l) => l.key)).toEqual([
+      'macro',
+      'cot',
+      'news',
+      'lme',
+      'token',
+    ])
+    expect(s.lines.every((l) => l.ok)).toBe(true)
+  })
+
+  it('⚠️ a FILTERED refresh HIDES skipped legs — neither updated nor failed (FIN-192)', () => {
+    // sources:["news"] → only news runs; macro/cot/lme come back skipped.
+    const s = summarizeRefresh(
+      full({
+        macro: { ok: true, skipped: true, reason: 'not in this refresh' },
+        cot: { ok: true, skipped: true, reason: 'not in this refresh' },
+        lme: { ok: true, skipped: true, reason: 'not in this refresh' },
+        news: { ok: true, count: 18 },
+      }),
+    )
+    expect(s.anyFailed).toBe(false)
+    const keys = s.lines.map((l) => l.key)
+    expect(keys).not.toContain('macro')
+    expect(keys).not.toContain('cot')
+    expect(keys).not.toContain('lme')
+    expect(keys).toContain('news') // the leg that ran IS shown
+    expect(keys).toContain('token') // token is always a status readout
+  })
+
+  it('a filtered LME refresh shows its OWN leg (not just the token)', () => {
+    const s = summarizeRefresh(
+      full({
+        macro: { ok: true, skipped: true },
+        cot: { ok: true, skipped: true },
+        news: { ok: true, skipped: true },
+        lme: { ok: true, stored: 5, as_of: '2026-07-22', usdinr: 96.47 },
+      }),
+    )
+    const lme = s.lines.find((l) => l.key === 'lme')
+    expect(lme?.ok).toBe(true)
+    expect(lme?.detail).toMatch(/5 metals/)
+    expect(s.lines.map((l) => l.key)).not.toContain('macro')
   })
 
   it('⚠️ a PARTIAL refresh names the failed source, not a generic failure', () => {

@@ -7,6 +7,7 @@ import { ScreenError } from '@/components/common/ScreenState'
 import { CockpitSkeleton } from './cockpit/CockpitSkeleton'
 import { queryKeys, useReadiness, useRefreshSpine } from '@/lib/query/hooks'
 import { RefreshReport } from './RefreshReport'
+import { RefreshScopeModal } from './RefreshScopeModal'
 import { KiteRefreshModal } from './KiteRefreshModal'
 import { EvidenceCockpit } from './cockpit/EvidenceCockpit'
 import { GenerateFlow } from './generate/GenerateFlow'
@@ -27,6 +28,7 @@ export function ReadinessScreen() {
   const navigate = useNavigate()
   const [kiteOpen, setKiteOpen] = useState(false)
   const [generateOpen, setGenerateOpen] = useState(false)
+  const [refreshScopeOpen, setRefreshScopeOpen] = useState(false)
   const [reportDismissed, setReportDismissed] = useState(false)
 
   // already_running → bound the wait with started_at (refresh_spine runs ~7s),
@@ -57,21 +59,29 @@ export function ReadinessScreen() {
   // overnight window → a positioning-only run. An honest outcome, not an edge.
   const positioningOnly = (data.evidence?.news.fresh_count ?? 0) === 0
 
-  // The one place the spine fetches: a user action. Both the standing Refresh CTA
-  // and a refreshable source-row click land here — never a timer, never on-land.
+  // BARE POST /refresh — every leg. The deliberate full sweep, chosen from the
+  // scope modal ("Refresh all"). Spends every quota-limited API.
   function runRefresh() {
     setReportDismissed(false)
-    refresh.mutate()
+    refresh.mutate(undefined)
   }
 
-  // A refreshable source clicked in the rail: Kite opens the daily-login modal;
-  // everything else triggers the spine refresh (POST /refresh).
+  // FILTERED POST /refresh {"sources": keys} — one dot, or the stale subset
+  // (FIN-192). One stale source never spends every quota-limited API.
+  function refreshSources(keys: string[]) {
+    setReportDismissed(false)
+    refresh.mutate(keys)
+  }
+
+  // A refreshable dot clicked in the rail: Kite is special — its action is a Kite
+  // LOGIN, not a spine leg (the backend 400s {"sources":["kite"]}), so it opens
+  // the daily-login modal; anything else refreshes just that source.
   function onRefreshSource(source: ReadinessSource) {
     if (source.action === 'kite_refresh') {
       setKiteOpen(true)
       return
     }
-    runRefresh()
+    refreshSources([source.key])
   }
 
   const showFeedback =
@@ -84,7 +94,7 @@ export function ReadinessScreen() {
       <EvidenceCockpit
         data={data}
         refreshing={refresh.isPending}
-        onRefresh={runRefresh}
+        onRefresh={() => setRefreshScopeOpen(true)}
         onRefreshKite={() => setKiteOpen(true)}
         onGenerate={() => setGenerateOpen(true)}
         onViewBrief={() => navigate({ to: '/brief/today' })}
@@ -123,6 +133,21 @@ export function ReadinessScreen() {
             />
           )}
         </div>
+      )}
+
+      {refreshScopeOpen && (
+        <RefreshScopeModal
+          sources={data.sources}
+          onClose={() => setRefreshScopeOpen(false)}
+          onRefreshAll={() => {
+            setRefreshScopeOpen(false)
+            runRefresh()
+          }}
+          onRefreshSources={(keys) => {
+            setRefreshScopeOpen(false)
+            refreshSources(keys)
+          }}
+        />
       )}
 
       {kiteOpen && (

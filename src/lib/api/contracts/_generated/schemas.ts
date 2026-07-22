@@ -285,6 +285,11 @@ const KiteRefreshResponse = z
     source: SourceHealthModel,
   })
   .passthrough()
+const RefreshRequest = z
+  .object({ sources: z.union([z.array(z.string()), z.null()]) })
+  .partial()
+  .passthrough()
+const refresh_refresh_post_Body = z.union([RefreshRequest, z.null()])
 const MacroRefresh = z
   .object({
     ok: z.boolean(),
@@ -294,6 +299,8 @@ const MacroRefresh = z
     source: z.union([z.string(), z.null()]).optional(),
     date_range: z.union([z.string(), z.null()]).optional(),
     error: z.union([z.string(), z.null()]).optional(),
+    skipped: z.union([z.boolean(), z.null()]).optional(),
+    reason: z.union([z.string(), z.null()]).optional(),
   })
   .passthrough()
 const CotRefresh = z
@@ -306,6 +313,7 @@ const CotRefresh = z
     scope: z.union([z.string(), z.null()]).optional(),
     stored_pub_before: z.union([z.string(), z.null()]).optional(),
     error: z.union([z.string(), z.null()]).optional(),
+    skipped: z.union([z.boolean(), z.null()]).optional(),
   })
   .passthrough()
 const NewsRefresh = z
@@ -316,6 +324,8 @@ const NewsRefresh = z
     queries_ok: z.union([z.number(), z.null()]).optional(),
     queries_total: z.union([z.number(), z.null()]).optional(),
     error: z.union([z.string(), z.null()]).optional(),
+    skipped: z.union([z.boolean(), z.null()]).optional(),
+    reason: z.union([z.string(), z.null()]).optional(),
   })
   .passthrough()
 const BoardRefresh = z
@@ -324,6 +334,7 @@ const BoardRefresh = z
     advanced: z.union([z.number(), z.null()]).optional(),
     reason: z.union([z.string(), z.null()]).optional(),
     error: z.union([z.string(), z.null()]).optional(),
+    skipped: z.union([z.boolean(), z.null()]).optional(),
   })
   .passthrough()
 const LmeRefresh = z
@@ -334,6 +345,7 @@ const LmeRefresh = z
     usdinr: z.union([z.number(), z.null()]).optional(),
     reason: z.union([z.string(), z.null()]).optional(),
     error: z.union([z.string(), z.null()]).optional(),
+    skipped: z.union([z.boolean(), z.null()]).optional(),
   })
   .passthrough()
 const TokenStatus = z
@@ -454,6 +466,8 @@ export const schemas = {
   ReadinessResponse,
   KiteRefreshBody,
   KiteRefreshResponse,
+  RefreshRequest,
+  refresh_refresh_post_Body,
   MacroRefresh,
   CotRefresh,
   NewsRefresh,

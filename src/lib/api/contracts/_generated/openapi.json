@@ -308,6 +308,23 @@
       "post": {
         "summary": "Refresh",
         "operationId": "refresh_refresh_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/RefreshRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -315,6 +332,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/RefreshResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -517,6 +544,17 @@
               }
             ],
             "title": "Error"
+          },
+          "skipped": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Skipped"
           }
         },
         "type": "object",
@@ -884,6 +922,17 @@
               }
             ],
             "title": "Error"
+          },
+          "skipped": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Skipped"
           }
         },
         "type": "object",
@@ -1119,6 +1168,17 @@
               }
             ],
             "title": "Error"
+          },
+          "skipped": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Skipped"
           }
         },
         "type": "object",
@@ -1271,6 +1331,28 @@
               }
             ],
             "title": "Error"
+          },
+          "skipped": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Skipped"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
           }
         },
         "type": "object",
@@ -1544,6 +1626,28 @@
               }
             ],
             "title": "Error"
+          },
+          "skipped": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Skipped"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
           }
         },
         "type": "object",
@@ -1701,6 +1805,27 @@
           "token"
         ],
         "title": "RefreshReport"
+      },
+      "RefreshRequest": {
+        "properties": {
+          "sources": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sources"
+          }
+        },
+        "type": "object",
+        "title": "RefreshRequest",
+        "description": "Optional POST /refresh body. `sources` are readiness dot-keys (lme/news/cot/board/comex/\nusdinr/dxy/macro_continuity) -> the backend maps them to the leg-set to run. None/absent/empty ->\nrun ALL legs (bare-POST backward-compatible). An unknown key or 'kite' -> 400 (nothing refreshed)."
       },
       "RefreshResponse": {
         "properties": {
