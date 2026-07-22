@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { ArrowDown, ArrowUp } from 'lucide-react'
-import type { BoardRow } from '@/lib/api/contracts'
+import type { BoardRow, MacroRow } from '@/lib/api/contracts'
 import {
   DASH,
   formatInr,
@@ -8,10 +8,18 @@ import {
   formatSignedNumber,
   istDate,
 } from '@/lib/format'
+import { type LmeRef, lmeRefFor } from '@/lib/mcx/lme'
 import { cn } from '@/lib/utils'
 import { PercentileMarker } from './PercentileMarker'
 import { Tile } from './Tile'
 import { SEGMENT_LABEL, cotMeaning, oiStateInfo } from './provenance'
+
+/** The LME 3M level formatted honestly: an integer stays whole (13,836), a half
+ *  keeps its decimal (3,170.5) — never rounded away. Presented with the USD/t
+ *  unit so it can never be mistaken for a ₹ price or an implied-open %. */
+function formatLmeLevel(value: number): string {
+  return formatNumber(value, { decimals: Number.isInteger(value) ? 0 : 1 })
+}
 
 /**
  * The BOARD, the hero tile (Bento Cockpit). One CARD per instrument, grouped by
@@ -58,10 +66,15 @@ function groupBySegment(rows: BoardRow[]): Group[] {
 
 export function BoardTile({
   rows,
+  macro,
   hoveredSource,
   delayMs,
 }: {
   rows: BoardRow[]
+  /** The evidence macro rows — the LME_*_3M reference levels are joined from here
+   *  onto each base-metal card (FIN-142). Optional so the tile degrades honestly
+   *  if `evidence.macro` is ever absent. */
+  macro?: MacroRow[]
   hoveredSource: string | null
   delayMs?: number
 }) {
@@ -114,6 +127,7 @@ export function BoardTile({
                 <InstrumentCard
                   key={r.instrument_id}
                   row={r}
+                  lme={lmeRefFor(r.instrument_id, macro)}
                   on={hoverId === r.instrument_id}
                   onHover={setHoverId}
                   priceLit={priceLit}
@@ -126,19 +140,24 @@ export function BoardTile({
       </div>
 
       {/* FOCUS footer — the hovered card explained in plain words */}
-      <FocusFooter row={focus} />
+      <FocusFooter
+        row={focus}
+        lme={focus ? lmeRefFor(focus.instrument_id, macro) : null}
+      />
     </Tile>
   )
 }
 
 function InstrumentCard({
   row,
+  lme,
   on,
   onHover,
   priceLit,
   cotLit,
 }: {
   row: BoardRow
+  lme: LmeRef | null
   on: boolean
   onHover: (id: string | null) => void
   priceLit: boolean
@@ -253,6 +272,23 @@ function InstrumentCard({
           <PercentileMarker value={row.cot_percentile} />
         )}
       </div>
+
+      {/* LME 3M reference LEVEL (FIN-142) — the international context this base
+          metal was previously "disconnected" from. It is a reference PRICE
+          (USD/t), NOT an implied open and NOT a pre-open move: no %, no sign.
+          Rendered only when the backend actually shipped a level (fail-closed —
+          a metals.dev-down metal simply shows no line, never a fabricated one). */}
+      {lme && (
+        <div className="-mx-1 flex items-center justify-between gap-2 rounded px-1">
+          <span className="text-[9.5px] font-medium uppercase tracking-[0.05em] text-apex-fg-tertiary">
+            LME 3M
+          </span>
+          <span className="apex-tabular text-[11px] text-apex-fg-secondary">
+            {formatLmeLevel(lme.value)}
+            <span className="ml-1 text-[9.5px] text-apex-fg-tertiary">USD/t</span>
+          </span>
+        </div>
+      )}
     </button>
   )
 }
@@ -337,11 +373,17 @@ function MoveGlyph({
   )
 }
 
-function FocusFooter({ row }: { row: BoardRow | null }) {
+function FocusFooter({
+  row,
+  lme,
+}: {
+  row: BoardRow | null
+  lme: LmeRef | null
+}) {
   return (
     <div className="min-h-[76px] border-t-[0.5px] border-apex-border-subtle bg-apex-secondary/40 px-4 py-3">
       {row ? (
-        <FocusContent row={row} />
+        <FocusContent row={row} lme={lme} />
       ) : (
         <p className="text-[12px] leading-[16px] text-apex-fg-tertiary">
           Hover an instrument to see where the numbers come from and what the
@@ -352,7 +394,7 @@ function FocusFooter({ row }: { row: BoardRow | null }) {
   )
 }
 
-function FocusContent({ row }: { row: BoardRow }) {
+function FocusContent({ row, lme }: { row: BoardRow; lme: LmeRef | null }) {
   const info = oiStateInfo(row.oi_state)
   return (
     <div>
@@ -384,6 +426,13 @@ function FocusContent({ row }: { row: BoardRow }) {
           ` · CFTC, as-of ${istDate(row.cot_as_of)}`}
         .
       </p>
+      {lme && (
+        <p className="mt-0.5 text-[11px] leading-[15px] text-apex-fg-tertiary">
+          LME 3M reference {formatLmeLevel(lme.value)} USD/t — an international
+          context level (metals.dev
+          {lme.asOf && `, as-of ${istDate(lme.asOf)}`}), not an implied open.
+        </p>
+      )}
     </div>
   )
 }

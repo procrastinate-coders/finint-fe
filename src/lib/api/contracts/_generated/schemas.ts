@@ -289,6 +289,8 @@ const MacroRefresh = z
   .object({
     ok: z.boolean(),
     rows: z.union([z.number(), z.null()]).optional(),
+    inserted: z.union([z.number(), z.null()]).optional(),
+    updated: z.union([z.number(), z.null()]).optional(),
     source: z.union([z.string(), z.null()]).optional(),
     date_range: z.union([z.string(), z.null()]).optional(),
     error: z.union([z.string(), z.null()]).optional(),
@@ -316,6 +318,24 @@ const NewsRefresh = z
     error: z.union([z.string(), z.null()]).optional(),
   })
   .passthrough()
+const BoardRefresh = z
+  .object({
+    ok: z.boolean(),
+    advanced: z.union([z.number(), z.null()]).optional(),
+    reason: z.union([z.string(), z.null()]).optional(),
+    error: z.union([z.string(), z.null()]).optional(),
+  })
+  .passthrough()
+const LmeRefresh = z
+  .object({
+    ok: z.boolean(),
+    stored: z.union([z.number(), z.null()]).optional(),
+    as_of: z.union([z.string(), z.null()]).optional(),
+    usdinr: z.union([z.number(), z.null()]).optional(),
+    reason: z.union([z.string(), z.null()]).optional(),
+    error: z.union([z.string(), z.null()]).optional(),
+  })
+  .passthrough()
 const TokenStatus = z
   .object({
     valid: z.boolean(),
@@ -330,6 +350,8 @@ const RefreshReport = z
     macro: MacroRefresh,
     cot: CotRefresh,
     news: NewsRefresh,
+    board: BoardRefresh,
+    lme: LmeRefresh,
     token: TokenStatus,
   })
   .passthrough()
@@ -365,6 +387,7 @@ const StageCost = z
     output_tokens: z.number().int(),
     web_search_calls: z.number().int(),
     retries: z.number().int(),
+    regenerates: z.number().int(),
     cost_usd: z.number(),
   })
   .passthrough()
@@ -377,6 +400,7 @@ const CostReport = z
     ceiling: z.number().int(),
     web_search_calls: z.number().int(),
     retries: z.number().int(),
+    regenerates: z.number().int(),
     stages: z.array(StageCost),
   })
   .passthrough()
@@ -433,6 +457,8 @@ export const schemas = {
   MacroRefresh,
   CotRefresh,
   NewsRefresh,
+  BoardRefresh,
+  LmeRefresh,
   TokenStatus,
   RefreshReport,
   RefreshResponse,

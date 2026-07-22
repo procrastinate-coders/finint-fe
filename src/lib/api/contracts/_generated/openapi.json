@@ -479,6 +479,53 @@
         ],
         "title": "Backdrop"
       },
+      "BoardRefresh": {
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "title": "Ok"
+          },
+          "advanced": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Advanced"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ok"
+        ],
+        "title": "BoardRefresh",
+        "description": "FIN-184 Slice 2: the token-gated price/OI leg. `ok:false` + `reason` when the Kite token is\nexpired (board NOT advanced) \u2014 that failure is isolated to this leg (macro/cot/news still run)."
+      },
       "BoardRow": {
         "properties": {
           "instrument_id": {
@@ -729,6 +776,10 @@
             "type": "integer",
             "title": "Retries"
           },
+          "regenerates": {
+            "type": "integer",
+            "title": "Regenerates"
+          },
           "stages": {
             "items": {
               "$ref": "#/components/schemas/StageCost"
@@ -746,6 +797,7 @@
           "ceiling",
           "web_search_calls",
           "retries",
+          "regenerates",
           "stages"
         ],
         "title": "CostReport"
@@ -1007,6 +1059,75 @@
         "title": "KiteRefreshResponse",
         "description": "POST /kite/refresh \u2014 the one-call token exchange result + the refreshed kite source dot."
       },
+      "LmeRefresh": {
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "title": "Ok"
+          },
+          "stored": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stored"
+          },
+          "as_of": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "As Of"
+          },
+          "usdinr": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Usdinr"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ok"
+        ],
+        "title": "LmeRefresh",
+        "description": "FIN-142 Option A: the LME base-metal 3M context leg (metals.dev, no Kite token). `ok:false` +\n`reason`/`error` when metals.dev is down/misconfigured (context OMITTED, dot goes red) \u2014 isolated\nto this leg (macro/cot/news/board still run). NOT an implied open."
+      },
       "LoginBody": {
         "properties": {
           "email": {
@@ -1095,6 +1216,28 @@
               }
             ],
             "title": "Rows"
+          },
+          "inserted": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inserted"
+          },
+          "updated": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated"
           },
           "source": {
             "anyOf": [
@@ -1537,6 +1680,12 @@
           "news": {
             "$ref": "#/components/schemas/NewsRefresh"
           },
+          "board": {
+            "$ref": "#/components/schemas/BoardRefresh"
+          },
+          "lme": {
+            "$ref": "#/components/schemas/LmeRefresh"
+          },
           "token": {
             "$ref": "#/components/schemas/TokenStatus"
           }
@@ -1547,6 +1696,8 @@
           "macro",
           "cot",
           "news",
+          "board",
+          "lme",
           "token"
         ],
         "title": "RefreshReport"
@@ -2359,6 +2510,10 @@
             "type": "integer",
             "title": "Retries"
           },
+          "regenerates": {
+            "type": "integer",
+            "title": "Regenerates"
+          },
           "cost_usd": {
             "type": "number",
             "title": "Cost Usd"
@@ -2371,6 +2526,7 @@
           "output_tokens",
           "web_search_calls",
           "retries",
+          "regenerates",
           "cost_usd"
         ],
         "title": "StageCost"

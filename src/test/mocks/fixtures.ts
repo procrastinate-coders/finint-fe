@@ -248,6 +248,9 @@ export const refreshSpineFixture = {
       queries_ok: 3,
       queries_total: 6,
     },
+    board: { ok: true, advanced: 9 },
+    // FIN-142: the LME base-metal context leg (metals.dev, isolated + non-blocking).
+    lme: { ok: true, stored: 5, as_of: '2026-07-15', usdinr: 96.47 },
     token: { valid: true, ttl_hours: 9.4 },
   },
 }
@@ -261,6 +264,9 @@ export const refreshPartialFixture = {
     macro: { ok: false, error: 'comex fetch timed out' },
     cot: { ok: true, action: 'skipped', stored_pub: '2026-07-10' },
     news: { ok: true, count: 18 },
+    board: { ok: true, advanced: 9 },
+    // the LME leg is ISOLATED — macro can fail while LME context still lands.
+    lme: { ok: true, stored: 5, as_of: '2026-07-15', usdinr: 96.47 },
     token: { valid: false, ttl_hours: -0.0 },
   },
 }
@@ -396,6 +402,7 @@ const genCost = (costUsd: number) => ({
   ceiling: 250000,
   web_search_calls: 0,
   retries: 0,
+  regenerates: 0,
   stages: [
     {
       stage: 'pass1_news_read',
@@ -403,6 +410,7 @@ const genCost = (costUsd: number) => ({
       output_tokens: 800,
       web_search_calls: 0,
       retries: 0,
+      regenerates: 0,
       cost_usd: 0.0229,
     },
     {
@@ -411,6 +419,7 @@ const genCost = (costUsd: number) => ({
       output_tokens: 3548,
       web_search_calls: 0,
       retries: 0,
+      regenerates: 0,
       cost_usd: 0.070536,
     },
   ],

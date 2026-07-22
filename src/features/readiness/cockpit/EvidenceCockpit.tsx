@@ -70,6 +70,7 @@ export function EvidenceCockpit({
 
         <BoardTile
           rows={board}
+          macro={macro}
           hoveredSource={hoveredSource}
           delayMs={160}
         />

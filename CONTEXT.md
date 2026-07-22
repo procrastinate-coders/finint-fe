@@ -186,6 +186,16 @@ board (GOLD ₹1,41,370 NEW SHORTS, ZINC/ALU LONG LIQUIDATION, USD/INR "lagging"
 derived from the live threshold. The throwaway brainstorm fixture + `/dev/evidence` preview are
 DELETED. **55 tests green**, typecheck + lint + build clean.
 
+**FIN-142 — each base-metal card now carries its own LME 3M reference.** The 5 `LME_*_3M`
+evidence macro rows (source METALS_DEV) are JOINED onto the board cards by instrument
+(`lib/mcx/lme.ts` mirrors the backend `LME_METALS` map — COPPER/ZINC/ALUMINIUM/LEAD/NICKEL, British
+spelling; confirmed live 2026-07-22). Rendered as a reference LEVEL "LME 3M · 13,836 USD/t" — no %,
+no sign (it is NOT an implied open), fail-closed when metals.dev is down (no row → no line, never
+fabricated). COPPER is Tier-A so it gets the LME line alongside its COT. NOT wired: the brief's
+`InstrumentCard` — its `lme_context` string is internal backend only, not in the served-brief
+openapi (a backend follow-up to expose it). Regenerating contracts also caught unrelated drift now
+typed: the `RefreshReport.board`/`.lme` legs and `CostReport`/`StageCost.regenerates`.
+
 **FIN-160 (the readiness spine) is PRESERVED UNDER the cockpit and PROVEN against the live API.**
 The `ReadinessScreen` container still owns the data fetch, loading/error (`ScreenState`), a
 **standing manual Refresh** (FIN-174 replaced the on-land auto-refresh), the `already_running`
