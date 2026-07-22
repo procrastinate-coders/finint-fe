@@ -36,9 +36,18 @@ const LME_MACRO: MacroRow[] = [
   macroRow('USDINR', 96.47),
 ]
 
-function renderTile(rows: BoardRow[], macro: MacroRow[] = LME_MACRO) {
+function renderTile(
+  rows: BoardRow[],
+  macro: MacroRow[] = LME_MACRO,
+  hoveredSource: string | null = null,
+) {
   return render(
-    <BoardTile rows={rows} macro={macro} hoveredSource={null} delayMs={0} />,
+    <BoardTile
+      rows={rows}
+      macro={macro}
+      hoveredSource={hoveredSource}
+      delayMs={0}
+    />,
   )
 }
 
@@ -81,6 +90,20 @@ describe('BoardTile — LME 3M reference tied to each base-metal card (FIN-142)'
     expect(within(card).queryByText('USD/t')).not.toBeInTheDocument()
     // it renders as today — the honest COT "no int'l reference" line stays
     expect(within(card).getByText(/no int'l reference/i)).toBeInTheDocument()
+  })
+
+  it('hovering the LME source LIGHTS each metal’s LME line (lineage, like other sources)', () => {
+    const lmeRow = (id: string) =>
+      within(cardFor(id)).getByText('LME 3M').closest('div') as HTMLElement
+
+    // not hovered → no highlight
+    const { unmount } = renderTile([boardRow({ instrument_id: 'ZINC' })], LME_MACRO, null)
+    expect(lmeRow('ZINC').className).not.toContain('bg-apex-blue-tint')
+    unmount()
+
+    // hovering the `lme` source → the LME line lights up
+    renderTile([boardRow({ instrument_id: 'ZINC' })], LME_MACRO, 'lme')
+    expect(lmeRow('ZINC').className).toContain('bg-apex-blue-tint')
   })
 
   it('presents the LME line as a reference LEVEL, never an implied-open % or a signed move', () => {

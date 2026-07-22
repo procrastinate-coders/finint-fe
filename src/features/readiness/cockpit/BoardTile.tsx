@@ -85,6 +85,9 @@ export function BoardTile({
 
   const priceLit = hoveredSource === 'kite' || hoveredSource === 'board'
   const cotLit = hoveredSource === 'cot' || hoveredSource === 'board'
+  // FIN-142: hovering the LME source lights each base metal's LME 3M line — the
+  // same lineage affordance the other sources get.
+  const lmeLit = hoveredSource === 'lme'
 
   const focus = rows.find((r) => r.instrument_id === hoverId) ?? null
   const groups = groupBySegment(rows)
@@ -102,8 +105,14 @@ export function BoardTile({
           )}
         </span>
       }
-      lit={priceLit || cotLit}
-      litLabel={hoveredSource === 'cot' ? 'CFTC' : 'Kite'}
+      lit={priceLit || cotLit || lmeLit}
+      litLabel={
+        hoveredSource === 'cot'
+          ? 'CFTC'
+          : hoveredSource === 'lme'
+            ? 'LME'
+            : 'Kite'
+      }
       delayMs={delayMs}
       bodyClassName="flex flex-col"
     >
@@ -132,6 +141,7 @@ export function BoardTile({
                   onHover={setHoverId}
                   priceLit={priceLit}
                   cotLit={cotLit}
+                  lmeLit={lmeLit}
                 />
               ))}
             </div>
@@ -155,6 +165,7 @@ function InstrumentCard({
   onHover,
   priceLit,
   cotLit,
+  lmeLit,
 }: {
   row: BoardRow
   lme: LmeRef | null
@@ -162,6 +173,7 @@ function InstrumentCard({
   onHover: (id: string | null) => void
   priceLit: boolean
   cotLit: boolean
+  lmeLit: boolean
 }) {
   const info = oiStateInfo(row.oi_state)
   const building = info?.building ?? false
@@ -279,7 +291,12 @@ function InstrumentCard({
           Rendered only when the backend actually shipped a level (fail-closed —
           a metals.dev-down metal simply shows no line, never a fabricated one). */}
       {lme && (
-        <div className="-mx-1 flex items-center justify-between gap-2 rounded px-1">
+        <div
+          className={cn(
+            '-mx-1 flex items-center justify-between gap-2 rounded px-1 transition-colors',
+            lmeLit && 'bg-apex-blue-tint',
+          )}
+        >
           <span className="text-[9.5px] font-medium uppercase tracking-[0.05em] text-apex-fg-tertiary">
             LME 3M
           </span>

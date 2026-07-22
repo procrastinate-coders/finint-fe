@@ -30,6 +30,7 @@ export function sourceFeeds(key: string): EvidenceTile | null {
     case 'kite':
     case 'cot':
     case 'board':
+    case 'lme': // FIN-142: LME source produces the cards' LME 3M reference line
       return 'board'
     case 'comex':
     case 'usdinr':
