@@ -15,6 +15,7 @@ const full = (
     board: { ok: true, advanced: 9 },
     lme: { ok: true, stored: 5, as_of: '2026-07-15', usdinr: 96.47 },
     eia: { ok: true, action: 'skipped', as_of: '2026-07-10' },
+    lme_cotr: { ok: true, action: 'skipped', as_of: '2026-08-21' },
     token: { valid: true, ttl_hours: 9.4 },
     ...over,
   },

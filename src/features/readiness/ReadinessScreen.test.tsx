@@ -354,6 +354,7 @@ describe('ReadinessScreen — filtered per-dot refresh (FIN-192)', () => {
         board: { ok: true, skipped: true, reason: 'not in this refresh' },
         lme: { ok: true, skipped: true, reason: 'not in this refresh' },
         eia: { ok: true, skipped: true, reason: 'not in this refresh' },
+        lme_cotr: { ok: true, skipped: true, reason: 'not in this refresh' },
         token: { valid: true, ttl_hours: 9.4 },
       },
     }

@@ -349,6 +349,46 @@
         }
       }
     },
+    "/admin/lme-cotr/ingest": {
+      "post": {
+        "summary": "Lme Cotr Ingest",
+        "operationId": "lme_cotr_ingest_admin_lme_cotr_ingest_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "items": {},
+                "type": "array",
+                "title": "Rows"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LmeCotrIngestResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/kite/login-url": {
       "get": {
         "summary": "Kite Login Url",
@@ -1188,6 +1228,128 @@
         "title": "KiteRefreshResponse",
         "description": "POST /kite/refresh \u2014 the one-call token exchange result + the refreshed kite source dot."
       },
+      "LmeCotrIngestResponse": {
+        "properties": {
+          "stored": {
+            "type": "integer",
+            "title": "Stored"
+          },
+          "skipped": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Skipped",
+            "default": []
+          },
+          "rejected": {
+            "items": {
+              "$ref": "#/components/schemas/LmeCotrRejected"
+            },
+            "type": "array",
+            "title": "Rejected",
+            "default": []
+          },
+          "percentiles_updated": {
+            "type": "integer",
+            "title": "Percentiles Updated"
+          }
+        },
+        "type": "object",
+        "required": [
+          "stored",
+          "percentiles_updated"
+        ],
+        "title": "LmeCotrIngestResponse"
+      },
+      "LmeCotrRefresh": {
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "title": "Ok"
+          },
+          "action": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Action"
+          },
+          "stored": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stored"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "skipped": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Skipped"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ok"
+        ],
+        "title": "LmeCotrRefresh",
+        "description": "FIN-195: the weekly LME COTR positioning leg (base-metal cot_percentile; no Kite token). WEEKLY\ncadence-aware \u2014 `action:\"skipped\"` when the stored week is current (no new Tuesday release).\n`ok:false` + `error` when LME.com is down/format-changed (positioning OMITTED, cot stays null) \u2014\nisolated to this leg. Fills the 4 Tier-B metals; COPPER keeps its CFTC COMEX-copper COT."
+      },
+      "LmeCotrRejected": {
+        "properties": {
+          "row": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Row"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "row",
+          "reason"
+        ],
+        "title": "LmeCotrRejected"
+      },
       "LmeRefresh": {
         "properties": {
           "ok": {
@@ -1895,6 +2057,9 @@
           "eia": {
             "$ref": "#/components/schemas/EiaRefresh"
           },
+          "lme_cotr": {
+            "$ref": "#/components/schemas/LmeCotrRefresh"
+          },
           "token": {
             "$ref": "#/components/schemas/TokenStatus"
           }
@@ -1908,6 +2073,7 @@
           "board",
           "lme",
           "eia",
+          "lme_cotr",
           "token"
         ],
         "title": "RefreshReport"
@@ -2261,6 +2427,17 @@
               }
             ],
             "title": "Vol"
+          },
+          "cot": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cot"
           }
         },
         "additionalProperties": false,
@@ -2368,11 +2545,100 @@
             ],
             "title": "Atr"
           },
+          "atr_avg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Atr Avg"
+          },
+          "total_oi": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Oi"
+          },
+          "oi_change": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oi Change"
+          },
+          "cot_confidence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cot Confidence"
+          },
           "levels": {
             "$ref": "#/components/schemas/ServedLevels"
           },
           "factors": {
             "$ref": "#/components/schemas/ServedFactors"
+          },
+          "lme_context": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lme Context"
+          },
+          "eia_context": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Eia Context"
+          },
+          "liquid_contract": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Liquid Contract"
+          },
+          "liquid_contract_expiry": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Liquid Contract Expiry"
           },
           "ai_read": {
             "anyOf": [
@@ -2491,7 +2757,7 @@
             ],
             "title": "Oi State"
           },
-          "cot_stance": {
+          "cot_stance_label": {
             "anyOf": [
               {
                 "type": "string"
@@ -2500,7 +2766,7 @@
                 "type": "null"
               }
             ],
-            "title": "Cot Stance"
+            "title": "Cot Stance Label"
           },
           "cot_percentile": {
             "anyOf": [
@@ -2512,6 +2778,17 @@
               }
             ],
             "title": "Cot Percentile"
+          },
+          "cot_confidence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cot Confidence"
           },
           "divergence_flag": {
             "type": "boolean",
@@ -2584,6 +2861,61 @@
               }
             ],
             "title": "Cot Percentile"
+          },
+          "total_oi": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Oi"
+          },
+          "oi_change": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oi Change"
+          },
+          "atr": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Atr"
+          },
+          "atr_avg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Atr Avg"
+          },
+          "cot_confidence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cot Confidence"
           },
           "factors": {
             "$ref": "#/components/schemas/ServedFactors"

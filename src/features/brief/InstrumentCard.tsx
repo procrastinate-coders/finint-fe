@@ -1,7 +1,15 @@
 import type { ReactNode } from 'react'
-import { ArrowDown, ArrowUp, GitCompareArrows } from 'lucide-react'
+import { ArrowDown, ArrowUp, GitCompareArrows, TriangleAlert } from 'lucide-react'
 import type { ServedBrief } from '@/lib/api/contracts'
-import { DASH, formatInr, formatPct, formatPercentile } from '@/lib/format'
+import {
+  DASH,
+  formatInr,
+  formatNumber,
+  formatPct,
+  formatPercentile,
+  formatSignedNumber,
+  istDate,
+} from '@/lib/format'
 import { oiStateInfo } from '@/lib/mcx/oi-state'
 import { cn } from '@/lib/utils'
 import { Prose } from './Withheld'
@@ -27,22 +35,38 @@ export function InstrumentCard({ ins, id }: { ins: Instrument; id: string }) {
       id={id}
       className="scroll-mt-[140px] overflow-hidden rounded-[16px] border-[0.5px] border-apex-border bg-apex-primary"
     >
-      <header className="flex items-center justify-between gap-3 border-b-[0.5px] border-apex-border-subtle px-5 py-3.5">
-        <div className="flex items-baseline gap-2.5">
-          <h3 className="text-[18px] font-semibold tracking-tight text-apex-fg">
-            {ins.instrument}
-          </h3>
-          <span className="text-[12px] text-apex-fg-tertiary">{ins.name}</span>
-          <span
-            className={cn(
-              'rounded-[4px] px-1 py-px text-[9px] font-semibold uppercase',
-              tierB
-                ? 'bg-apex-tertiary text-apex-fg-tertiary'
-                : 'bg-apex-blue-tint text-apex-blue',
-            )}
-          >
-            {tierB ? 'B · LME' : 'A'}
-          </span>
+      <header className="flex items-start justify-between gap-3 border-b-[0.5px] border-apex-border-subtle px-5 py-3.5">
+        <div className="min-w-0">
+          <div className="flex items-baseline gap-2.5">
+            <h3 className="text-[18px] font-semibold tracking-tight text-apex-fg">
+              {ins.instrument}
+            </h3>
+            <span className="text-[12px] text-apex-fg-tertiary">{ins.name}</span>
+            <span
+              className={cn(
+                'rounded-[4px] px-1 py-px text-[9px] font-semibold uppercase',
+                tierB
+                  ? 'bg-apex-tertiary text-apex-fg-tertiary'
+                  : 'bg-apex-blue-tint text-apex-blue',
+              )}
+            >
+              {tierB ? 'B · LME' : 'A'}
+            </span>
+          </div>
+          {/* FIN-197/213: NAME the contract this read is about. On an expiry-day
+              morning the card silently switches contract/price/levels — the brief
+              must say which one. Null = the picker refused; never a stale contract. */}
+          {ins.liquid_contract && (
+            <div className="apex-tabular mt-1 text-[11.5px] text-apex-fg-secondary">
+              {ins.liquid_contract}
+              {ins.liquid_contract_expiry && (
+                <span className="text-apex-fg-tertiary">
+                  {' · expires '}
+                  {istDate(ins.liquid_contract_expiry)}
+                </span>
+              )}
+            </div>
+          )}
         </div>
         {ins.ai_read?.guard_failed && (
           <span className="inline-flex items-center gap-1 rounded-[5px] bg-apex-orange-tint px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-[0.03em] text-apex-orange">
@@ -72,6 +96,16 @@ export function InstrumentCard({ ins, id }: { ins: Instrument; id: string }) {
                 {info.meaning}
               </p>
             )}
+            {/* FIN-213: OI MAGNITUDE — the thin-vs-deep signal (LEAD ~763 lots vs
+                NATURALGAS ~34,072). Null = not served → omitted, never a 0. */}
+            {(ins.total_oi != null || ins.oi_change != null) && (
+              <p className="apex-tabular mt-1 text-[11px] text-apex-fg-tertiary">
+                {ins.total_oi != null ? `${formatNumber(ins.total_oi)} lots` : DASH}
+                {ins.oi_change != null && (
+                  <span> · Δ {formatSignedNumber(ins.oi_change)}</span>
+                )}
+              </p>
+            )}
           </div>
 
           <div>
@@ -95,21 +129,31 @@ export function InstrumentCard({ ins, id }: { ins: Instrument; id: string }) {
 
           <div>
             <RailLabel>COT percentile</RailLabel>
-            {tierB ? (
-              <p className="mt-0.5 text-[11px] text-apex-fg-tertiary">
-                no CFTC COT (LME-priced)
-              </p>
-            ) : (
+            {ins.cot_percentile != null ? (
               <>
                 <div className="apex-tabular mt-0.5 text-[16px] font-semibold text-apex-fg">
                   {formatPercentile(ins.cot_percentile)}
                 </div>
-                {pos?.cot_stance && !isWithheld(pos.cot_stance) && (
+                {/* FIN-195/213: the confidence caveat is INSEPARABLE from the
+                    number. Base metals carry an LME-COTR proxy whose correlation
+                    to price is unverified/weak; the percentile must never be read
+                    without it. Tier-A CFTC names carry null → verified, no caveat. */}
+                {ins.cot_confidence && (
+                  <p className="mt-1 flex items-start gap-1 text-[10.5px] leading-[14px] text-apex-yellow">
+                    <TriangleAlert className="mt-px size-3 shrink-0" aria-hidden />
+                    {ins.cot_confidence}
+                  </p>
+                )}
+                {pos?.cot_stance_label && !isWithheld(pos.cot_stance_label) && (
                   <p className="mt-0.5 text-[11px] leading-[15px] text-apex-fg-tertiary">
-                    {pos.cot_stance}
+                    {pos.cot_stance_label}
                   </p>
                 )}
               </>
+            ) : (
+              <p className="mt-0.5 text-[11px] text-apex-fg-tertiary">
+                {tierB ? 'no COT reference (LME-priced)' : 'no COT reference'}
+              </p>
             )}
           </div>
 
@@ -129,6 +173,50 @@ export function InstrumentCard({ ins, id }: { ins: Instrument; id: string }) {
               </span>
             </div>
           </div>
+
+          {/* FIN-213: ATR with its own baseline — a range has no context without
+              it. Null (e.g. continuous series stale) → omitted, never a 0. */}
+          {(ins.atr != null || ins.atr_avg != null) && (
+            <div>
+              <RailLabel>ATR · daily range</RailLabel>
+              <div className="apex-tabular mt-0.5 text-[13px] text-apex-fg-secondary">
+                {ins.atr != null ? formatNumber(ins.atr) : DASH}
+                {ins.atr_avg != null && (
+                  <span className="text-apex-fg-tertiary">
+                    {' · avg '}
+                    {formatNumber(ins.atr_avg)}
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* FIN-193/213: LME is a CONTEXT LEVEL — explicitly NOT an implied open
+              (base metals have no valid overnight move: metals.dev publishes before
+              MCX's 11:30 PM close). EIA is a released FACT (as-of · WoW · direction).
+              Verbatim from the backend's grounding string; null → omitted. */}
+          {ins.lme_context && (
+            <div>
+              <RailLabel>LME reference</RailLabel>
+              <p className="apex-tabular mt-0.5 text-[11.5px] leading-[16px] text-apex-fg-secondary">
+                {ins.lme_context}
+              </p>
+              <p className="mt-0.5 text-[10px] leading-[14px] text-apex-fg-tertiary">
+                context level — not an implied open
+              </p>
+            </div>
+          )}
+          {ins.eia_context && (
+            <div>
+              <RailLabel>EIA supply</RailLabel>
+              <p className="mt-0.5 text-[11.5px] leading-[16px] text-apex-fg-secondary">
+                {ins.eia_context}
+              </p>
+              <p className="mt-0.5 text-[10px] leading-[14px] text-apex-fg-tertiary">
+                released weekly data — a fact, not a forecast
+              </p>
+            </div>
+          )}
         </div>
 
         {/* PROSE */}

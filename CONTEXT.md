@@ -209,6 +209,25 @@ registry-driven + refreshable via the FIN-192 filtered path (`{"sources":["eia"]
 the required `RefreshReport.eia` leg (fixtures updated). NOT wired: the brief `InstrumentCard`'s
 `eia_context` (internal-only, same as `lme_context`).
 
+**FIN-213 — the brief now surfaces everything the 2026-09-05 payload carries (items 1–7; item 8
+held).** The `ServedInstrument`/`ServedScanRow` schemas grew 8/5 fields + `cot_stance` was RENAMED
+`cot_stance_label` (a live regression — `InstrumentCard` rendered the removed field → blank; fixed).
+Regenerated Zod (FFE-004). Cockpit sources (13, weakest-link notes) were ALREADY dynamic
+(`SourcesRail` maps the array) — no change. New in the BRIEF (`features/brief/`): (1) `liquid_contract`
++ expiry NAMED in the `InstrumentCard` header (FIN-197 — the card silently switches contract on
+expiry-day); (2) `cot_confidence` caveat welded to the percentile, and Tier-B base metals now show
+their FIN-195 LME-COTR percentile (was hidden as "no CFTC COT") — the number never appears without
+the caveat; (3) `total_oi`/`oi_change` (stat rail + a new scan OI column — the thin-vs-deep signal);
+(6) `atr` + `atr_avg` baseline; (7) brief `lme_context`/`eia_context` with framing preserved (LME =
+context level NOT an implied open; EIA = released fact); (4/5) a new `BriefSources` block renders
+`brief.sources` (13, verbatim notes so the weakest-link name survives, unevaluable sources visible).
+Fail-closed throughout (null → omitted). ⚠️ Item 8 (refusal legibility) HELD: the backend signals
+refusals via NULL with no reason field served (`serialize.py:166,330`), so a refused number reads as
+a bare "—"; making it legibly-deliberate needs a served reason (a backend follow-up) — deferred by
+decision. Verified via a real-component-tree integration test (`features/brief/fin213.test.tsx`)
+asserting each field's visible DOM; a live-brief browser screenshot wasn't possible (no brief today —
+news+kite red).
+
 **FIN-160 (the readiness spine) is PRESERVED UNDER the cockpit and PROVEN against the live API.**
 The `ReadinessScreen` container still owns the data fetch, loading/error (`ScreenState`), a
 **standing manual Refresh** (FIN-174 replaced the on-land auto-refresh), the `already_running`

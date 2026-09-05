@@ -104,6 +104,7 @@ const ServedFactors = z
     oi: z.union([z.number(), z.null()]),
     level: z.union([z.number(), z.null()]),
     vol: z.union([z.number(), z.null()]),
+    cot: z.union([z.number(), z.null()]),
   })
   .partial()
 const ServedScanRow = z.object({
@@ -114,6 +115,11 @@ const ServedScanRow = z.object({
   implied_open_pct: z.union([z.number(), z.null()]).optional(),
   oi_state: z.union([z.string(), z.null()]).optional(),
   cot_percentile: z.union([z.number(), z.null()]).optional(),
+  total_oi: z.union([z.number(), z.null()]).optional(),
+  oi_change: z.union([z.number(), z.null()]).optional(),
+  atr: z.union([z.number(), z.null()]).optional(),
+  atr_avg: z.union([z.number(), z.null()]).optional(),
+  cot_confidence: z.union([z.string(), z.null()]).optional(),
   factors: ServedFactors,
 })
 const ServedImpliedOpen = z
@@ -129,8 +135,9 @@ const ServedLevels = z
 const ServedPositioning = z
   .object({
     oi_state: z.union([z.string(), z.null()]),
-    cot_stance: z.union([z.string(), z.null()]),
+    cot_stance_label: z.union([z.string(), z.null()]),
     cot_percentile: z.union([z.number(), z.null()]),
+    cot_confidence: z.union([z.string(), z.null()]),
     divergence_flag: z.boolean().default(false),
     divergence_note: z.union([z.string(), z.null()]),
   })
@@ -153,8 +160,16 @@ const ServedInstrument = z.object({
   oi_state: z.union([z.string(), z.null()]).optional(),
   cot_percentile: z.union([z.number(), z.null()]).optional(),
   atr: z.union([z.number(), z.null()]).optional(),
+  atr_avg: z.union([z.number(), z.null()]).optional(),
+  total_oi: z.union([z.number(), z.null()]).optional(),
+  oi_change: z.union([z.number(), z.null()]).optional(),
+  cot_confidence: z.union([z.string(), z.null()]).optional(),
   levels: ServedLevels,
   factors: ServedFactors,
+  lme_context: z.union([z.string(), z.null()]).optional(),
+  eia_context: z.union([z.string(), z.null()]).optional(),
+  liquid_contract: z.union([z.string(), z.null()]).optional(),
+  liquid_contract_expiry: z.union([z.string(), z.null()]).optional(),
   ai_read: z.union([ServedAiRead, z.null()]).optional(),
 })
 const ServedMeta = z
@@ -361,6 +376,16 @@ const EiaRefresh = z
     skipped: z.union([z.boolean(), z.null()]).optional(),
   })
   .passthrough()
+const LmeCotrRefresh = z
+  .object({
+    ok: z.boolean(),
+    action: z.union([z.string(), z.null()]).optional(),
+    stored: z.union([z.number(), z.null()]).optional(),
+    reason: z.union([z.string(), z.null()]).optional(),
+    error: z.union([z.string(), z.null()]).optional(),
+    skipped: z.union([z.boolean(), z.null()]).optional(),
+  })
+  .passthrough()
 const TokenStatus = z
   .object({
     valid: z.boolean(),
@@ -378,6 +403,7 @@ const RefreshReport = z
     board: BoardRefresh,
     lme: LmeRefresh,
     eia: EiaRefresh,
+    lme_cotr: LmeCotrRefresh,
     token: TokenStatus,
   })
   .passthrough()
@@ -387,6 +413,17 @@ const RefreshResponse = z
     guard: z.string(),
     started_at: z.union([z.string(), z.null()]).optional(),
     report: z.union([RefreshReport, z.null()]).optional(),
+  })
+  .passthrough()
+const LmeCotrRejected = z
+  .object({ row: z.object({}).partial().passthrough(), reason: z.string() })
+  .passthrough()
+const LmeCotrIngestResponse = z
+  .object({
+    stored: z.number().int(),
+    skipped: z.array(z.string()).optional().default([]),
+    rejected: z.array(LmeCotrRejected).optional().default([]),
+    percentiles_updated: z.number().int(),
   })
   .passthrough()
 const LoginUrlResponse = z.object({ url: z.string() }).passthrough()
@@ -488,9 +525,12 @@ export const schemas = {
   BoardRefresh,
   LmeRefresh,
   EiaRefresh,
+  LmeCotrRefresh,
   TokenStatus,
   RefreshReport,
   RefreshResponse,
+  LmeCotrRejected,
+  LmeCotrIngestResponse,
   LoginUrlResponse,
   GenerateResponse,
   RunStep,

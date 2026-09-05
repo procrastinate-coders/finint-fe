@@ -253,6 +253,7 @@ export const refreshSpineFixture = {
     lme: { ok: true, stored: 5, as_of: '2026-07-15', usdinr: 96.47 },
     // FIN-188: the EIA weekly energy-inventory leg (weekly cadence; skipped when current).
     eia: { ok: true, action: 'skipped', as_of: '2026-07-10' },
+    lme_cotr: { ok: true, action: 'skipped', as_of: '2026-08-21' },
     token: { valid: true, ttl_hours: 9.4 },
   },
 }
@@ -270,6 +271,7 @@ export const refreshPartialFixture = {
     // the LME leg is ISOLATED — macro can fail while LME context still lands.
     lme: { ok: true, stored: 5, as_of: '2026-07-15', usdinr: 96.47 },
     eia: { ok: true, action: 'skipped', as_of: '2026-07-10' },
+    lme_cotr: { ok: true, action: 'skipped', as_of: '2026-08-21' },
     token: { valid: false, ttl_hours: -0.0 },
   },
 }
@@ -348,6 +350,44 @@ function makeBrief(guardFailed: boolean) {
       catalysts: [],
       cross_instrument: [],
     },
+    // FIN-213: the 6→13 source set behind the brief, mapped from the payload.
+    sources: [
+      { key: 'kite', status: 'green', note: 'Fresh · ~12h left' },
+      { key: 'comex', status: 'green', note: 'Fresh · 2026-07-15 session' },
+      { key: 'usdinr', status: 'green', note: 'Fresh · 2026-07-15 session' },
+      { key: 'dxy', status: 'green', note: 'Fresh · 2026-07-15 session' },
+      { key: 'continuous', status: 'green', note: 'Fresh · 2026-07-15 session' },
+      { key: 'reference', status: 'green', note: 'Fresh · 2026-07-15 session' },
+      { key: 'cot', status: 'green', note: 'As-of 2026-07-11 — next release Fri' },
+      {
+        key: 'macro_continuity',
+        status: 'green',
+        note: 'stored prev is prior-session (consecutive)',
+      },
+      { key: 'board', status: 'green', note: 'all 9 mains hold the last settled session' },
+      { key: 'lme', status: 'green', note: 'Fresh · 2026-07-15 session' },
+      {
+        key: 'eia',
+        status: 'amber',
+        note: 'As-of 2026-06-27 — a new EIA release is due (stale) · weakest: EIA_NATGAS_STORAGE',
+      },
+      { key: 'lme_cotr', status: 'amber', note: 'As-of 2026-06-27 — a new LME COTR is due (stale)' },
+      { key: 'news', status: 'green', note: '18 stored articles · fetched 16:50 IST' },
+    ],
+    scan: [
+      {
+        rank: 1, instrument: 'GOLD', name: 'Gold', tier: 'A',
+        implied_open_pct: null, oi_state: 'NEW_SHORTS', cot_percentile: 0.06,
+        cot_confidence: null, total_oi: 12045, oi_change: -320, atr: 1800, atr_avg: 1650,
+        factors: { gap: null, oi: 0.5, level: 0.2, vol: 0.1 },
+      },
+      {
+        rank: 2, instrument: 'LEAD', name: 'Lead', tier: 'B',
+        implied_open_pct: null, oi_state: 'shorts_building', cot_percentile: 0.66,
+        cot_confidence: 'correlation to price unverified', total_oi: 763, oi_change: -20,
+        atr: null, atr_avg: null, factors: {},
+      },
+    ],
     instruments: [
       {
         instrument: 'GOLD',
@@ -357,22 +397,73 @@ function makeBrief(guardFailed: boolean) {
         implied_open: null,
         oi_state: 'NEW_SHORTS',
         cot_percentile: 0.06,
+        cot_confidence: null, // Tier-A CFTC — verified, no caveat
         atr: 1800,
+        atr_avg: 1650,
+        total_oi: 12045,
+        oi_change: -320,
         levels: { support: [140000], resistance: [148000] },
         factors: { gap: null, oi: 0.5, level: 0.2, vol: 0.1 },
+        lme_context: null,
+        eia_context: null,
+        liquid_contract: 'GOLD26OCTFUT',
+        liquid_contract_expiry: '2026-10-05',
         ai_read: {
           what_changed: 'Flat to open.',
           narrative: 'Crowded short; no fresh catalyst.',
-          positioning: null,
+          positioning: {
+            oi_state: 'NEW_SHORTS',
+            cot_stance_label: 'crowded short',
+            cot_percentile: 0.06,
+            cot_confidence: null,
+            divergence_flag: false,
+            divergence_note: null,
+          },
           cross_instrument_note: null,
           watch: 'Holds above 140000.',
           why: 'Positioning-led.',
           guard_failed: guardFailed, // GOLD read withheld on the degraded run
         },
       },
+      {
+        instrument: 'LEAD',
+        name: 'Lead',
+        tier: 'B',
+        data_tier: 'B',
+        implied_open: null, // base metals: no valid overnight move
+        oi_state: 'shorts_building',
+        cot_percentile: 0.66, // FIN-195 LME-COTR proxy
+        cot_confidence: 'correlation to price unverified',
+        atr: null,
+        atr_avg: null,
+        total_oi: 763,
+        oi_change: -20,
+        levels: { support: [], resistance: [] },
+        factors: {},
+        lme_context: 'LME LEAD 3M 1,995 USD/t',
+        eia_context: null,
+        liquid_contract: 'LEAD26SEPFUT',
+        liquid_contract_expiry: '2026-09-30',
+        ai_read: {
+          what_changed: 'Shorts built into the LME reference.',
+          narrative: 'Positioning-led; thin book.',
+          positioning: {
+            oi_state: 'shorts_building',
+            cot_stance_label: 'building shorts',
+            cot_percentile: 0.66,
+            cot_confidence: 'correlation to price unverified',
+            divergence_flag: false,
+            divergence_note: null,
+          },
+          cross_instrument_note: null,
+          watch: 'The LME 3M reference.',
+          why: 'Thin OI (763 lots).',
+          guard_failed: false,
+        },
+      },
     ],
     meta: {
-      deep_set: ['GOLD', 'SILVER'],
+      deep_set: ['GOLD', 'LEAD', 'SILVER'],
       guard_failed: guardFailed,
       fabricated_claims: 0,
     },

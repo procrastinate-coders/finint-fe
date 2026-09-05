@@ -1,6 +1,7 @@
 import type { ServedBrief } from '@/lib/api/contracts'
 import { istDateTime } from '@/lib/format'
 import { BriefNav, type NavSection } from './BriefNav'
+import { BriefSources } from './BriefSources'
 import { HonestyBanner } from './HonestyBanner'
 import { InstrumentCard, MissingInstrumentCard } from './InstrumentCard'
 import { MarketLayer } from './MarketLayer'
@@ -25,6 +26,7 @@ export function BriefRenderer({ brief }: { brief: ServedBrief }) {
   )
   const orderedNames = [...deepSet, ...extras.map((e) => e.instrument)]
 
+  const sources = brief.sources ?? []
   const sections: NavSection[] = [
     { id: 'market', label: 'Market' },
     { id: 'board', label: 'Board' },
@@ -33,6 +35,7 @@ export function BriefRenderer({ brief }: { brief: ServedBrief }) {
       label: n,
       withheld: byName.get(n)?.ai_read?.guard_failed ?? false,
     })),
+    ...(sources.length > 0 ? [{ id: 'sources', label: 'Sources' }] : []),
   ]
 
   return (
@@ -113,6 +116,10 @@ export function BriefRenderer({ brief }: { brief: ServedBrief }) {
             )}
           </div>
         </div>
+
+        <Reveal delay={200}>
+          <BriefSources sources={sources} />
+        </Reveal>
       </div>
     </div>
   )

@@ -1,6 +1,6 @@
 import { ArrowDown, ArrowUp, ChevronRight } from 'lucide-react'
 import type { ServedBrief } from '@/lib/api/contracts'
-import { DASH, formatPct, formatPercentile } from '@/lib/format'
+import { DASH, formatNumber, formatPct, formatPercentile } from '@/lib/format'
 import { oiStateInfo } from '@/lib/mcx/oi-state'
 import { cn } from '@/lib/utils'
 import { Section } from './Section'
@@ -9,7 +9,7 @@ import { scrollToSection } from './useScrollSpy'
 type ScanRow = NonNullable<ServedBrief['scan']>[number]
 
 const COLS =
-  'grid grid-cols-[28px_minmax(0,1fr)_150px_88px_60px] items-center gap-x-4'
+  'grid grid-cols-[28px_minmax(0,1fr)_132px_76px_78px_64px] items-center gap-x-3'
 
 /**
  * The SCAN BOARD — all 9 mains, ranked by HOW MUCH MOVED (not what to trade —
@@ -36,8 +36,8 @@ export function ScanBoard({
     >
       {/* max-w on desktop; on mobile the 5-col grid scrolls WITHIN its own
           bounded card (visible scrollbar) rather than clipping the COT column. */}
-      <div className="max-w-[760px] overflow-x-auto rounded-[14px] border-[0.5px] border-apex-border bg-apex-primary">
-        <div className="min-w-[480px]">
+      <div className="max-w-[820px] overflow-x-auto rounded-[14px] border-[0.5px] border-apex-border bg-apex-primary">
+        <div className="min-w-[560px]">
           <div
             className={cn(
               COLS,
@@ -47,6 +47,7 @@ export function ScanBoard({
           <span className="text-right">#</span>
           <span>Instrument</span>
           <span>Positioning</span>
+          <span className="text-right">OI</span>
           <span className="text-right">Impl. open</span>
           <span className="text-right">COT</span>
         </div>
@@ -95,17 +96,33 @@ export function ScanBoard({
                   <span className="text-apex-fg-tertiary">{DASH}</span>
                 )}
               </span>
+              {/* FIN-213: OI magnitude — the thin-vs-deep signal, visible across
+                  the board (LEAD ~763 vs NATURALGAS ~34,072). Null → "—". */}
+              <span className="apex-tabular text-right text-[12px] text-apex-fg-secondary">
+                {r.total_oi != null ? formatNumber(r.total_oi) : DASH}
+              </span>
               <span className="apex-tabular text-right text-[13px] text-apex-fg-secondary">
                 {formatPct(r.implied_open_pct, { decimals: 2 })}
               </span>
-              <span className="text-right">
-                {tierB ? (
+              {/* FIN-195/213: base metals now carry an LME-COTR percentile; the
+                  "†" marks the confidence caveat so the number never appears
+                  without it (full text on hover + the deep-read card). */}
+              <span className="apex-tabular text-right text-[13px] text-apex-fg-secondary">
+                {r.cot_percentile != null ? (
+                  <>
+                    {formatPercentile(r.cot_percentile)}
+                    {r.cot_confidence && (
+                      <sup
+                        className="ml-0.5 text-apex-yellow"
+                        title={r.cot_confidence}
+                      >
+                        †
+                      </sup>
+                    )}
+                  </>
+                ) : (
                   <span className="text-[10px] text-apex-fg-tertiary/80">
                     no ref
-                  </span>
-                ) : (
-                  <span className="apex-tabular text-[13px] text-apex-fg-secondary">
-                    {formatPercentile(r.cot_percentile)}
                   </span>
                 )}
               </span>
@@ -136,10 +153,12 @@ export function ScanBoard({
         })}
         </div>
       </div>
-      <p className="mt-2.5 max-w-[760px] text-[11px] leading-[15px] text-apex-fg-tertiary">
+      <p className="mt-2.5 max-w-[820px] text-[11px] leading-[15px] text-apex-fg-tertiary">
         Tier-B (ZINC · ALUMINIUM · LEAD · NICKEL) is LME-priced — no international
-        reference and no CFTC COT, so implied open and percentile read “—” by
-        design.
+        reference, so implied open reads “—” by design. Its COT is an LME COTR
+        proxy (
+        <span className="text-apex-yellow">†</span>) whose correlation to price is
+        not verified — see the instrument read for the caveat.
       </p>
     </Section>
   )
