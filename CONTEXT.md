@@ -228,6 +228,25 @@ decision. Verified via a real-component-tree integration test (`features/brief/f
 asserting each field's visible DOM; a live-brief browser screenshot wasn't possible (no brief today —
 news+kite red).
 
+**FIN-216 — multi-session comparisons now speak on the brief card (+ the ranking factors).**
+Third silent drift in a week: `ServedInstrument` grew `oi_gap_sessions` + `prior_close_sessions` the
+same day it shipped (FIN-218 tracks the structural fix; regenerated for now). Semantics (confirmed
+from `../finint/src/live/sessions.py`): `sessions_between` counts settled MCX sessions in
+`(prev, latest]`; `1` = a true T-1 (the pre-open norm), `>1` = a multi-session net change that must
+NOT read as "overnight"/"yesterday", `>3` refused upstream. `oi_gap_sessions` qualifies the OI read
+(oi_state is classified between consecutive stored bars); `prior_close_sessions` qualifies the
+implied-open price anchor. `InstrumentCard` renders an amber qualifier ONLY on the exception (>1) —
+"net change over N sessions — not overnight" on the OI block, "anchored to a close N sessions old —
+not yesterday" on the implied-open block; a clean T-1 (1/null) stays unmarked (fail-closed). The
+session fields are on `ServedInstrument` only, NOT `ServedScanRow` — so this is the deep-read card;
+the scan can't mark it (a backend follow-up if wanted). **Factors decision (judgment call — SHOWN):**
+a compact "Rank basis" profile in the stat rail — the 5 raw served scores (gap/oi/level/vol/cot) as
+bars ordered by the FIN-200 weights (documented in a tooltip); the FE renders scores, NEVER
+re-derives the rank. Argued reader-facing because the deep set is 4 of 9 ("why these four") and the
+basis is non-obvious (a thin Tier-B takes a card on OI+vol with no gap). A null factor → explicit
+"—", never a 0. Verified via `features/brief/fin216.test.tsx` (real zod + real components). Item 8
+(refusal legibility) still blocked on FIN-217 (a served refusal reason) — NOT inferred from nulls.
+
 **FIN-160 (the readiness spine) is PRESERVED UNDER the cockpit and PROVEN against the live API.**
 The `ReadinessScreen` container still owns the data fetch, loading/error (`ScreenState`), a
 **standing manual Refresh** (FIN-174 replaced the on-land auto-refresh), the `already_running`

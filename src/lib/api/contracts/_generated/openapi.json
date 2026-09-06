@@ -2640,6 +2640,28 @@
             ],
             "title": "Liquid Contract Expiry"
           },
+          "oi_gap_sessions": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oi Gap Sessions"
+          },
+          "prior_close_sessions": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prior Close Sessions"
+          },
           "ai_read": {
             "anyOf": [
               {

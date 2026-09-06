@@ -394,7 +394,11 @@ function makeBrief(guardFailed: boolean) {
         name: 'Gold',
         tier: 'A',
         data_tier: 'A',
-        implied_open: null,
+        implied_open: {
+          implied_open_pct: 0.5,
+          intl_change_pct: 0.4,
+          usdinr_change_pct: 0.1,
+        },
         oi_state: 'NEW_SHORTS',
         cot_percentile: 0.06,
         cot_confidence: null, // Tier-A CFTC — verified, no caveat
@@ -403,7 +407,9 @@ function makeBrief(guardFailed: boolean) {
         total_oi: 12045,
         oi_change: -320,
         levels: { support: [140000], resistance: [148000] },
-        factors: { gap: null, oi: 0.5, level: 0.2, vol: 0.1 },
+        factors: { gap: 0.6, oi: 0.5, level: 0.2, vol: 0.1, cot: 0.4 },
+        oi_gap_sessions: 1, // clean overnight — no marker
+        prior_close_sessions: 2, // FIN-216: the price anchor is 2 sessions old
         lme_context: null,
         eia_context: null,
         liquid_contract: 'GOLD26OCTFUT',
@@ -439,7 +445,10 @@ function makeBrief(guardFailed: boolean) {
         total_oi: 763,
         oi_change: -20,
         levels: { support: [], resistance: [] },
-        factors: {},
+        // FIN-200 anomaly: earned a card on OI + vol with NO gap (Tier-B)
+        factors: { gap: null, oi: 1.0, level: 0.782, vol: 0.973, cot: 0.5 },
+        oi_gap_sessions: 3, // FIN-216: a 3-session net change — not overnight
+        prior_close_sessions: null,
         lme_context: 'LME LEAD 3M 1,995 USD/t',
         eia_context: null,
         liquid_contract: 'LEAD26SEPFUT',

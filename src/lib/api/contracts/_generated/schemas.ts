@@ -170,6 +170,8 @@ const ServedInstrument = z.object({
   eia_context: z.union([z.string(), z.null()]).optional(),
   liquid_contract: z.union([z.string(), z.null()]).optional(),
   liquid_contract_expiry: z.union([z.string(), z.null()]).optional(),
+  oi_gap_sessions: z.union([z.number(), z.null()]).optional(),
+  prior_close_sessions: z.union([z.number(), z.null()]).optional(),
   ai_read: z.union([ServedAiRead, z.null()]).optional(),
 })
 const ServedMeta = z

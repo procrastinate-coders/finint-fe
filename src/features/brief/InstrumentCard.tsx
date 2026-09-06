@@ -106,6 +106,11 @@ export function InstrumentCard({ ins, id }: { ins: Instrument; id: string }) {
                 )}
               </p>
             )}
+            {/* FIN-216: oi_state is classified between consecutive STORED bars, so
+                a skipped session turns a multi-day move into a false "overnight".
+                Only the exception speaks — a true T-1 (1 session, or null) stays
+                clean and unmarked. */}
+            <SessionSpan n={ins.oi_gap_sessions} kind="oi" />
           </div>
 
           <div>
@@ -118,12 +123,18 @@ export function InstrumentCard({ ins, id }: { ins: Instrument; id: string }) {
                 no international reference (LME-priced)
               </p>
             ) : (
-              io && (
-                <p className="apex-tabular text-[10.5px] text-apex-fg-tertiary">
-                  intl {formatPct(io.intl_change_pct, { decimals: 2 })} · USD/INR{' '}
-                  {formatPct(io.usdinr_change_pct, { decimals: 2 })}
-                </p>
-              )
+              <>
+                {io && (
+                  <p className="apex-tabular text-[10.5px] text-apex-fg-tertiary">
+                    intl {formatPct(io.intl_change_pct, { decimals: 2 })} ·
+                    USD/INR {formatPct(io.usdinr_change_pct, { decimals: 2 })}
+                  </p>
+                )}
+                {/* FIN-216: the implied open is anchored to the prior CLOSE. When
+                    that close is >1 session old, it is not "yesterday's" — the
+                    FIN-201 mislabel in a new place. */}
+                <SessionSpan n={ins.prior_close_sessions} kind="close" />
+              </>
             )}
           </div>
 
@@ -217,6 +228,13 @@ export function InstrumentCard({ ins, id }: { ins: Instrument; id: string }) {
               </p>
             </div>
           )}
+
+          {/* FIN-200/216: WHY this instrument earned one of the 4 cards. The deep
+              set is 4 of 9, so "why these four" is a real question — and the basis
+              is non-obvious (a thin Tier-B can take a card on OI+vol with no gap).
+              Raw served scores, ordered by weight; the FE never re-derives the
+              rank. All-null → omitted. */}
+          <FactorProfile factors={ins.factors} />
         </div>
 
         {/* PROSE */}
@@ -313,6 +331,91 @@ function RailLabel({ children }: { children: ReactNode }) {
   return (
     <div className="text-[10px] font-medium uppercase tracking-[0.05em] text-apex-fg-tertiary">
       {children}
+    </div>
+  )
+}
+
+/**
+ * FIN-216: a multi-session comparison qualifier. Renders ONLY when the span is
+ * > 1 (a true T-1 stays clean and unmarked; null / 1 → nothing). Amber caution —
+ * the "day-over-day" read is a multi-SESSION net change, never overnight.
+ */
+function SessionSpan({
+  n,
+  kind,
+}: {
+  n: number | null | undefined
+  kind: 'oi' | 'close'
+}) {
+  if (n == null || n <= 1) return null
+  return (
+    <p className="mt-1 flex items-start gap-1 text-[10.5px] leading-[14px] text-apex-yellow">
+      <TriangleAlert className="mt-px size-3 shrink-0" aria-hidden />
+      {kind === 'oi'
+        ? `net change over ${n} sessions — not overnight`
+        : `anchored to a close ${n} sessions old — not yesterday`}
+    </p>
+  )
+}
+
+type Factors = NonNullable<Instrument['factors']>
+// Ordered by the FIN-200 normalised weights so the emphasis isn't arbitrary.
+const FACTOR_ROWS: { key: keyof Factors; label: string }[] = [
+  { key: 'gap', label: 'gap' },
+  { key: 'cot', label: 'cot' },
+  { key: 'oi', label: 'oi' },
+  { key: 'level', label: 'level' },
+  { key: 'vol', label: 'vol' },
+]
+
+/**
+ * FIN-200/216: the scanner's ranking basis — five raw served factor scores in
+ * [0,1], shown as a compact bar profile ordered by weight. The FE renders the
+ * scores; it NEVER re-derives the rank (the backend owns the weighting). A null
+ * factor (Tier-B has no `gap`; a stale continuous series refuses others) reads as
+ * an explicit "—", never a 0 bar. All-null → the block is omitted.
+ */
+function FactorProfile({ factors }: { factors: Factors | null | undefined }) {
+  if (!factors || FACTOR_ROWS.every((f) => factors[f.key] == null)) return null
+  return (
+    <div>
+      <RailLabel>
+        <span title="The scanner's ranking basis (FIN-200), normalised to [0,1]. Weights: gap .333 · cot .259 · oi .222 · level .111 · vol .074.">
+          Rank basis
+        </span>
+      </RailLabel>
+      <div className="mt-1 space-y-1">
+        {FACTOR_ROWS.map(({ key, label }) => {
+          const v = factors[key]
+          return (
+            <div key={key} className="flex items-center gap-2">
+              <span className="w-9 shrink-0 text-[9.5px] uppercase tracking-[0.04em] text-apex-fg-tertiary">
+                {label}
+              </span>
+              {v == null ? (
+                <span className="flex-1 text-[10px] text-apex-fg-tertiary/70">
+                  {DASH}
+                </span>
+              ) : (
+                <>
+                  <span
+                    className="relative h-1 flex-1 overflow-hidden rounded-full bg-apex-tertiary"
+                    aria-hidden
+                  >
+                    <span
+                      className="absolute inset-y-0 left-0 rounded-full bg-apex-fg-secondary"
+                      style={{ width: `${Math.max(0, Math.min(1, v)) * 100}%` }}
+                    />
+                  </span>
+                  <span className="apex-tabular w-7 shrink-0 text-right text-[9.5px] text-apex-fg-tertiary">
+                    {formatNumber(v, { decimals: 2 })}
+                  </span>
+                </>
+              )}
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }
