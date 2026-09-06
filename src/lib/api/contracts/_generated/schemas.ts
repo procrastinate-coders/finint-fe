@@ -172,6 +172,8 @@ const ServedInstrument = z.object({
   liquid_contract_expiry: z.union([z.string(), z.null()]).optional(),
   oi_gap_sessions: z.union([z.number(), z.null()]).optional(),
   prior_close_sessions: z.union([z.number(), z.null()]).optional(),
+  dist_to_support_atr: z.union([z.number(), z.null()]).optional(),
+  dist_to_resistance_atr: z.union([z.number(), z.null()]).optional(),
   ai_read: z.union([ServedAiRead, z.null()]).optional(),
 })
 const ServedMeta = z

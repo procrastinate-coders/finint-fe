@@ -186,3 +186,36 @@ the FE renders it (the honest `RefreshReport` + `already_running` bounded re-rea
 trace also surfaced two BACKEND bugs the CTA does NOT fix (negative freshness-age "Fresh · -53562s
 ago"; macro `on_conflict_do_nothing` reporting `rows: 0` while leaving stale values) — separate
 FININT tickets. Backend: FIN-174, FIN-156.
+
+## FFE-012 — The zod contract is drift-guarded by regenerate-and-compare (FIN-218)
+Status: LOCKED
+Date: 2026-09-06
+Decision: A check regenerates the contract from the backend OpenAPI spec and FAILS on ANY difference
+from the committed `src/lib/api/contracts/_generated/{openapi.json,schemas.ts}`. The generation core
+is shared (`scripts/lib/contracts.mjs`) so the guard reproduces exactly what `gen:contracts` writes;
+`scripts/check-contracts.mjs` runs it in two modes: FRESHNESS (default — regenerate from the backend
+spec via `resolveSpec`, diff both files) and `--self` (regenerate schemas from the committed
+openapi.json copy, diff schemas.ts; no backend dependency). It runs in two places: (1) **CI**
+(`.github/workflows/ci.yml`) checks out `procrastinate-coders/finint`'s committed
+`docs/api/openapi.json` and runs the FRESHNESS check — the un-skippable gate that catches the copy
+going stale vs the backend; (2) **`prebuild`** runs the `--self` check on every `npm run build` +
+Vercel deploy (no backend needed), gating even a CI-bypassing `vercel --prod`. The diff is FULL
+equality (structural for openapi, deterministic byte-compare for schemas), so a RENAME fails, not
+just an addition. FAIL-CLOSED: if the backend spec can't be resolved, the check fails — it never
+passes by being unable to check.
+Rationale: the FE generates zod from a hand-refreshed COMMITTED COPY of the backend spec, and the
+schemas are `.passthrough()` with optional fields (the correct runtime choice — a strict schema
+would crash the app on any backend addition). So an unknown field is silently dropped and a removed
+field reads `undefined`, both indistinguishable from "not sent" — drift is invisible. This bit FOUR
+times in ~seven weeks (lme_context/eia_context unrendered 4 runs; the `cot_stance → cot_stance_label`
+LIVE REGRESSION rendering blank; `oi_gap_sessions`/`prior_close_sessions` a day after a regen; and
+`dist_to_*_atr`, caught by this guard on its FIRST run). Comparing to the backend's COMMITTED spec
+(not live) is sufficient because the backend's own `scripts/dump_openapi.py --check` guarantees its
+committed spec equals live — the chain composes (live ↔ backend-committed ↔ FE-copy ↔ zod) without
+the FE needing a JWT/network. This is the DERIVABLE→EQUALITY half of the drift family (FIN-221 owns
+the non-regenerable prompt half); regeneration becoming a mandatory, visible commit is the point.
+Consequences: schema changes now REQUIRE `npm run gen:contracts` + committing the `_generated/` diff,
+or CI is red. Do NOT make parsing stricter (`.passthrough()` stays — the fix is the check, not the
+runtime). CI needs a read-only token for the finint repo (`FININT_SPEC_TOKEN` secret); absent it the
+guard is red, never skipped. `.passthrough()` runtime honesty (law 12) is unchanged. Backend: FIN-218,
+FIN-213 (`dump_openapi.py --check`), FIN-221 (the prompt half).

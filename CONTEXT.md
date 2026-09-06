@@ -247,6 +247,22 @@ basis is non-obvious (a thin Tier-B takes a card on OI+vol with no gap). A null 
 "—", never a 0. Verified via `features/brief/fin216.test.tsx` (real zod + real components). Item 8
 (refusal legibility) still blocked on FIN-217 (a served refusal reason) — NOT inferred from nulls.
 
+**FIN-218 — the silent-drift class is closed by a regenerate-and-compare guard (FFE-012).** The FE
+zod is generated from a hand-refreshed committed copy of the backend spec + `.passthrough()`, so
+drift was invisible (4× in ~7 weeks). Now: `scripts/lib/contracts.mjs` is the shared generator core
+(`gen:contracts` + the guard produce identical output); `scripts/check-contracts.mjs` regenerates and
+FAILS on any diff (full equality → catches renames, not just additions). Two homes: **CI** (`ci.yml`
+checks out finint's committed `docs/api/openapi.json`, runs the FRESHNESS check — the un-skippable
+gate; needs the `FININT_SPEC_TOKEN` secret, fail-closed without it) and **`prebuild`** (the `--self`
+consistency check, no backend dep, gates every build + Vercel deploy). Live comparison is NOT needed —
+the backend's `dump_openapi.py --check` guarantees its committed spec == live, so the chain composes.
+Proof it works: the guard FAILED on its first run, catching a 4th drift —
+`ServedInstrument.dist_to_support_atr` + `dist_to_resistance_atr` (distance to S/R in ATR units), now
+typed but **UNRENDERED** → a follow-up render ticket (like FIN-213/216), NOT built here. Break-tests
+in `scripts/check-contracts.test.ts` (added field fails · rename fails · match passes · --self
+passes). `.passthrough()` stays (runtime honesty, law 12) — the fix is the check, never stricter
+parsing.
+
 **FIN-160 (the readiness spine) is PRESERVED UNDER the cockpit and PROVEN against the live API.**
 The `ReadinessScreen` container still owns the data fetch, loading/error (`ScreenState`), a
 **standing manual Refresh** (FIN-174 replaced the on-land auto-refresh), the `already_running`

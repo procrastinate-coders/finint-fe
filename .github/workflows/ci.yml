@@ -15,7 +15,34 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+
+      # FIN-218 — contract drift guard (the un-skippable gate). Compare the
+      # committed FE contract against the BACKEND'S COMMITTED spec. The backend's
+      # own `scripts/dump_openapi.py --check` guarantees that committed spec equals
+      # its live API, so the chain composes end to end — live ↔ backend-committed
+      # ↔ FE-copy ↔ zod — WITHOUT the FE needing a live JWT. On any drift the build
+      # goes red; the fix is `npm run gen:contracts` + commit the _generated/ diff.
+      #
+      # Needs a read-only token for procrastinate-coders/finint (a PAT or GitHub
+      # App token in the FININT_SPEC_TOKEN secret). If it is missing, this step
+      # FAILS — the guard is fail-closed, never silently skipped.
+      - name: Check out the backend OpenAPI spec
+        uses: actions/checkout@v4
+        with:
+          repository: procrastinate-coders/finint
+          ref: main
+          path: .backend-spec
+          sparse-checkout: docs/api/openapi.json
+          sparse-checkout-cone-mode: false
+          token: ${{ secrets.FININT_SPEC_TOKEN }}
+      - name: Contract drift check (FIN-218)
+        run: npm run check:contracts
+        env:
+          FININT_OPENAPI_FILE: .backend-spec/docs/api/openapi.json
+
       - run: npm run typecheck
       - run: npm run lint
       - run: npm test
+      # `npm run build` also runs the `prebuild` self-consistency check (no backend
+      # dependency), so a CI-bypassing `vercel --prod` deploy is still gated.
       - run: npm run build

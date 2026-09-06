@@ -2662,6 +2662,28 @@
             ],
             "title": "Prior Close Sessions"
           },
+          "dist_to_support_atr": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dist To Support Atr"
+          },
+          "dist_to_resistance_atr": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dist To Resistance Atr"
+          },
           "ai_read": {
             "anyOf": [
               {
