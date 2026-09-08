@@ -69,3 +69,21 @@ export function istDateTime(iso: string | null | undefined): string {
   const d = parse(iso)
   return d ? `${dateShortFmt.format(d)}, ${timeFmt.format(d)}` : DASH
 }
+
+// "YYYY-MM-DD" in IST — the API's own date-path format. en-CA is used purely
+// because it formats as ISO; the locale never reaches the screen.
+const isoDateFmt = new Intl.DateTimeFormat('en-CA', {
+  timeZone: IST,
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+})
+
+/**
+ * Today's date in IST as "YYYY-MM-DD", for building a date-path link.
+ * ⚠️ The board runs on IST, so "today" must be IST's today — a viewer west of
+ * Kolkata after 18:30 UTC would otherwise link to yesterday's run.
+ */
+export function istToday(now: Date = new Date()): string {
+  return isoDateFmt.format(now)
+}

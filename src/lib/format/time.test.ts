@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { istClock, istDate, istDateTime, istTime, DASH } from './time'
+import { istClock, istDate, istDateTime, istTime, istToday, DASH } from './time'
 
 describe('IST time formatting — every operator-facing time is IST', () => {
   it('istTime renders HH:MM in IST regardless of the input offset', () => {
@@ -27,5 +27,18 @@ describe('IST time formatting — every operator-facing time is IST', () => {
     expect(istTime('not-a-date')).toBe(DASH)
     expect(istDate(null)).toBe(DASH)
     expect(istDateTime(undefined)).toBe(DASH)
+  })
+})
+
+describe('istToday — the date-path a nav link is built from (FIN-231)', () => {
+  it('is the BOARD\'s day, not the viewer\'s — it rolls at 00:00 IST', () => {
+    // 18:29Z is still 23:59 IST on the 7th; one minute later it is the 8th.
+    expect(istToday(new Date('2026-09-07T18:29:00Z'))).toBe('2026-09-07')
+    expect(istToday(new Date('2026-09-07T18:31:00Z'))).toBe('2026-09-08')
+  })
+
+  it('is YYYY-MM-DD — the shape GET /agent-run/{date} takes', () => {
+    expect(istToday(new Date('2026-01-05T06:00:00Z'))).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+    expect(istToday(new Date('2026-01-05T06:00:00Z'))).toBe('2026-01-05')
   })
 })

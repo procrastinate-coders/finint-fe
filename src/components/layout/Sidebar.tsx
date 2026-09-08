@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
-import { Clock, FileText, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
+import { Bot, Clock, FileText, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import { Glass, BrandMark, Wordmark } from '@/design-system'
+import { istToday } from '@/lib/format'
 import { cn } from '@/lib/utils'
 
 // Only routes that EXIST are linked (typed Links).
@@ -13,10 +14,25 @@ interface NavItem {
 
 // ONE destination (FIN-172): the home IS the Morning brief — the cockpit is its
 // "not yet" state. No separate Brief tab; you reach the read via "View brief".
-const NAV: NavItem[] = [
-  { to: '/', label: 'Morning brief', icon: FileText, exact: true },
-  { to: '/history', label: 'History', icon: Clock },
-]
+//
+// FIN-231: **Agent run** joins them, third — deliberately BELOW the brief and its
+// history. It is a SECOND read on the board Father has already read above, so it
+// reads as a companion to the brief rather than a rival destination; putting it
+// first would invite it to be read as the primary morning read, which it is not.
+// It is a paper pipeline that decides nothing.
+//
+// The link is date-addressed at today (IST — the board's own day, so a viewer
+// west of Kolkata after 18:30 UTC does not land on yesterday). On a morning the
+// harness did not run, the route answers 404 and the page says exactly that,
+// distinguishing it from a gate refusal — which is the honest degrade, not a
+// dead link.
+function navItems(): NavItem[] {
+  return [
+    { to: '/', label: 'Morning brief', icon: FileText, exact: true },
+    { to: '/history', label: 'History', icon: Clock },
+    { to: `/agent-run/${istToday()}`, label: 'Agent run', icon: Bot },
+  ]
+}
 
 /**
  * The glass sidebar. Two responsive modes:
@@ -65,7 +81,7 @@ export function Sidebar({
       </div>
 
       <nav className="flex flex-1 flex-col gap-0.5 px-3 py-2">
-        {NAV.map(({ to, label, icon: Icon, exact }) => (
+        {navItems().map(({ to, label, icon: Icon, exact }) => (
           <Link
             key={to}
             to={to}

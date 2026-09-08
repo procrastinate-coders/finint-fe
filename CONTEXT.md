@@ -263,6 +263,60 @@ in `scripts/check-contracts.test.ts` (added field fails · rename fails · match
 passes). `.passthrough()` stays (runtime honesty, law 12) — the fix is the check, never stricter
 parsing.
 
+**FIN-227 / FIN-231 / FIN-228 Stream C — the Agent Run view (`/agent-run/:date`).** A SECOND read on
+the same board, from the laptop harness (SAD §3.3), built for COMPARISON against the API brief. The
+endpoint is LIVE and the contract is **GENERATED** (the provisional hand-authored
+`contracts/agent-run.ts` is DELETED — that is FFE-004's whole point).
+🔴 **THE STATUS-CODE RULE: 404 = no run was landed; a gate refusal is a 200 with `gate.ok:false` and
+an empty `stages[]`.** Two different pages, both tested.
+⚠️ **GROUPED BY INSTRUMENT, NOT BY ANALYST** (FIN-228). Four analysts x nine instruments = 36 reads;
+each instrument card carries ONE board-facts strip and all four views beneath it. Reasons: (1) the
+value of a second pipeline is where its readers DISAGREE about the same instrument, and a
+disagreement eight screens apart is unusable; (2) the board facts are per instrument, so grouped this
+way they render once instead of four times or none; (3) a missing analyst is visible nine times
+instead of once. What is genuinely per-analyst — `board_note`, the crossmarket `backdrop`, the news
+`macro`/`catalysts` — is rendered in its own board-level section BELOW the instruments, grouped by
+analyst. Grouping follows what the thing IS.
+⚠️ **THE ROSTER (`ANALYSTS` in report-shape.ts) MAKES ABSENCE VISIBLE — and must never make an
+ADDITION invisible.** The page renders against the expected four, so three reads never pass for four
+(FIN-198's shape); `specsForRun()` ALSO renders any analyst not on the roster, with whatever prose
+fields it wrote, because a hardcoded list that silently drops a new arrival is law 5's failure in a
+new place. Every absence is typed: rejected / did not land / unreadable / landed-but-uncovered.
+⚠️ **A QUARANTINED REPORT IS NOT CONTENT.** `.bad` name + `status:"failed"` are welded by a database
+CHECK (FIN-231 G3); EITHER signal is treated as rejected, and the body is never rendered.
+⚠️ **FIN-228 Stream A fields are NOT SERVED YET.** `push_agent_run.BOARD_FIELDS` ships 9 keys; the
+four analysts cite 34, all already in the scan bundle. `stream-a-fields.ts` reads them off the board
+row's `.passthrough()` — DELETE it once BOARD_FIELDS is extended and the contract regenerated. The
+board-level `ratios` block is not served at any level either.
+⚠️ **THE PREMIUM Z NEVER RENDERS WITHOUT ITS WINDOW** (`premiumReading()`): the window is per
+instrument (GOLD 196, SILVER 216) against a 180 floor, so a bare z is FIN-215's defect again. A z
+with no window is WITHHELD and named as withheld. A ratio's `value` (today's actual contracts) and
+its `percentile` (250 back-adjusted CONTINUOUS sessions) are labelled apart, with `basis` verbatim.
+⚠️ **UNIT TRAP: a `_pct` suffix does not mean one thing.** `implied_open_pct` (1.1776) and
+`intl_change_pct` are already percentages → `formatPct`; `premium_pct` (-0.0081) is a FRACTION →
+`formatFractionPct`. Confirmed off the crossmarket analyst's own prose on two instruments. Shares
+(`next_oi_share`) use `formatSharePct` — UNSIGNED, because a share has no direction.
+⚠️ **A REFUSED GATE DOES NOT MEAN NOTHING RAN.** The real 2026-09-08 run refused (9/9 closes
+unsettled) and landed all four analysts anyway; `GatePanel` takes `stagesLanded` and says "the gate
+refused, and N stages landed regardless — read it against this refusal" rather than the false "no
+agents ran".
+⚠️ `stages[].report` is an OPAQUE object in the spec, so its readers live in
+`features/agent-run/report-shape.ts`, deliberately NOT in `contracts/`, and are `safeParse`d at use.
+Fixtures are REAL served payloads built by the harness's own `gather()` over the real
+`runs/2026-09-0{4,5,8}` artifacts; `served-four-narrow-board.json` is what the endpoint serves TODAY
+and keeps the "not served" paths under test. ⚠️ The page is only PROVISIONALLY verified for the wide
+board — re-verify against a real run once BOARD_FIELDS ships.
+⚠️ **A DECISION COUNT IS NOT A CLAIM COUNT** (FIN-232, shipped after the FIN-231 report flagged it).
+`GuardDecision.claims[]` + `claim_count` and `GuardSummary.denied`/`claim_count` are now in the
+contract; one deny carried FOUR ungrounded claims and read as "1 denied". GuardPanel shows
+"N denied (M claims)" and lists each claim (instrument · field · found · expected_prose). ⚠️ The raw
+`expected` level array is deliberately NOT rendered — 14 floats bury the claim they support.
+⚠️ **The guard WRITER does not emit `claims` yet**, so a real denial arrives with `claim_count: 0`;
+a zero is never printed as "(0 claims)" — that would say the denial rested on nothing.
+NAV: **Agent run** is the third sidebar item, date-addressed at `istToday()` (IST — the board's day).
+⚠️ The generator needed a Zod-v4 fixup: openapi-zod-client emits v3 `z.record(V)`; v4 needs
+`z.record(k, v)` — patched in `scripts/lib/contracts.mjs` so gen + check stay byte-identical.
+
 **FIN-160 (the readiness spine) is PRESERVED UNDER the cockpit and PROVEN against the live API.**
 The `ReadinessScreen` container still owns the data fetch, loading/error (`ScreenState`), a
 **standing manual Refresh** (FIN-174 replaced the on-land auto-refresh), the `already_running`

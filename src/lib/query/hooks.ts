@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   generate,
+  getAgentRun,
   getBrief,
   getBriefToday,
   getBriefs,
@@ -21,6 +22,7 @@ export const queryKeys = {
   briefToday: ['brief', 'today'] as const,
   brief: (date: string) => ['brief', date] as const,
   briefs: ['briefs'] as const,
+  agentRun: (date: string) => ['agent-run', date] as const,
 }
 
 /** A generate/status run is finished when it reaches one of these. */
@@ -151,5 +153,16 @@ export function useBriefs() {
     queryKey: queryKeys.briefs,
     queryFn: ({ signal }) => getBriefs(signal),
     staleTime: 60 * 1000,
+  })
+}
+
+/**
+ * GET /agent-run/{date} — the harness run for one date (FIN-227 Stream C). A gate
+ * refusal is a SUCCESSFUL response carrying its reason, never an error state.
+ */
+export function useAgentRun(date: string) {
+  return useQuery({
+    queryKey: queryKeys.agentRun(date),
+    queryFn: ({ signal }) => getAgentRun(date, signal),
   })
 }

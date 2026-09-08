@@ -73,5 +73,26 @@ export const briefListItem = schemas.BriefListItem
 export type ServedBrief = z.infer<typeof schemas.ServedBrief>
 export type BriefListItem = z.infer<typeof schemas.BriefListItem>
 
+// --- agent run (FIN-227 Stream C / FIN-231) ------------------------------
+// GENERATED. The provisional hand-authored ./agent-run (the FFE-008 exception,
+// carried only while GET /agent-run/{date} was unbuilt) is DELETED now that the
+// endpoint is in the spec — a hand-written contract living beside a generated
+// one is how the two drift apart, which is the whole point of FFE-004.
+//
+// ⚠️ EVERY FIELD IS OPTIONAL (the backend models them that way on purpose, so
+// the page lights up as fields start being served). That is a licence to render
+// "not recorded", NEVER to substitute a zero or a default (law 1).
+//
+// ⚠️ `AgentRunStage.report` is an OPAQUE object in the spec — the agent's own
+// report body is not contract-typed. Its reader lives in the feature
+// (features/agent-run/report-shape.ts), not here, so nothing implies the API
+// guarantees that shape.
+export const agentRunResponse = schemas.AgentRunResponse
+export type AgentRunResponse = z.infer<typeof schemas.AgentRunResponse>
+export type AgentRunGate = z.infer<typeof schemas.AgentRunGate>
+export type AgentRunStage = z.infer<typeof schemas.AgentRunStage>
+export type AgentRunBoardRow = z.infer<typeof schemas.AgentRunBoardRow>
+export type GuardDecision = z.infer<typeof schemas.GuardDecision>
+
 // --- error (hand-authored — the {detail} envelope isn't in the spec) -----
 export * from './error'

@@ -1,0 +1,365 @@
+{
+  "run_date": "2026-09-05",
+  "run_id": "2026-09-05-095304",
+  "board_date": "2026-09-05",
+  "api_brief_run_id": "aa967a32a185",
+  "gate": {
+    "board_date": "2026-09-05",
+    "checks": [
+      {
+        "detail": "9 instruments on the board (need >= 9)",
+        "name": "instrument_count",
+        "ok": true
+      },
+      {
+        "detail": "0/9 closes unsettled",
+        "name": "any_settled_close",
+        "ok": true
+      },
+      {
+        "detail": "0/9 continuous series stale by > 3 sessions \u2014 max 0",
+        "name": "any_fresh_continuous",
+        "ok": true
+      }
+    ],
+    "instruments": 9,
+    "ok": true,
+    "reason": "board healthy",
+    "stale": [],
+    "unsettled": [],
+    "checked_at": "2026-09-05T07:00:00+00:00"
+  },
+  "board": [
+    {
+      "instrument": "ALUMINIUM",
+      "data_tier": "B",
+      "oi_state": "SHORT_COVERING",
+      "total_oi": 4365,
+      "oi_change": -84,
+      "oi_gap_sessions": 3,
+      "oi_gap_label": "over 3 sessions",
+      "cot_percentile": 0.8729,
+      "cot_confidence": "weak correlation to price",
+      "implied_open_pct": null
+    },
+    {
+      "instrument": "COPPER",
+      "data_tier": "A",
+      "oi_state": "LONG_LIQUIDATION",
+      "total_oi": 10997,
+      "oi_change": -540,
+      "oi_gap_sessions": 3,
+      "oi_gap_label": "over 3 sessions",
+      "cot_percentile": 0.0,
+      "cot_confidence": null,
+      "implied_open_pct": 0.5004785509158616
+    },
+    {
+      "instrument": "CRUDEOIL",
+      "data_tier": "A",
+      "oi_state": "NEW_LONGS",
+      "total_oi": 17306,
+      "oi_change": 7029,
+      "oi_gap_sessions": 3,
+      "oi_gap_label": "over 3 sessions",
+      "cot_percentile": 0.0757,
+      "cot_confidence": null,
+      "implied_open_pct": 0.7951188268787712
+    },
+    {
+      "instrument": "GOLD",
+      "data_tier": "A",
+      "oi_state": "LONG_LIQUIDATION",
+      "total_oi": 10693,
+      "oi_change": -329,
+      "oi_gap_sessions": 3,
+      "oi_gap_label": "over 3 sessions",
+      "cot_percentile": 0.0,
+      "cot_confidence": null,
+      "implied_open_pct": 1.1775973475874446
+    },
+    {
+      "instrument": "LEAD",
+      "data_tier": "B",
+      "oi_state": "NEW_SHORTS",
+      "total_oi": 763,
+      "oi_change": 177,
+      "oi_gap_sessions": 3,
+      "oi_gap_label": "over 3 sessions",
+      "cot_percentile": 0.0,
+      "cot_confidence": "correlation to price unverified",
+      "implied_open_pct": null
+    },
+    {
+      "instrument": "NATURALGAS",
+      "data_tier": "A",
+      "oi_state": "SHORT_COVERING",
+      "total_oi": 34072,
+      "oi_change": -6905,
+      "oi_gap_sessions": 3,
+      "oi_gap_label": "over 3 sessions",
+      "cot_percentile": 0.9075,
+      "cot_confidence": null,
+      "implied_open_pct": -0.10396359042219583
+    },
+    {
+      "instrument": "NICKEL",
+      "data_tier": "B",
+      "oi_state": null,
+      "total_oi": 449,
+      "oi_change": null,
+      "oi_gap_sessions": 4,
+      "oi_gap_label": "over 4 sessions",
+      "cot_percentile": 0.0942,
+      "cot_confidence": "correlation to price unverified",
+      "implied_open_pct": null
+    },
+    {
+      "instrument": "SILVER",
+      "data_tier": "A",
+      "oi_state": "NEW_SHORTS",
+      "total_oi": 12674,
+      "oi_change": 4392,
+      "oi_gap_sessions": 3,
+      "oi_gap_label": "over 3 sessions",
+      "cot_percentile": 0.2873,
+      "cot_confidence": null,
+      "implied_open_pct": 0.9384852665945465
+    },
+    {
+      "instrument": "ZINC",
+      "data_tier": "B",
+      "oi_state": "NEW_LONGS",
+      "total_oi": 2673,
+      "oi_change": 97,
+      "oi_gap_sessions": 3,
+      "oi_gap_label": "over 3 sessions",
+      "cot_percentile": 0.615,
+      "cot_confidence": null,
+      "implied_open_pct": null
+    }
+  ],
+  "guard": {
+    "lines": 3,
+    "sha256": "847881b18d149af1621d0519061a28ab09517afb818d23440aaa9bb3a22e104d",
+    "decisions": [
+      {
+        "decision": "deny",
+        "reason": "CRUDEOIL: ungrounded 0.0757 in `cot_read` \u2014 expected a scan level [-4450.0, 0.44222962962962964, 0.8486, 1.0, 3.0, 94.4604, 270.0, 6997.0, 7029.0, 8497.0, 8767.0, 8836.708067552461, 17306.0, 424460.0]; NATURALGAS: ungrounded 0.9075 in `cot_read` \u2014 expected a scan level [-6905.0, 0.32240740740740736, 0.5, 0.815, 3.0, 5.0, 5.5, 15.0, 94.4604, 257.8, 277.8, 283.0054711483339, 283.3, 3184.0, 34072.0]; ZINC: ungrounded 0.615 in `cot_read` \u2014 expected a scan level [-1.3486005089058506, 0.16154714998686628, 0.22999999999999998, 0.458628841607565, 1.150000000000034, 3.0, 7.0, 35.799999999999955, 94.4604, 97.0, 377.35, 413.15, 414.3, 2673.0, 3877.0]; ALUMINIUM: ungrounded 0.8729 in `cot_read` \u2014 expected a scan level [-84.0, 0.12274719922065269, 0.12395493316014504, 0.3729, 0.3856834310397961, 3.0, 8.0, 8.899999999999977, 9.800000000000011, 94.4604, 339.25, 348.15, 357.95, 3253.5, 4365.0]",
+        "agent_id": "a9143150ded91c504",
+        "ts": "2026-09-07T10:13:53.629+00:00",
+        "path": "/Users/uditgarg/Personel/Procrastinate Coder/finint/runs/2026-09-05/analyst_positioning.json"
+      },
+      {
+        "decision": "allow",
+        "reason": "every number traces to the board",
+        "agent_id": "a9143150ded91c504",
+        "ts": "2026-09-07T10:17:23.957+00:00",
+        "path": "/Users/uditgarg/Personel/Procrastinate Coder/finint/runs/2026-09-05/analyst_positioning.json"
+      },
+      {
+        "decision": "allow",
+        "reason": "every number traces to the board",
+        "agent_id": "orchestrator-recheck",
+        "ts": "2026-09-07T10:18:58.947+00:00",
+        "path": "runs/2026-09-05/analyst_positioning.json"
+      }
+    ]
+  },
+  "audit": {
+    "lines": 1,
+    "sha256": "4d37b0df6140ea0b065d22ac687c4c804b09ec3872f8cfc552b09f5a8ec83598"
+  },
+  "transcripts": [],
+  "stages": [
+    {
+      "stage": "analyst",
+      "agent": "analyst_positioning",
+      "seq": 1,
+      "created_at": "2026-09-05T07:05:00+00:00",
+      "report_sha256": "49f9027b69d23ee4347f18aa27bdbaad08a1e7bbc60d375ec996e31960e50e3e",
+      "report": {
+        "agent": "positioning-analyst",
+        "run_date": "2026-09-05",
+        "instruments": [
+          {
+            "instrument": "GOLD",
+            "oi_state": "LONG_LIQUIDATION",
+            "oi_read": "OI fell by 329 contracts to a total of 10,693 over the board's 3-session comparison window \u2014 a modest reduction relative to the book, consistent with LONG_LIQUIDATION: longs giving up, not fresh selling.",
+            "cot_read": "COT percentile is 0.0 \u2014 the extreme bottom of GOLD's historical range, a genuine positioning extreme.",
+            "divergence": "LONG_LIQUIDATION pairs with a falling price over the multi-session window, yet the overnight implied_open_pct is +1.18% \u2014 up. The multi-session positioning read and the overnight move point in opposite directions; the board does not reconcile this.",
+            "refused": [],
+            "sources": [
+              "oi_state",
+              "oi_change",
+              "total_oi",
+              "oi_gap_sessions",
+              "cot_percentile",
+              "implied_open_pct"
+            ]
+          },
+          {
+            "instrument": "SILVER",
+            "oi_state": "NEW_SHORTS",
+            "oi_read": "OI rose by 4,392 contracts to a total of 12,674 over the board's 3-session comparison window \u2014 a large build relative to the book, consistent with NEW_SHORTS: fresh money selling, not shorts already in place unwinding elsewhere.",
+            "cot_read": "COT percentile sits below the midpoint of SILVER's historical range \u2014 unremarkable, not a positioning extreme.",
+            "divergence": "NEW_SHORTS pairs with a falling price over the multi-session window, yet the overnight implied_open_pct is +0.94% \u2014 up. The positioning read and the overnight move disagree; the board does not reconcile this.",
+            "refused": [],
+            "sources": [
+              "oi_state",
+              "oi_change",
+              "total_oi",
+              "oi_gap_sessions",
+              "cot_percentile",
+              "implied_open_pct"
+            ]
+          },
+          {
+            "instrument": "CRUDEOIL",
+            "oi_state": "NEW_LONGS",
+            "oi_read": "OI rose by 7,029 contracts to a total of 17,306 over the board's 3-session comparison window \u2014 the largest OI build on the ranked board, consistent with NEW_LONGS: fresh conviction buying, not short-covering.",
+            "cot_read": "COT percentile sits near the bottom of CRUDEOIL's historical range \u2014 a meaningful positioning extreme.",
+            "divergence": null,
+            "refused": [],
+            "sources": [
+              "oi_state",
+              "oi_change",
+              "total_oi",
+              "oi_gap_sessions",
+              "cot_percentile"
+            ]
+          },
+          {
+            "instrument": "NATURALGAS",
+            "oi_state": "SHORT_COVERING",
+            "oi_read": "OI fell by 6,905 contracts to a total of 34,072 over the board's 3-session comparison window \u2014 a sizable contraction, consistent with SHORT_COVERING: shorts being forced out, not fresh buying.",
+            "cot_read": "COT percentile sits near the top of NATURALGAS's historical range \u2014 a genuine positioning extreme.",
+            "divergence": "SHORT_COVERING pairs with a rising price over the multi-session window, yet the overnight implied_open_pct is -0.10% \u2014 down, though only marginally. The positioning read and the overnight move point in opposite directions, however small the overnight move; the board does not reconcile this.",
+            "refused": [],
+            "sources": [
+              "oi_state",
+              "oi_change",
+              "total_oi",
+              "oi_gap_sessions",
+              "cot_percentile",
+              "implied_open_pct"
+            ]
+          },
+          {
+            "instrument": "COPPER",
+            "oi_state": "LONG_LIQUIDATION",
+            "oi_read": "OI fell by 540 contracts to a total of 10,997 over the board's 3-session comparison window \u2014 a modest reduction, consistent with LONG_LIQUIDATION: longs giving up, not fresh selling.",
+            "cot_read": "COT percentile is 0.0 \u2014 the extreme bottom of the historical range, a genuine positioning extreme.",
+            "divergence": "LONG_LIQUIDATION pairs with a falling price over the multi-session window, yet the overnight implied_open_pct is +0.50% \u2014 up. The positioning read and the overnight move disagree; the board does not reconcile this.",
+            "refused": [],
+            "sources": [
+              "oi_state",
+              "oi_change",
+              "total_oi",
+              "oi_gap_sessions",
+              "cot_percentile",
+              "implied_open_pct"
+            ]
+          },
+          {
+            "instrument": "ZINC",
+            "oi_state": "NEW_LONGS",
+            "oi_read": "Tier B \u2014 honestly lighter, no international reference leg. OI rose by 97 contracts to a total of 2,673 over the board's 3-session comparison window \u2014 a small build, consistent with NEW_LONGS: fresh buying.",
+            "cot_read": "COT percentile sits above the midpoint of ZINC's historical range but not at an extreme \u2014 unremarkable.",
+            "divergence": null,
+            "refused": [
+              "implied_open_pct"
+            ],
+            "sources": [
+              "oi_state",
+              "oi_change",
+              "total_oi",
+              "oi_gap_sessions",
+              "cot_percentile"
+            ]
+          },
+          {
+            "instrument": "ALUMINIUM",
+            "oi_state": "SHORT_COVERING",
+            "oi_read": "Tier B \u2014 honestly lighter, no international reference leg. OI fell by 84 contracts to a total of 4,365 over the board's 3-session comparison window \u2014 a very small contraction, consistent with SHORT_COVERING: shorts being forced out.",
+            "cot_read": "COT percentile sits near the top of ALUMINIUM's historical range \u2014 a positioning extreme, but the board itself flags 'weak correlation to price' for this series \u2014 a caveat on how much weight the extremity carries.",
+            "divergence": null,
+            "refused": [
+              "implied_open_pct"
+            ],
+            "sources": [
+              "oi_state",
+              "oi_change",
+              "total_oi",
+              "oi_gap_sessions",
+              "cot_percentile",
+              "cot_confidence"
+            ]
+          },
+          {
+            "instrument": "LEAD",
+            "oi_state": "NEW_SHORTS",
+            "oi_read": "Tier B \u2014 honestly lighter, no international reference leg. OI rose by 177 contracts to a total of 763 over the board's 3-session comparison window \u2014 a large build relative to LEAD's thin book, consistent with NEW_SHORTS: fresh selling.",
+            "cot_read": "COT percentile is 0.0 \u2014 the extreme bottom of the historical range, but the board flags 'correlation to price unverified' for this series \u2014 the extremity's reliability is itself an open question.",
+            "divergence": null,
+            "refused": [
+              "implied_open_pct"
+            ],
+            "sources": [
+              "oi_state",
+              "oi_change",
+              "total_oi",
+              "oi_gap_sessions",
+              "cot_percentile",
+              "cot_confidence"
+            ]
+          },
+          {
+            "instrument": "NICKEL",
+            "oi_state": null,
+            "oi_read": "Tier B \u2014 honestly lighter, no international reference leg. The board declines to name an OI state \u2014 the comparison spans 4 sessions (oi_gap_sessions: 4), too wide a gap to characterize as any of the four states, and oi_change is not stated. Total OI stands at 449 contracts, the thinnest book on the entire ranked board.",
+            "cot_read": "COT percentile sits near the bottom of NICKEL's historical range, but the board flags 'correlation to price unverified' for this series \u2014 the extremity's reliability is itself an open question.",
+            "divergence": null,
+            "refused": [
+              "oi_state",
+              "oi_change",
+              "implied_open_pct"
+            ],
+            "sources": [
+              "oi_gap_sessions",
+              "total_oi",
+              "cot_percentile",
+              "cot_confidence"
+            ]
+          }
+        ]
+      },
+      "status": "ok",
+      "model": "claude-sonnet-4-6",
+      "tokens_estimated": 1712
+    },
+    {
+      "stage": "analyst",
+      "agent": "analyst_bear.bad",
+      "seq": 2,
+      "created_at": "2026-09-05T07:09:00+00:00",
+      "report_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "report": {
+        "agent": "bear",
+        "run_date": "2026-09-05",
+        "instruments": [
+          {
+            "instrument": "SILVER",
+            "oi_state": "NEW_SHORTS",
+            "oi_read": "OI rose 12.4% on a 3.1% break \u2014 an ungrounded number the guard denied.",
+            "cot_read": "COT sits at the 97th percentile.",
+            "divergence": "Positioning and price disagree sharply."
+          }
+        ]
+      },
+      "status": "failed",
+      "model": "claude-sonnet-4-6",
+      "tokens_estimated": 980
+    }
+  ]
+}

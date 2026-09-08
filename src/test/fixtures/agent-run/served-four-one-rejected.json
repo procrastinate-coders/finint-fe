@@ -1,0 +1,1237 @@
+{
+  "run_date": "2026-09-08",
+  "run_id": "2026-09-08-123710",
+  "board_date": "2026-09-08",
+  "api_brief_run_id": null,
+  "gate": {
+    "board_date": "2026-09-08",
+    "checks": [
+      {
+        "detail": "9 instruments on the board (need >= 9)",
+        "name": "instrument_count",
+        "ok": true
+      },
+      {
+        "detail": "9/9 closes unsettled \u2014 ['ALUMINIUM', 'COPPER', 'CRUDEOIL', 'GOLD', 'LEAD', 'NATURALGAS', 'NICKEL', 'SILVER', 'ZINC']",
+        "name": "any_settled_close",
+        "ok": false
+      },
+      {
+        "detail": "0/9 continuous series stale by > 3 sessions \u2014 max 0",
+        "name": "any_fresh_continuous",
+        "ok": true
+      }
+    ],
+    "instruments": 9,
+    "ok": false,
+    "reason": "9/9 closes unsettled \u2014 ['ALUMINIUM', 'COPPER', 'CRUDEOIL', 'GOLD', 'LEAD', 'NATURALGAS', 'NICKEL', 'SILVER', 'ZINC']",
+    "stale": [],
+    "unsettled": [
+      "ALUMINIUM",
+      "COPPER",
+      "CRUDEOIL",
+      "GOLD",
+      "LEAD",
+      "NATURALGAS",
+      "NICKEL",
+      "SILVER",
+      "ZINC"
+    ]
+  },
+  "board": [
+    {
+      "instrument": "ALUMINIUM",
+      "data_tier": "B",
+      "oi_state": "SHORT_COVERING",
+      "total_oi": 4253,
+      "oi_change": -123,
+      "oi_gap_sessions": 2,
+      "oi_gap_label": "over 2 sessions",
+      "cot_percentile": 0.9311,
+      "cot_confidence": "weak correlation to price",
+      "implied_open_pct": null,
+      "term_structure": "backwardation",
+      "near_next_spread": -0.7999999999999545,
+      "near_next_spread_change": -0.6499999999999773,
+      "spread_basis": "ALUMINIUM26OCTFUT minus ALUMINIUM26SEPFUT",
+      "next_oi_share": 0.13993933265925176,
+      "sessions_to_expiry": 16,
+      "roll_basis": "ALUMINIUM26OCTFUT OI over ALUMINIUM26SEPFUT + ALUMINIUM26OCTFUT",
+      "premium_pct": null,
+      "premium_z": null,
+      "premium_window": 0,
+      "premium_basis": "not applicable \u2014 the premium is a bullion parity calculation",
+      "support_level": 342.5,
+      "resistance_level": 359.0,
+      "dist_to_support": 8.899999999999977,
+      "dist_to_resistance": 7.600000000000023,
+      "dist_to_support_atr": 2.0923593618807668,
+      "dist_to_resistance_atr": 1.786733837111676,
+      "atr": 4.253571428571429,
+      "atr_avg": 5.19130952380952,
+      "cont_stale_sessions": 0,
+      "intl_change_pct": null,
+      "usdinr_change_pct": null
+    },
+    {
+      "instrument": "COPPER",
+      "data_tier": "A",
+      "oi_state": "NEW_LONGS",
+      "total_oi": 11167,
+      "oi_change": 463,
+      "oi_gap_sessions": 2,
+      "oi_gap_label": "over 2 sessions",
+      "cot_percentile": 0.104,
+      "cot_confidence": null,
+      "implied_open_pct": null,
+      "term_structure": "contango",
+      "near_next_spread": 6.0499999999999545,
+      "near_next_spread_change": -1.75,
+      "spread_basis": "COPPER26OCTFUT minus COPPER26SEPFUT",
+      "next_oi_share": 0.1444878571975791,
+      "sessions_to_expiry": 16,
+      "roll_basis": "COPPER26OCTFUT OI over COPPER26SEPFUT + COPPER26OCTFUT",
+      "premium_pct": null,
+      "premium_z": null,
+      "premium_window": 0,
+      "premium_basis": "not applicable \u2014 the premium is a bullion parity calculation",
+      "support_level": 1361.1,
+      "resistance_level": 1407.9,
+      "dist_to_support": 40.600000000000136,
+      "dist_to_resistance": 6.2000000000000455,
+      "dist_to_support_atr": 2.7379576107899823,
+      "dist_to_resistance_atr": 0.4181117533718709,
+      "atr": 14.82857142857147,
+      "atr_avg": 16.832380952380987,
+      "cont_stale_sessions": 0,
+      "intl_change_pct": null,
+      "usdinr_change_pct": null
+    },
+    {
+      "instrument": "CRUDEOIL",
+      "data_tier": "A",
+      "oi_state": "NEW_LONGS",
+      "total_oi": 18954,
+      "oi_change": 1660,
+      "oi_gap_sessions": 2,
+      "oi_gap_label": "over 2 sessions",
+      "cot_percentile": 0.5544,
+      "cot_confidence": null,
+      "implied_open_pct": null,
+      "term_structure": "backwardation",
+      "near_next_spread": -289.0,
+      "near_next_spread_change": 10.0,
+      "spread_basis": "CRUDEOIL26OCTFUT minus CRUDEOIL26SEPFUT",
+      "next_oi_share": 0.15459411239964319,
+      "sessions_to_expiry": 9,
+      "roll_basis": "CRUDEOIL26OCTFUT OI over CRUDEOIL26SEPFUT + CRUDEOIL26OCTFUT",
+      "premium_pct": null,
+      "premium_z": null,
+      "premium_window": 0,
+      "premium_basis": "not applicable \u2014 the premium is a bullion parity calculation",
+      "support_level": 8774.0,
+      "resistance_level": null,
+      "dist_to_support": 135.0,
+      "dist_to_resistance": null,
+      "dist_to_support_atr": 0.4872389791183295,
+      "dist_to_resistance_atr": null,
+      "atr": 277.07142857142856,
+      "atr_avg": 368.5547619047619,
+      "cont_stale_sessions": 0,
+      "intl_change_pct": null,
+      "usdinr_change_pct": null
+    },
+    {
+      "instrument": "GOLD",
+      "data_tier": "A",
+      "oi_state": "NEW_SHORTS",
+      "total_oi": 10461,
+      "oi_change": 48,
+      "oi_gap_sessions": 2,
+      "oi_gap_label": "over 2 sessions",
+      "cot_percentile": 0.042,
+      "cot_confidence": null,
+      "implied_open_pct": null,
+      "term_structure": "contango",
+      "near_next_spread": 1527.0,
+      "near_next_spread_change": -268.0,
+      "spread_basis": "GOLD26DECFUT minus GOLD26OCTFUT",
+      "next_oi_share": 0.4498553773336839,
+      "sessions_to_expiry": 18,
+      "roll_basis": "GOLD26DECFUT OI over GOLD26OCTFUT + GOLD26DECFUT",
+      "premium_pct": -0.022762233204433567,
+      "premium_z": -0.3525,
+      "premium_window": 196,
+      "premium_basis": "reference x USD/INR x (1 + 15% import duty); z over 196 sessions (floor 180)",
+      "support_level": 149665.0,
+      "resistance_level": 164773.0,
+      "dist_to_support": 3260.0,
+      "dist_to_resistance": 11848.0,
+      "dist_to_support_atr": 1.069804509868267,
+      "dist_to_resistance_atr": 3.888050255496695,
+      "atr": 3047.285714285714,
+      "atr_avg": 2651.442857142857,
+      "cont_stale_sessions": 0,
+      "intl_change_pct": null,
+      "usdinr_change_pct": null
+    },
+    {
+      "instrument": "LEAD",
+      "data_tier": "B",
+      "oi_state": "NEW_SHORTS",
+      "total_oi": 779,
+      "oi_change": 13,
+      "oi_gap_sessions": 2,
+      "oi_gap_label": "over 2 sessions",
+      "cot_percentile": 0.0,
+      "cot_confidence": "correlation to price unverified",
+      "implied_open_pct": null,
+      "term_structure": "contango",
+      "near_next_spread": 0.4000000000000057,
+      "near_next_spread_change": -3.75,
+      "spread_basis": "LEAD26OCTFUT minus LEAD26SEPFUT",
+      "next_oi_share": 0.001282051282051282,
+      "sessions_to_expiry": 16,
+      "roll_basis": "LEAD26OCTFUT OI over LEAD26SEPFUT + LEAD26OCTFUT",
+      "premium_pct": null,
+      "premium_z": null,
+      "premium_window": 0,
+      "premium_basis": "not applicable \u2014 the premium is a bullion parity calculation",
+      "support_level": 196.0,
+      "resistance_level": 200.0,
+      "dist_to_support": 0.09999999999999432,
+      "dist_to_resistance": 3.9000000000000057,
+      "dist_to_support_atr": 0.059447983014858666,
+      "dist_to_resistance_atr": 2.318471337579623,
+      "atr": 1.6821428571428558,
+      "atr_avg": 2.5415476190476154,
+      "cont_stale_sessions": 0,
+      "intl_change_pct": null,
+      "usdinr_change_pct": null
+    },
+    {
+      "instrument": "NATURALGAS",
+      "data_tier": "A",
+      "oi_state": "SHORT_COVERING",
+      "total_oi": 36093,
+      "oi_change": -5653,
+      "oi_gap_sessions": 2,
+      "oi_gap_label": "over 2 sessions",
+      "cot_percentile": 1.0,
+      "cot_confidence": null,
+      "implied_open_pct": null,
+      "term_structure": "contango",
+      "near_next_spread": 12.100000000000023,
+      "near_next_spread_change": -0.7999999999999545,
+      "spread_basis": "NATURALGAS26OCTFUT minus NATURALGAS26SEPFUT",
+      "next_oi_share": 0.20515756788301878,
+      "sessions_to_expiry": 13,
+      "roll_basis": "NATURALGAS26OCTFUT OI over NATURALGAS26SEPFUT + NATURALGAS26OCTFUT",
+      "premium_pct": null,
+      "premium_z": null,
+      "premium_window": 0,
+      "premium_basis": "not applicable \u2014 the premium is a bullion parity calculation",
+      "support_level": 259.4,
+      "resistance_level": 286.0,
+      "dist_to_support": 22.5,
+      "dist_to_resistance": 4.100000000000023,
+      "dist_to_support_atr": 2.5777414075286442,
+      "dist_to_resistance_atr": 0.46972176759411116,
+      "atr": 8.728571428571419,
+      "atr_avg": 8.795952380952375,
+      "cont_stale_sessions": 0,
+      "intl_change_pct": null,
+      "usdinr_change_pct": null
+    },
+    {
+      "instrument": "NICKEL",
+      "data_tier": "B",
+      "oi_state": "LONG_LIQUIDATION",
+      "total_oi": 431,
+      "oi_change": -19,
+      "oi_gap_sessions": 2,
+      "oi_gap_label": "over 2 sessions",
+      "cot_percentile": 0.0684,
+      "cot_confidence": "correlation to price unverified",
+      "implied_open_pct": null,
+      "term_structure": "contango",
+      "near_next_spread": 9.299999999999955,
+      "near_next_spread_change": 3.099999999999909,
+      "spread_basis": "NICKEL26OCTFUT minus NICKEL26SEPFUT",
+      "next_oi_share": 0.22202166064981949,
+      "sessions_to_expiry": 6,
+      "roll_basis": "NICKEL26OCTFUT OI over NICKEL26SEPFUT + NICKEL26OCTFUT",
+      "premium_pct": null,
+      "premium_z": null,
+      "premium_window": 0,
+      "premium_basis": "not applicable \u2014 the premium is a bullion parity calculation",
+      "support_level": 1596.0,
+      "resistance_level": 1650.0,
+      "dist_to_support": 13.0,
+      "dist_to_resistance": 41.0,
+      "dist_to_support_atr": 0.6591814559942042,
+      "dist_to_resistance_atr": 2.0789568996740284,
+      "atr": 19.721428571428596,
+      "atr_avg": 21.739285714285735,
+      "cont_stale_sessions": 0,
+      "intl_change_pct": null,
+      "usdinr_change_pct": null
+    },
+    {
+      "instrument": "SILVER",
+      "data_tier": "A",
+      "oi_state": "NEW_SHORTS",
+      "total_oi": 12529,
+      "oi_change": 107,
+      "oi_gap_sessions": 2,
+      "oi_gap_label": "over 2 sessions",
+      "cot_percentile": 0.3972,
+      "cot_confidence": null,
+      "implied_open_pct": null,
+      "term_structure": "contango",
+      "near_next_spread": 6535.0,
+      "near_next_spread_change": 2962.0,
+      "spread_basis": "SILVER27MARFUT minus SILVER26DECFUT",
+      "next_oi_share": 0.01602136181575434,
+      "sessions_to_expiry": 42,
+      "roll_basis": "SILVER27MARFUT OI over SILVER26DECFUT + SILVER27MARFUT",
+      "premium_pct": 0.025240242362126332,
+      "premium_z": 0.2137,
+      "premium_window": 216,
+      "premium_basis": "reference x USD/INR x (1 + 15% import duty); z over 216 sessions (floor 180)",
+      "support_level": 231811.0,
+      "resistance_level": 255460.0,
+      "dist_to_support": 7407.0,
+      "dist_to_resistance": 16242.0,
+      "dist_to_support_atr": 1.3260274673282013,
+      "dist_to_resistance_atr": 2.9077005703178944,
+      "atr": 5585.857142857143,
+      "atr_avg": 5884.245238095237,
+      "cont_stale_sessions": 0,
+      "intl_change_pct": null,
+      "usdinr_change_pct": null
+    },
+    {
+      "instrument": "ZINC",
+      "data_tier": "B",
+      "oi_state": "SHORT_COVERING",
+      "total_oi": 2682,
+      "oi_change": -151,
+      "oi_gap_sessions": 2,
+      "oi_gap_label": "over 2 sessions",
+      "cot_percentile": 0.6418,
+      "cot_confidence": null,
+      "implied_open_pct": null,
+      "term_structure": "backwardation",
+      "near_next_spread": -7.75,
+      "near_next_spread_change": 0.6999999999999886,
+      "spread_basis": "ZINC26OCTFUT minus ZINC26SEPFUT",
+      "next_oi_share": 0.1334410339256866,
+      "sessions_to_expiry": 16,
+      "roll_basis": "ZINC26OCTFUT OI over ZINC26SEPFUT + ZINC26OCTFUT",
+      "premium_pct": null,
+      "premium_z": null,
+      "premium_window": 0,
+      "premium_basis": "not applicable \u2014 the premium is a bullion parity calculation",
+      "support_level": 422.05,
+      "resistance_level": null,
+      "dist_to_support": 0.6499999999999773,
+      "dist_to_resistance": null,
+      "dist_to_support_atr": 0.06728280961182759,
+      "dist_to_resistance_atr": null,
+      "atr": 9.660714285714286,
+      "atr_avg": 7.092619047619048,
+      "cont_stale_sessions": 0,
+      "intl_change_pct": null,
+      "usdinr_change_pct": null
+    }
+  ],
+  "guard": {
+    "lines": 9,
+    "sha256": "f082fbd198749388b0c726769c5f68ca974e003abfbb52c782f4b0b3a9552818",
+    "decisions": [
+      {
+        "decision": "allow",
+        "reason": "every number traces to the board",
+        "claims": [],
+        "claim_count": 0,
+        "agent_id": "ac59312f307d2aada",
+        "ts": "2026-09-08T12:57:11.839+00:00",
+        "path": "/Users/uditgarg/Personel/Procrastinate Coder/finint/runs/2026-09-08/analyst_crossmarket.json"
+      },
+      {
+        "decision": "deny",
+        "reason": "GOLD: ungrounded 270 in `level_read` \u2014 expected a scan level [-329.0, -10.0, 3.0, 94.4604, 1795.0, 8068.0, 10300.0, 10693.0, 11000.0, 142500.0, 153500.0, 155087.0, 155307.6119285467, 155965.27744618602, 163800.0]",
+        "claims": [],
+        "claim_count": 0,
+        "agent_id": "afe5f71787d9ce0dc",
+        "ts": "2026-09-08T12:57:56.627+00:00",
+        "path": "/Users/uditgarg/Personel/Procrastinate Coder/finint/runs/2026-09-08/analyst_technical.json"
+      },
+      {
+        "decision": "allow",
+        "reason": "every number traces to the board",
+        "claims": [],
+        "claim_count": 0,
+        "agent_id": "af48ac306365f6a68",
+        "ts": "2026-09-08T12:58:08.706+00:00",
+        "path": "/Users/uditgarg/Personel/Procrastinate Coder/finint/runs/2026-09-08/analyst_positioning.json"
+      },
+      {
+        "decision": "allow",
+        "reason": "every number traces to the board",
+        "claims": [],
+        "claim_count": 0,
+        "agent_id": "a3d7362804548c19c",
+        "ts": "2026-09-08T12:58:15.224+00:00",
+        "path": "/Users/uditgarg/Personel/Procrastinate Coder/finint/runs/2026-09-08/analyst_news.json"
+      },
+      {
+        "decision": "allow",
+        "reason": "every number traces to the board",
+        "claims": [],
+        "claim_count": 0,
+        "agent_id": "afe5f71787d9ce0dc",
+        "ts": "2026-09-08T12:58:44.661+00:00",
+        "path": "/Users/uditgarg/Personel/Procrastinate Coder/finint/runs/2026-09-08/analyst_technical.json"
+      },
+      {
+        "decision": "allow",
+        "reason": "every number traces to the board",
+        "claims": [],
+        "claim_count": 0,
+        "agent_id": "orchestrator-recheck",
+        "ts": "2026-09-08T13:01:06.012+00:00",
+        "path": "runs/2026-09-08/analyst_positioning.json"
+      },
+      {
+        "decision": "allow",
+        "reason": "every number traces to the board",
+        "claims": [],
+        "claim_count": 0,
+        "agent_id": "orchestrator-recheck",
+        "ts": "2026-09-08T13:01:06.031+00:00",
+        "path": "runs/2026-09-08/analyst_technical.json"
+      },
+      {
+        "decision": "allow",
+        "reason": "every number traces to the board",
+        "claims": [],
+        "claim_count": 0,
+        "agent_id": "orchestrator-recheck",
+        "ts": "2026-09-08T13:01:06.050+00:00",
+        "path": "runs/2026-09-08/analyst_crossmarket.json"
+      },
+      {
+        "decision": "allow",
+        "reason": "every number traces to the board",
+        "claims": [],
+        "claim_count": 0,
+        "agent_id": "orchestrator-recheck",
+        "ts": "2026-09-08T13:01:06.063+00:00",
+        "path": "runs/2026-09-08/analyst_news.json"
+      }
+    ],
+    "denied": 1,
+    "claim_count": 0
+  },
+  "audit": {
+    "lines": 4,
+    "sha256": "2099df030a57749116ae6fa31b10175c06d786a6efb0c52e2a7b391064d77873"
+  },
+  "transcripts": [],
+  "stages": [
+    {
+      "stage": "analyst",
+      "agent": "analyst_crossmarket",
+      "seq": 1,
+      "created_at": "2026-09-08T07:01:00+00:00",
+      "report_sha256": "9dbe2c9a37427c02f69af6b23c974d2ca7d05f1e3c8c5ac72b88a193bcd13837",
+      "report": {
+        "agent": "crossmarket-analyst",
+        "run_date": "2026-09-08",
+        "board_note": "Four of the five Tier A instruments point the same way this morning: GOLD, SILVER, CRUDEOIL and COPPER all imply higher opens (+1.18%, +0.94%, +0.80%, +0.50%), each built on international reference gains of +1.59% to +2.28%. NATURALGAS breaks from that pattern \u2014 its reference leg rose only +0.98%, the smallest on the board, and the same -1.07% USD/INR move that merely damped the other four was large enough to flip this one negative, to a -0.10% implied open. The rupee is unambiguously the story today: a single -1.07% USD/INR reading (94.4604 vs 95.48638, TWELVE_DATA, as of 2026-09-02) appears identically as the usdinr_change_pct leg behind every Tier A implied open, doing more work on NATURALGAS than on any other instrument. A third of the board carries no implied open at all: ZINC, ALUMINIUM, LEAD and NICKEL are refused by design because LME publishes before MCX closes, so their only overnight context is a day-over-day LME 3M read, not an open. Within bullion, GOLD trades 0.81% below import parity with a z of -0.04 over 196 sessions \u2014 a discount, but an ordinary one \u2014 while SILVER is 3.28% rich with a z of 1.20 over 216 sessions; that contrast between an unremarkable gold reading and a moderately elevated silver one is the finding, not either number alone.",
+        "backdrop": {
+          "usdinr_read": "USD/INR at 94.4604, down 1.07% from 95.48638 (change_pct -1.0744778469976457), source TWELVE_DATA, as of 2026-09-02, not stale",
+          "rupee_is_the_story": true
+        },
+        "instruments": [
+          {
+            "instrument": "GOLD",
+            "tier": "A",
+            "implied_open_read": "+1.18% implied open (implied_open_pct 1.1775973475874446). The reference gained +2.28% overnight (intl_change_pct 2.2765360703397963) while USD/INR fell -1.07% (usdinr_change_pct -1.0744778469976457) \u2014 both legs sizeable and offsetting, netting the smaller positive open.",
+            "reference_read": "COMEX/international reference +2.28% overnight (intl_change_pct 2.2765360703397963)",
+            "premium_read": "-0.81% to import parity, z -0.04 over 196 sessions (premium_pct -0.0081, premium_z -0.0382, premium_window 196) \u2014 an ordinary discount",
+            "refused": [],
+            "sources": [
+              "implied_open_pct",
+              "intl_change_pct",
+              "usdinr_change_pct",
+              "premium_pct",
+              "premium_z",
+              "premium_window"
+            ]
+          },
+          {
+            "instrument": "SILVER",
+            "tier": "A",
+            "implied_open_read": "+0.94% implied open (implied_open_pct 0.9384852665945465). The reference gained +2.03% overnight (intl_change_pct 2.0348268776169354) while USD/INR fell -1.07% (usdinr_change_pct -1.0744778469976457), offsetting most of the reference gain.",
+            "reference_read": "international reference +2.03% overnight (intl_change_pct 2.0348268776169354)",
+            "premium_read": "+3.28% above import parity, z 1.20 over 216 sessions (premium_pct 0.0328, premium_z 1.2044, premium_window 216) \u2014 moderately rich, unlike GOLD's ordinary discount",
+            "refused": [],
+            "sources": [
+              "implied_open_pct",
+              "intl_change_pct",
+              "usdinr_change_pct",
+              "premium_pct",
+              "premium_z",
+              "premium_window"
+            ]
+          },
+          {
+            "instrument": "CRUDEOIL",
+            "tier": "A",
+            "implied_open_read": "+0.80% implied open (implied_open_pct 0.7951188268787712). The reference gained +1.89% overnight (intl_change_pct 1.8899032657970993) while USD/INR fell -1.07% (usdinr_change_pct -1.0744778469976457), offsetting over half of the reference gain.",
+            "reference_read": "international reference +1.89% overnight (intl_change_pct 1.8899032657970993)",
+            "premium_read": "not applicable \u2014 the premium is a bullion parity calculation and CRUDEOIL carries none",
+            "refused": [],
+            "sources": [
+              "implied_open_pct",
+              "intl_change_pct",
+              "usdinr_change_pct"
+            ]
+          },
+          {
+            "instrument": "NATURALGAS",
+            "tier": "A",
+            "implied_open_read": "-0.10% implied open (implied_open_pct -0.10396359042219583) \u2014 the only Tier A instrument implying a lower open. The reference gained only +0.98% overnight (intl_change_pct 0.9810554803788785), the smallest Tier A reference move on the board, and the same -1.07% USD/INR move (usdinr_change_pct -1.0744778469976457) that only damped the other four here was large enough to flip the sign.",
+            "reference_read": "international reference +0.98% overnight (intl_change_pct 0.9810554803788785)",
+            "premium_read": "not applicable \u2014 the premium is a bullion parity calculation and NATURALGAS carries none",
+            "refused": [],
+            "sources": [
+              "implied_open_pct",
+              "intl_change_pct",
+              "usdinr_change_pct"
+            ]
+          },
+          {
+            "instrument": "COPPER",
+            "tier": "A",
+            "implied_open_read": "+0.50% implied open (implied_open_pct 0.5004785509158616). The reference gained +1.59% overnight (intl_change_pct 1.592062759575441) while USD/INR fell -1.07% (usdinr_change_pct -1.0744778469976457), offsetting roughly two-thirds of the reference gain.",
+            "reference_read": "international reference +1.59% overnight (intl_change_pct 1.592062759575441)",
+            "premium_read": "not applicable \u2014 the premium is a bullion parity calculation and COPPER carries none",
+            "refused": [],
+            "sources": [
+              "implied_open_pct",
+              "intl_change_pct",
+              "usdinr_change_pct"
+            ]
+          },
+          {
+            "instrument": "ZINC",
+            "tier": "B",
+            "implied_open_read": "refused by design \u2014 LME publishes before MCX closes, so no overnight reference window exists to imply an open from",
+            "reference_read": "no overnight reference leg (intl_change_pct null); day-over-day LME 3M context only: -1.35% as of 2026-09-03 (lme_value 3877.0, lme_change_pct -1.3486005089058506) \u2014 not an implied open",
+            "premium_read": "not applicable \u2014 the premium is a bullion parity calculation",
+            "refused": [
+              "implied_open_pct"
+            ],
+            "sources": [
+              "implied_open_pct",
+              "intl_change_pct",
+              "lme_value",
+              "lme_change_pct",
+              "lme_as_of"
+            ]
+          },
+          {
+            "instrument": "ALUMINIUM",
+            "tier": "B",
+            "implied_open_read": "refused by design \u2014 LME publishes before MCX closes, so no overnight reference window exists to imply an open from",
+            "reference_read": "no overnight reference leg (intl_change_pct null); day-over-day LME 3M context only: +0.39% as of 2026-09-03 (lme_value 3253.5, lme_change_pct 0.3856834310397961) \u2014 not an implied open",
+            "premium_read": "not applicable \u2014 the premium is a bullion parity calculation",
+            "refused": [
+              "implied_open_pct"
+            ],
+            "sources": [
+              "implied_open_pct",
+              "intl_change_pct",
+              "lme_value",
+              "lme_change_pct",
+              "lme_as_of"
+            ]
+          },
+          {
+            "instrument": "LEAD",
+            "tier": "B",
+            "implied_open_read": "refused by design \u2014 LME publishes before MCX closes, so no overnight reference window exists to imply an open from",
+            "reference_read": "no overnight reference leg (intl_change_pct null); day-over-day LME 3M context only: -0.26% as of 2026-09-03 (lme_value 1906.0, lme_change_pct -0.26164311878598134) \u2014 not an implied open",
+            "premium_read": "not applicable \u2014 the premium is a bullion parity calculation",
+            "refused": [
+              "implied_open_pct"
+            ],
+            "sources": [
+              "implied_open_pct",
+              "intl_change_pct",
+              "lme_value",
+              "lme_change_pct",
+              "lme_as_of"
+            ]
+          },
+          {
+            "instrument": "NICKEL",
+            "tier": "B",
+            "implied_open_read": "refused by design \u2014 LME publishes before MCX closes, so no overnight reference window exists to imply an open from",
+            "reference_read": "no overnight reference leg (intl_change_pct null); day-over-day LME 3M context only: -1.91% as of 2026-09-03 (lme_value 16675.0, lme_change_pct -1.9117647058823573) \u2014 not an implied open",
+            "premium_read": "not applicable \u2014 the premium is a bullion parity calculation",
+            "refused": [
+              "implied_open_pct"
+            ],
+            "sources": [
+              "implied_open_pct",
+              "intl_change_pct",
+              "lme_value",
+              "lme_change_pct",
+              "lme_as_of"
+            ]
+          }
+        ]
+      },
+      "status": "ok",
+      "model": "claude-sonnet-4-6",
+      "tokens_estimated": 1861
+    },
+    {
+      "stage": "analyst",
+      "agent": "analyst_news",
+      "seq": 2,
+      "created_at": "2026-09-08T07:02:00+00:00",
+      "report_sha256": "ef60e4c118cb6b0fa5aca3e9d6894d0522f5d57ce41c0d89175e8b6009d17887",
+      "report": {
+        "agent": "news-analyst",
+        "run_date": "2026-09-08",
+        "board_note": "No news is stored on the board at all this run \u2014 the scan carries no news field for any of the nine instruments, and no fetch was performed per instruction, so catalysts[] is empty and the honest read for every instrument is 'no material overnight catalyst.' The only stored macro data points are two EIA prints \u2014 crude 424460 as of 2026-08-28 (WoW -4450) and natural gas 3184 as of 2026-08-21 (WoW +15) \u2014 both predating this morning by well over a week, and consensus is not available for either, so neither can be called a surprise, a beat, or a miss. DXY is absent from the board entirely this run: no value, no as_of, no overnight dollar read possible. USD/INR (-1.07% to 94.46, as of 2026-09-02, several days before this board's 2026-09-08 date) is the one FX figure present, and it is baked identically into every Tier A implied open \u2014 GOLD +1.18%, SILVER +0.94%, CRUDEOIL +0.80%, COPPER +0.50%, NATURALGAS -0.10% \u2014 alongside each instrument's own international reference change; that is FX and positioning arithmetic already on the tape, not news, and cannot be attributed to any catalyst because none exists on the board. ZINC, ALUMINIUM, LEAD and NICKEL (Tier B) have no news, no implied open, and no international reference leg at all; the only overnight-adjacent figures for them are LME references dated 2026-09-03, again ahead of this board's date, not an overnight print. This is a fully positioning-led morning with zero news coverage across the board \u2014 exactly the outcome the founding thesis anticipates, not a failure of this read.",
+        "macro": {
+          "dxy_read": "DXY is not present anywhere on this board for 2026-09-08 \u2014 no value, no as_of field. No overnight, or any, dollar read is available this run.",
+          "eia_read": "CRUDEOIL: 424460 as of 2026-08-28, week-on-week -4450 (CRUDEOIL.eia_value / CRUDEOIL.eia_wow / CRUDEOIL.eia_as_of). NATURALGAS: 3184 as of 2026-08-21, week-on-week +15 (NATURALGAS.eia_value / NATURALGAS.eia_wow / NATURALGAS.eia_as_of). Both prints predate this morning by well over a week; consensus not available for either.",
+          "consensus": "consensus not available"
+        },
+        "catalysts": [],
+        "instruments": [
+          {
+            "instrument": "GOLD",
+            "news_read": "No material overnight catalyst \u2014 the board stores no news content this run. Implied open is +1.18% (GOLD.implied_open_pct); that figure is FX and international-reference arithmetic already on the tape, not a reported event.",
+            "matches_tape": null,
+            "refused": [
+              "news"
+            ],
+            "sources": [
+              "GOLD.implied_open_pct"
+            ]
+          },
+          {
+            "instrument": "SILVER",
+            "news_read": "No material overnight catalyst \u2014 the board stores no news content this run. Implied open is +0.94% (SILVER.implied_open_pct); no catalyst on the board explains or contradicts it.",
+            "matches_tape": null,
+            "refused": [
+              "news"
+            ],
+            "sources": [
+              "SILVER.implied_open_pct"
+            ]
+          },
+          {
+            "instrument": "CRUDEOIL",
+            "news_read": "No material overnight catalyst \u2014 the board stores no news content this run. The only stored data point is the EIA crude stocks print: 424460 as of 2026-08-28, week-on-week -4450 (CRUDEOIL.eia_value / CRUDEOIL.eia_wow / CRUDEOIL.eia_as_of); that print predates this morning by well over a week and consensus is not available, so it is context, not an overnight catalyst. Implied open is +0.80% (CRUDEOIL.implied_open_pct).",
+            "matches_tape": null,
+            "refused": [
+              "news"
+            ],
+            "sources": [
+              "CRUDEOIL.implied_open_pct",
+              "CRUDEOIL.eia_value",
+              "CRUDEOIL.eia_wow",
+              "CRUDEOIL.eia_as_of"
+            ]
+          },
+          {
+            "instrument": "NATURALGAS",
+            "news_read": "No material overnight catalyst \u2014 the board stores no news content this run. The only stored data point is the EIA natural gas storage print: 3184 as of 2026-08-21, week-on-week +15 (NATURALGAS.eia_value / NATURALGAS.eia_wow / NATURALGAS.eia_as_of); that print predates this morning by well over two weeks and consensus is not available. Implied open is -0.10% (NATURALGAS.implied_open_pct).",
+            "matches_tape": null,
+            "refused": [
+              "news"
+            ],
+            "sources": [
+              "NATURALGAS.implied_open_pct",
+              "NATURALGAS.eia_value",
+              "NATURALGAS.eia_wow",
+              "NATURALGAS.eia_as_of"
+            ]
+          },
+          {
+            "instrument": "COPPER",
+            "news_read": "No material overnight catalyst \u2014 the board stores no news content this run. Implied open is +0.50% (COPPER.implied_open_pct). COPPER also carries an LME reference, -1.00% as of 2026-09-03 (COPPER.lme_change_pct / COPPER.lme_as_of), dated ahead of this board's 2026-09-08 read, not an overnight figure.",
+            "matches_tape": null,
+            "refused": [
+              "news"
+            ],
+            "sources": [
+              "COPPER.implied_open_pct",
+              "COPPER.lme_change_pct",
+              "COPPER.lme_as_of"
+            ]
+          },
+          {
+            "instrument": "ZINC",
+            "news_read": "No material overnight catalyst \u2014 the board stores no news content this run, and Tier B carries no international reference leg or implied open for ZINC. The only overnight-adjacent figure is the LME reference, -1.35% as of 2026-09-03 (ZINC.lme_change_pct / ZINC.lme_as_of), dated ahead of this board's 2026-09-08 read.",
+            "matches_tape": null,
+            "refused": [
+              "news",
+              "implied_open_pct"
+            ],
+            "sources": [
+              "ZINC.lme_change_pct",
+              "ZINC.lme_as_of"
+            ]
+          },
+          {
+            "instrument": "ALUMINIUM",
+            "news_read": "No material overnight catalyst \u2014 the board stores no news content this run, and Tier B carries no international reference leg or implied open for ALUMINIUM. The only overnight-adjacent figure is the LME reference, +0.39% as of 2026-09-03 (ALUMINIUM.lme_change_pct / ALUMINIUM.lme_as_of), dated ahead of this board's 2026-09-08 read.",
+            "matches_tape": null,
+            "refused": [
+              "news",
+              "implied_open_pct"
+            ],
+            "sources": [
+              "ALUMINIUM.lme_change_pct",
+              "ALUMINIUM.lme_as_of"
+            ]
+          },
+          {
+            "instrument": "LEAD",
+            "news_read": "No material overnight catalyst \u2014 the board stores no news content this run, and Tier B carries no international reference leg or implied open for LEAD. The only overnight-adjacent figure is the LME reference, -0.26% as of 2026-09-03 (LEAD.lme_change_pct / LEAD.lme_as_of), dated ahead of this board's 2026-09-08 read.",
+            "matches_tape": null,
+            "refused": [
+              "news",
+              "implied_open_pct"
+            ],
+            "sources": [
+              "LEAD.lme_change_pct",
+              "LEAD.lme_as_of"
+            ]
+          },
+          {
+            "instrument": "NICKEL",
+            "news_read": "No material overnight catalyst \u2014 the board stores no news content this run, and Tier B carries no international reference leg or implied open for NICKEL. The only overnight-adjacent figure is the LME reference, -1.91% as of 2026-09-03 (NICKEL.lme_change_pct / NICKEL.lme_as_of), dated ahead of this board's 2026-09-08 read.",
+            "matches_tape": null,
+            "refused": [
+              "news",
+              "implied_open_pct"
+            ],
+            "sources": [
+              "NICKEL.lme_change_pct",
+              "NICKEL.lme_as_of"
+            ]
+          }
+        ],
+        "fetched": []
+      },
+      "status": "ok",
+      "model": "claude-sonnet-4-6",
+      "tokens_estimated": 1642
+    },
+    {
+      "stage": "analyst",
+      "agent": "analyst_positioning",
+      "seq": 3,
+      "created_at": "2026-09-08T07:03:00+00:00",
+      "report_sha256": "5e706d8dd034a1ca0c716641f1f13c124c45a2911e5e2695770b19bdae201408",
+      "report": {
+        "agent": "positioning-analyst",
+        "run_date": "2026-09-08",
+        "board_note": "The board splits cleanly across all four OI states with no net lean: two instruments show fresh longs (CRUDEOIL, +7,029 contracts to 17,306; ZINC, +97 to 2,673), two show fresh shorts (SILVER, +4,392 contracts to 12,674; LEAD, +177 to 763), two show long liquidation (GOLD, -329 contracts to 10,693; COPPER, -540 to 10,997), and two show short covering (NATURALGAS, -6,905 contracts to 34,072; ALUMINIUM, -84 to 4,365) - a 2-2-2-2 split, with NICKEL's OI state refused outright (the comparison spans 4 sessions and oi_change itself is null). The fragmentation runs within sectors, not just across them: bullion shows both GOLD and SILVER turning bearish over the board's 3-session OI window (liquidation, fresh shorts) even as both carry positive overnight implied opens (+1.18% and +0.94%) - a real gap between recent positioning and the overnight tape confined to precious metals. Energy is split rather than aligned: CRUDEOIL's fresh longs match its own +0.80% overnight gap, but NATURALGAS's short covering sits against a slightly negative -0.10% overnight implied open. Base metals show no complex-wide pattern at all, touching all four states plus one refusal. The clearest outlier is NATURALGAS, carrying both the board's largest absolute OI swing (-6,905 of 34,072 total) and its most extreme COT reading (0.9075 percentile) - the sharpest single positioning signal on the board today. CRUDEOIL is a secondary note: the largest fresh-money OI addition on the board (+7,029 of 17,306) sits against an extreme-low 0.0757 COT percentile.",
+        "instruments": [
+          {
+            "instrument": "GOLD",
+            "oi_state": "LONG_LIQUIDATION",
+            "oi_read": "OI fell by 329 contracts to a total of 10,693 over the board's 3-session comparison window (oi_gap_label: \"over 3 sessions\"), read as LONG_LIQUIDATION - longs stepping away as price fell over that window, not fresh selling.",
+            "cot_read": "COT sits at the 0.0 percentile - the floor of its range, an extreme reading. The board gives no session-count window for this percentile.",
+            "divergence": "The overnight implied open is +1.18%, a gap up, while the board's 3-session OI read was LONG_LIQUIDATION (price falling, longs exiting) - the overnight move points higher, the recent OI trend the opposite way.",
+            "refused": [],
+            "sources": [
+              "oi_state",
+              "oi_change",
+              "total_oi",
+              "oi_gap_label",
+              "cot_percentile",
+              "implied_open_pct"
+            ]
+          },
+          {
+            "instrument": "SILVER",
+            "oi_state": "NEW_SHORTS",
+            "oi_read": "OI rose by 4,392 contracts to a total of 12,674 over the 3-session comparison window, read as NEW_SHORTS - fresh short positions added as price fell over that window, not longs stepping away.",
+            "cot_read": "COT sits at the 0.2873 percentile - below the midpoint, not an extreme reading. The board gives no session-count window for this percentile.",
+            "divergence": "The overnight implied open is +0.94%, a gap up, against a 3-session OI read of NEW_SHORTS built as price fell over that window - fresh shorts added into a market that has since gapped higher overnight.",
+            "refused": [],
+            "sources": [
+              "oi_state",
+              "oi_change",
+              "total_oi",
+              "oi_gap_label",
+              "cot_percentile",
+              "implied_open_pct"
+            ]
+          },
+          {
+            "instrument": "CRUDEOIL",
+            "oi_state": "NEW_LONGS",
+            "oi_read": "OI rose by 7,029 contracts to a total of 17,306 over the 3-session window - the largest OI swing on the board - read as NEW_LONGS: fresh money buying with conviction, price and OI rising together over that window.",
+            "cot_read": "COT sits at the 0.0757 percentile - near the floor of its range, an extreme low reading, even as the OI read for the same window shows fresh longs being added. The board gives no session-count window for this percentile.",
+            "divergence": null,
+            "refused": [],
+            "sources": [
+              "oi_state",
+              "oi_change",
+              "total_oi",
+              "oi_gap_label",
+              "cot_percentile",
+              "implied_open_pct"
+            ]
+          },
+          {
+            "instrument": "NATURALGAS",
+            "oi_state": "SHORT_COVERING",
+            "oi_read": "OI fell by 6,905 contracts to a total of 34,072 over the 3-session window - the largest absolute OI decline on the board - read as SHORT_COVERING: shorts forced out as price rose over that window, not fresh buying.",
+            "cot_read": "COT sits at the 0.9075 percentile - near the top of its range, the most extreme reading on the board. The board gives no session-count window for this percentile.",
+            "divergence": "The overnight implied open is -0.10%, essentially flat-to-down, against a 3-session OI read of SHORT_COVERING (price rising as shorts exited over that window) - the mild overnight softness sits against a recent trend of shorts being squeezed out.",
+            "refused": [],
+            "sources": [
+              "oi_state",
+              "oi_change",
+              "total_oi",
+              "oi_gap_label",
+              "cot_percentile",
+              "implied_open_pct"
+            ]
+          },
+          {
+            "instrument": "COPPER",
+            "oi_state": "LONG_LIQUIDATION",
+            "oi_read": "OI fell by 540 contracts to a total of 10,997 over the 3-session window, read as LONG_LIQUIDATION - longs stepping away as price fell over that window, not fresh selling.",
+            "cot_read": "COT sits at the 0.0 percentile - the floor of its range, an extreme reading. The board gives no session-count window for this percentile.",
+            "divergence": "The overnight implied open is +0.50%, a gap up, against a 3-session OI read of LONG_LIQUIDATION (price falling, longs exiting over that window) - the overnight move points higher, the recent OI trend the opposite way.",
+            "refused": [],
+            "sources": [
+              "oi_state",
+              "oi_change",
+              "total_oi",
+              "oi_gap_label",
+              "cot_percentile",
+              "implied_open_pct"
+            ]
+          },
+          {
+            "instrument": "ZINC",
+            "oi_state": "NEW_LONGS",
+            "oi_read": "OI rose by 97 contracts to a total of 2,673 over the 3-session window, read as NEW_LONGS - fresh buying, price and OI moving together over that window; a small move against the board's larger swings. Tier B: the board carries no implied open for ZINC (no international reference leg) to compare against.",
+            "cot_read": "COT sits at the 0.615 percentile - above the midpoint, not an extreme reading. The board gives no session-count window for this percentile.",
+            "divergence": null,
+            "refused": [
+              "implied_open_pct"
+            ],
+            "sources": [
+              "oi_state",
+              "oi_change",
+              "total_oi",
+              "oi_gap_label",
+              "cot_percentile"
+            ]
+          },
+          {
+            "instrument": "ALUMINIUM",
+            "oi_state": "SHORT_COVERING",
+            "oi_read": "OI fell by 84 contracts to a total of 4,365 over the 3-session window, read as SHORT_COVERING - shorts forced out as price rose over that window, not fresh buying; a small move against the board's larger swings. Tier B: the board carries no implied open for ALUMINIUM (no international reference leg) to compare against.",
+            "cot_read": "COT sits at the 0.8729 percentile - near the top of its range, an extreme reading, though the board flags it with cot_confidence: \"weak correlation to price\", a caveat on how much the percentile should carry. The board gives no session-count window for this percentile.",
+            "divergence": null,
+            "refused": [
+              "implied_open_pct"
+            ],
+            "sources": [
+              "oi_state",
+              "oi_change",
+              "total_oi",
+              "oi_gap_label",
+              "cot_percentile",
+              "cot_confidence"
+            ]
+          },
+          {
+            "instrument": "LEAD",
+            "oi_state": "NEW_SHORTS",
+            "oi_read": "OI rose by 177 contracts to a total of 763 over the 3-session window, read as NEW_SHORTS - fresh short selling, price and OI moving together over that window; against LEAD's small total OI base this is a comparatively large swing. Tier B: the board carries no implied open for LEAD (no international reference leg) to compare against.",
+            "cot_read": "COT sits at the 0.0 percentile - the floor of its range, an extreme reading, though the board flags it with cot_confidence: \"correlation to price unverified\". The board gives no session-count window for this percentile.",
+            "divergence": null,
+            "refused": [
+              "implied_open_pct"
+            ],
+            "sources": [
+              "oi_state",
+              "oi_change",
+              "total_oi",
+              "oi_gap_label",
+              "cot_percentile",
+              "cot_confidence"
+            ]
+          },
+          {
+            "instrument": "NICKEL",
+            "oi_state": null,
+            "oi_read": "The board refuses an OI state for NICKEL - the comparison spans 4 sessions (oi_gap_label: \"over 4 sessions\") and oi_change itself is null, so no direction or magnitude can be read; only the total OI of 449 contracts is stated.",
+            "cot_read": "COT sits at the 0.0942 percentile - near the floor of its range, though not at the extreme floor GOLD, COPPER and LEAD show at 0.0 today; the board flags it with cot_confidence: \"correlation to price unverified\". The board gives no session-count window for this percentile.",
+            "divergence": null,
+            "refused": [
+              "oi_state",
+              "oi_change",
+              "implied_open_pct"
+            ],
+            "sources": [
+              "oi_state",
+              "total_oi",
+              "oi_gap_label",
+              "cot_percentile",
+              "cot_confidence"
+            ]
+          }
+        ]
+      },
+      "status": "ok",
+      "model": "claude-sonnet-4-6",
+      "tokens_estimated": 2117
+    },
+    {
+      "stage": "analyst",
+      "agent": "analyst_technical.bad",
+      "seq": 4,
+      "created_at": "2026-09-08T07:04:00+00:00",
+      "report_sha256": "a1d57be9e3e419f46cc50f16a609568c0bcc051310d9ed5c6c49c3e664e25850",
+      "report": {
+        "agent": "technical-analyst",
+        "run_date": "2026-09-08",
+        "board_note": "The dominant structural fact this morning is a total volatility blackout: atr and atr_avg are null for all nine instruments, and dist_to_support_atr / dist_to_resistance_atr are null for all nine as well, while cont_stale_sessions reads 0 across the board \u2014 so this is not the staleness path, the ATR is refused outright with no basis beyond the null. That means no instrument's distance to its nearest level can be sized against today's volatility, and no in-play call can be made anywhere on the board; the honest read is that the board has no volatility structure to report, not that it is uniformly coiled or extended. In raw points (not ATR-normalised, and not comparable across instruments of different price scale) the one unambiguous level fact is LEAD, whose dist_to_support reads exactly 0.0 \u2014 last_close (196.35) sits on support_level (196.35) itself. Term structure splits contango (GOLD, NATURALGAS, COPPER, ALUMINIUM, NICKEL) against backwardation (CRUDEOIL, ZINC), with SILVER and LEAD each carrying a null term_structure because the board stores no next contract for either this morning (spread_basis: 'no next contract stored'). NICKEL is the board's exception: it is the only instrument with oi_state null and an oi_gap_sessions of 4, versus the uniform 3 sessions carried by every other instrument. On ratios, gold_silver reads 64.41 (per_gram convention \u2014 MCX gold quoted per 10g and silver per kg, normalised to rupees/gram before dividing) at the 0.4997 percentile over a 250-session window, with the value drawn from today's actual contracts and the percentile from a back-adjusted continuous series; crude_natgas reads 31.176 (as_quoted convention \u2014 rupees per barrel over rupees per mmBtu, a genuinely cross-unit reading) at the 0.7064 percentile over the same 250-session window, actual-contract value against a continuous-series percentile.",
+        "instruments": [
+          {
+            "instrument": "GOLD",
+            "level_read": "Support at 142500.0, dist_to_support 11000.0 points below last close 153500.0; resistance at 163800.0, dist_to_resistance 10300.0 points above. Both distances are given only in points \u2014 dist_to_support_atr and dist_to_resistance_atr are null, so no ATR multiple is stated for either level.",
+            "volatility_read": "atr and atr_avg are both null on the board. cont_stale_sessions reads 0, so this is not the staleness path \u2014 the board carries no volatility figure for GOLD this morning, with no basis beyond the null.",
+            "in_play": null,
+            "term_structure": "contango (GOLD26DECFUT minus GOLD26OCTFUT), near_next_spread 1795.0, near_next_spread_change -10.0 on the session; sessions_to_expiry 19 sessions, next_oi_share 0.434.",
+            "degraded": "With atr, atr_avg, dist_to_support_atr and dist_to_resistance_atr all null, the 11000.0 / 10300.0 point distances cannot be sized against volatility and no in_play determination can be made.",
+            "refused": [
+              "atr",
+              "atr_avg",
+              "dist_to_support_atr",
+              "dist_to_resistance_atr",
+              "in_play"
+            ],
+            "sources": [
+              "dist_to_support",
+              "dist_to_resistance",
+              "support_level",
+              "resistance_level",
+              "dist_to_support_atr",
+              "dist_to_resistance_atr",
+              "atr",
+              "atr_avg",
+              "cont_stale_sessions",
+              "term_structure",
+              "near_next_spread",
+              "near_next_spread_change",
+              "sessions_to_expiry",
+              "next_oi_share"
+            ]
+          },
+          {
+            "instrument": "SILVER",
+            "level_read": "Support at 219828.0, dist_to_support 17547.0 points below last close 237375.0; resistance at 251419.0, dist_to_resistance 14044.0 points above. Points only \u2014 dist_to_support_atr and dist_to_resistance_atr are both null.",
+            "volatility_read": "atr and atr_avg are both null on the board. cont_stale_sessions reads 0, so this is not the staleness path \u2014 no volatility figure is stated for SILVER this morning.",
+            "in_play": null,
+            "term_structure": "null on the board. spread_basis reads 'no next contract stored \u2014 this instrument has one contract on the board' \u2014 a fact about this morning's board, not a structural absence of a spread for SILVER. sessions_to_expiry for the front contract is 41 sessions regardless.",
+            "degraded": "Both the ATR read and the term-structure read are absent this morning: atr, atr_avg, dist_to_support_atr, dist_to_resistance_atr, near_next_spread, term_structure and next_oi_share are all null, so the point distances above cannot be sized against volatility or set against a spread.",
+            "refused": [
+              "atr",
+              "atr_avg",
+              "dist_to_support_atr",
+              "dist_to_resistance_atr",
+              "in_play",
+              "near_next_spread",
+              "term_structure",
+              "next_oi_share"
+            ],
+            "sources": [
+              "dist_to_support",
+              "dist_to_resistance",
+              "support_level",
+              "resistance_level",
+              "dist_to_support_atr",
+              "dist_to_resistance_atr",
+              "atr",
+              "atr_avg",
+              "cont_stale_sessions",
+              "term_structure",
+              "spread_basis",
+              "sessions_to_expiry"
+            ]
+          },
+          {
+            "instrument": "CRUDEOIL",
+            "level_read": "Support at 8497.0, dist_to_support 270.0 points below last close 8767.0. No resistance level is given \u2014 resistance_level and dist_to_resistance are both null on the board.",
+            "volatility_read": "atr and atr_avg are both null on the board. cont_stale_sessions reads 0, so this is not the staleness path \u2014 no volatility figure is stated for CRUDEOIL this morning.",
+            "in_play": null,
+            "term_structure": "backwardation (CRUDEOIL26OCTFUT minus CRUDEOIL26SEPFUT), near_next_spread -299.0, near_next_spread_change -181.0 on the session; sessions_to_expiry 11 sessions, next_oi_share 0.1334.",
+            "degraded": "No resistance level is stated on this board, and with atr, atr_avg, dist_to_support_atr and dist_to_resistance_atr all null, the single 270.0-point support distance cannot be sized against volatility.",
+            "refused": [
+              "atr",
+              "atr_avg",
+              "dist_to_support_atr",
+              "dist_to_resistance_atr",
+              "in_play",
+              "dist_to_resistance",
+              "resistance_level"
+            ],
+            "sources": [
+              "dist_to_support",
+              "support_level",
+              "dist_to_resistance",
+              "resistance_level",
+              "dist_to_support_atr",
+              "dist_to_resistance_atr",
+              "atr",
+              "atr_avg",
+              "cont_stale_sessions",
+              "term_structure",
+              "near_next_spread",
+              "near_next_spread_change",
+              "sessions_to_expiry",
+              "next_oi_share"
+            ]
+          },
+          {
+            "instrument": "NATURALGAS",
+            "level_read": "Support at 277.8, dist_to_support 5.5 points below last close 283.3. No resistance level is given \u2014 resistance_level and dist_to_resistance are both null on the board.",
+            "volatility_read": "atr and atr_avg are both null on the board. cont_stale_sessions reads 0, so this is not the staleness path \u2014 no volatility figure is stated for NATURALGAS this morning.",
+            "in_play": null,
+            "term_structure": "contango (NATURALGAS26OCTFUT minus NATURALGAS26SEPFUT), near_next_spread 13.0, near_next_spread_change -2.6 on the session; sessions_to_expiry 15 sessions, next_oi_share 0.158.",
+            "degraded": "No resistance level is stated on this board, and with atr, atr_avg, dist_to_support_atr and dist_to_resistance_atr all null, the 5.5-point support distance cannot be sized against volatility.",
+            "refused": [
+              "atr",
+              "atr_avg",
+              "dist_to_support_atr",
+              "dist_to_resistance_atr",
+              "in_play",
+              "dist_to_resistance",
+              "resistance_level"
+            ],
+            "sources": [
+              "dist_to_support",
+              "support_level",
+              "dist_to_resistance",
+              "resistance_level",
+              "dist_to_support_atr",
+              "dist_to_resistance_atr",
+              "atr",
+              "atr_avg",
+              "cont_stale_sessions",
+              "term_structure",
+              "near_next_spread",
+              "near_next_spread_change",
+              "sessions_to_expiry",
+              "next_oi_share"
+            ]
+          },
+          {
+            "instrument": "COPPER",
+            "level_read": "Support at 1343.8, dist_to_support 27.7 points below last close 1371.5; resistance at 1402.25, dist_to_resistance 30.75 points above. Points only \u2014 dist_to_support_atr and dist_to_resistance_atr are both null.",
+            "volatility_read": "atr and atr_avg are both null on the board. cont_stale_sessions reads 0, so this is not the staleness path \u2014 no volatility figure is stated for COPPER this morning.",
+            "in_play": null,
+            "term_structure": "contango (COPPER26OCTFUT minus COPPER26SEPFUT), near_next_spread 8.5; near_next_spread_change is null on the board. sessions_to_expiry 18 sessions, next_oi_share 0.1386.",
+            "degraded": "With atr, atr_avg, dist_to_support_atr and dist_to_resistance_atr all null, the 27.7 / 30.75 point distances cannot be sized against volatility, and the session-over-session move in the spread is also not stated (near_next_spread_change null).",
+            "refused": [
+              "atr",
+              "atr_avg",
+              "dist_to_support_atr",
+              "dist_to_resistance_atr",
+              "in_play",
+              "near_next_spread_change"
+            ],
+            "sources": [
+              "dist_to_support",
+              "dist_to_resistance",
+              "support_level",
+              "resistance_level",
+              "dist_to_support_atr",
+              "dist_to_resistance_atr",
+              "atr",
+              "atr_avg",
+              "cont_stale_sessions",
+              "term_structure",
+              "near_next_spread",
+              "sessions_to_expiry",
+              "next_oi_share"
+            ]
+          },
+          {
+            "instrument": "ZINC",
+            "level_read": "Support at 377.35, dist_to_support 35.8 points below last close 413.15; resistance at 414.3, dist_to_resistance 1.15 points above. Points only \u2014 dist_to_support_atr and dist_to_resistance_atr are both null.",
+            "volatility_read": "atr and atr_avg are both null on the board. cont_stale_sessions reads 0, so this is not the staleness path \u2014 no volatility figure is stated for ZINC this morning.",
+            "in_play": null,
+            "term_structure": "backwardation (ZINC26OCTFUT minus ZINC26SEPFUT), near_next_spread -7.65; near_next_spread_change is null on the board. sessions_to_expiry 18 sessions, next_oi_share 0.1042.",
+            "degraded": "Tier B: with atr, atr_avg, dist_to_support_atr and dist_to_resistance_atr all null, neither the 35.8-point support distance nor the 1.15-point resistance distance can be sized against volatility; near_next_spread_change is also not stated.",
+            "refused": [
+              "atr",
+              "atr_avg",
+              "dist_to_support_atr",
+              "dist_to_resistance_atr",
+              "in_play",
+              "near_next_spread_change"
+            ],
+            "sources": [
+              "dist_to_support",
+              "dist_to_resistance",
+              "support_level",
+              "resistance_level",
+              "dist_to_support_atr",
+              "dist_to_resistance_atr",
+              "atr",
+              "atr_avg",
+              "cont_stale_sessions",
+              "term_structure",
+              "near_next_spread",
+              "sessions_to_expiry",
+              "next_oi_share"
+            ]
+          },
+          {
+            "instrument": "ALUMINIUM",
+            "level_read": "Support at 339.25, dist_to_support 8.9 points below last close 348.15; resistance at 357.95, dist_to_resistance 9.8 points above. Points only \u2014 dist_to_support_atr and dist_to_resistance_atr are both null.",
+            "volatility_read": "atr and atr_avg are both null on the board. cont_stale_sessions reads 0, so this is not the staleness path \u2014 no volatility figure is stated for ALUMINIUM this morning.",
+            "in_play": null,
+            "term_structure": "contango (ALUMINIUM26OCTFUT minus ALUMINIUM26SEPFUT), near_next_spread 0.15; near_next_spread_change is null on the board. sessions_to_expiry 18 sessions, next_oi_share 0.1226.",
+            "degraded": "Tier B: with atr, atr_avg, dist_to_support_atr and dist_to_resistance_atr all null, the near-symmetric 8.9 / 9.8 point distances cannot be sized against volatility; near_next_spread_change is also not stated.",
+            "refused": [
+              "atr",
+              "atr_avg",
+              "dist_to_support_atr",
+              "dist_to_resistance_atr",
+              "in_play",
+              "near_next_spread_change"
+            ],
+            "sources": [
+              "dist_to_support",
+              "dist_to_resistance",
+              "support_level",
+              "resistance_level",
+              "dist_to_support_atr",
+              "dist_to_resistance_atr",
+              "atr",
+              "atr_avg",
+              "cont_stale_sessions",
+              "term_structure",
+              "near_next_spread",
+              "sessions_to_expiry",
+              "next_oi_share"
+            ]
+          },
+          {
+            "instrument": "LEAD",
+            "level_read": "Support at 196.35, dist_to_support 0.0 \u2014 last_close (196.35) sits on support_level exactly. Resistance at 200.05, dist_to_resistance 3.7 points above. Points only \u2014 dist_to_support_atr and dist_to_resistance_atr are both null.",
+            "volatility_read": "atr and atr_avg are both null on the board. cont_stale_sessions reads 0, so this is not the staleness path \u2014 no volatility figure is stated for LEAD this morning.",
+            "in_play": null,
+            "term_structure": "null on the board. spread_basis reads 'no next contract stored \u2014 this instrument has one contract on the board' \u2014 a fact about this morning's board, not a structural absence of a spread for LEAD. sessions_to_expiry for the front contract is 18 sessions regardless.",
+            "degraded": "Tier B, and lighter still this morning: atr, atr_avg, dist_to_support_atr, dist_to_resistance_atr, near_next_spread, term_structure and next_oi_share are all null. The dist_to_support of 0.0 is an exact board figure and needs no volatility normalisation to read, but the 3.7-point resistance distance cannot be sized against volatility.",
+            "refused": [
+              "atr",
+              "atr_avg",
+              "dist_to_support_atr",
+              "dist_to_resistance_atr",
+              "in_play",
+              "near_next_spread",
+              "term_structure",
+              "next_oi_share"
+            ],
+            "sources": [
+              "dist_to_support",
+              "dist_to_resistance",
+              "support_level",
+              "resistance_level",
+              "dist_to_support_atr",
+              "dist_to_resistance_atr",
+              "atr",
+              "atr_avg",
+              "cont_stale_sessions",
+              "term_structure",
+              "spread_basis",
+              "sessions_to_expiry"
+            ]
+          },
+          {
+            "instrument": "NICKEL",
+            "level_read": "Support at 1604.0, dist_to_support 11.0 points below last close 1615.0; resistance at 1675.4, dist_to_resistance 60.4 points above. Points only \u2014 dist_to_support_atr and dist_to_resistance_atr are both null.",
+            "volatility_read": "atr and atr_avg are both null on the board. cont_stale_sessions reads 0, so this is not the staleness path \u2014 no volatility figure is stated for NICKEL this morning.",
+            "in_play": null,
+            "term_structure": "contango (NICKEL26OCTFUT minus NICKEL26SEPFUT), near_next_spread 4.0, near_next_spread_change -5.9 on the session; sessions_to_expiry 8 sessions, next_oi_share 0.1792.",
+            "degraded": "Tier B: with atr, atr_avg, dist_to_support_atr and dist_to_resistance_atr all null, neither the 11.0-point support distance nor the 60.4-point resistance distance can be sized against volatility. NICKEL also carries an oi_gap_sessions of 4 versus the 3-session gap on the rest of the board, and oi_state is null here \u2014 both outside this report's level/volatility/term-structure scope but worth flagging as a board-level data gap.",
+            "refused": [
+              "atr",
+              "atr_avg",
+              "dist_to_support_atr",
+              "dist_to_resistance_atr",
+              "in_play"
+            ],
+            "sources": [
+              "dist_to_support",
+              "dist_to_resistance",
+              "support_level",
+              "resistance_level",
+              "dist_to_support_atr",
+              "dist_to_resistance_atr",
+              "atr",
+              "atr_avg",
+              "cont_stale_sessions",
+              "term_structure",
+              "near_next_spread",
+              "near_next_spread_change",
+              "sessions_to_expiry",
+              "next_oi_share",
+              "oi_gap_sessions",
+              "oi_state"
+            ]
+          }
+        ]
+      },
+      "status": "failed",
+      "model": "claude-sonnet-4-6",
+      "tokens_estimated": 3546
+    }
+  ],
+  "ratios": {
+    "crude_natgas": {
+      "basis": "CRUDEOIL and NATURALGAS as quoted, in their own units \u2014 a cross-unit reading by convention; value from today's actual contracts, percentile over 250 back-adjusted continuous sessions (the two bases differ slightly in level)",
+      "denominator": "NATURALGAS",
+      "numerator": "CRUDEOIL",
+      "percentile": 0.7204,
+      "unit_convention": "as_quoted",
+      "value": 31.60340546293012,
+      "window": 250
+    },
+    "gold_silver": {
+      "basis": "GOLD and SILVER normalised to rupees per gram (10g and 1000g quotes); value from today's actual contracts, percentile over 250 back-adjusted continuous sessions (the two bases differ slightly in level)",
+      "denominator": "SILVER",
+      "numerator": "GOLD",
+      "percentile": 0.5019,
+      "unit_convention": "per_gram",
+      "value": 63.92704562365709,
+      "window": 250
+    }
+  }
+}

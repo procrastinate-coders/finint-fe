@@ -389,6 +389,130 @@
         }
       }
     },
+    "/scan/today": {
+      "get": {
+        "summary": "Scan Today",
+        "description": "FIN-227 Stream A \u2014 the deterministic board, over HTTP. The harness laptop's ONLY market\ninput (SAD \u00a73.1): it holds no database credential, no SSH key and no snapshot.\n\nSLIM BY DEFAULT \u2014 bundles.*.data duplicates bundles.*.bundle, and subagent compaction is\nautomatic and SILENT (SAD \u00a74.1), so an oversized payload does not error, it quietly loses\ninstruments. ?full=true restores it for the provenance index, which needs every grounded\nvalue. Deterministic (FIN-203) and $0, so re-calling is harmless and nothing is cached.",
+        "operationId": "scan_today_scan_today_get",
+        "parameters": [
+          {
+            "name": "full",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Full"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScanTodayResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agent-run/{date}": {
+      "get": {
+        "summary": "Agent Run",
+        "operationId": "agent_run_agent_run__date__get",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentRunResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "no harness run was landed for this date \u2014 NOT the response for a gate refusal, which is a 200 with gate.ok:false"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/agent-run/ingest": {
+      "post": {
+        "summary": "Agent Run Ingest",
+        "description": "FIN-227 Stream A \u2014 land the harness blackboard. AUTHENTICATED (the middleware protects\nevery non-/auth path); it writes prod agent_run_state and scored_call.\n\nPer-row isolation with EVERY rejection named: a duplicate is refused by the database\n(agent_run_state_once / scored_call_once) and the response says so. A push that silently\ndrops a call is worse than one that fails \u2014 the operator would believe the ledger holds\nsomething it does not. run.json ALONE is valid: a gate refusal is a run with no agent\noutput, and the UI must be able to show \"no harness run today: <reason>\".",
+        "operationId": "agent_run_ingest_admin_agent_run_ingest_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "items": {},
+                "type": "array",
+                "title": "Rows"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentRunIngestResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/kite/login-url": {
       "get": {
         "summary": "Kite Login Url",
@@ -512,6 +636,524 @@
           "token_type"
         ],
         "title": "AccessTokenResponse"
+      },
+      "AgentRunBoardRow": {
+        "properties": {
+          "instrument": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instrument"
+          },
+          "data_tier": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Tier"
+          },
+          "oi_state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oi State"
+          },
+          "total_oi": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Oi"
+          },
+          "oi_change": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oi Change"
+          },
+          "oi_gap_sessions": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oi Gap Sessions"
+          },
+          "oi_gap_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oi Gap Label"
+          },
+          "cot_percentile": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cot Percentile"
+          },
+          "cot_confidence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cot Confidence"
+          },
+          "implied_open_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Implied Open Pct"
+          }
+        },
+        "type": "object",
+        "title": "AgentRunBoardRow",
+        "description": "\u26a0\ufe0f FLAT AND TYPED (G1). Not the raw bundle \u2014 `ScanBundle.bundle` is an opaque `{}` in the\nspec, which gives the FE no contract and no drift protection (FIN-218's failure in a new\nplace). cot_confidence sits beside cot_percentile because they are rendered as one element."
+      },
+      "AgentRunGate": {
+        "properties": {
+          "ok": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ok"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "instruments": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instruments"
+          },
+          "checks": {
+            "items": {
+              "$ref": "#/components/schemas/GateCheck"
+            },
+            "type": "array",
+            "title": "Checks",
+            "default": []
+          },
+          "stale": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Stale",
+            "default": []
+          },
+          "unsettled": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Unsettled",
+            "default": []
+          },
+          "checked_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checked At"
+          }
+        },
+        "type": "object",
+        "title": "AgentRunGate"
+      },
+      "AgentRunIngestResponse": {
+        "properties": {
+          "stored": {
+            "type": "integer",
+            "title": "Stored"
+          },
+          "scored_calls": {
+            "type": "integer",
+            "title": "Scored Calls"
+          },
+          "rejected": {
+            "items": {
+              "$ref": "#/components/schemas/AgentRunRejected"
+            },
+            "type": "array",
+            "title": "Rejected",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "stored",
+          "scored_calls"
+        ],
+        "title": "AgentRunIngestResponse"
+      },
+      "AgentRunRejected": {
+        "properties": {
+          "index": {
+            "type": "integer",
+            "title": "Index"
+          },
+          "call": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Call"
+          },
+          "stage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stage"
+          },
+          "agent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agent"
+          },
+          "instrument_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instrument Id"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "index",
+          "reason"
+        ],
+        "title": "AgentRunRejected"
+      },
+      "AgentRunResponse": {
+        "properties": {
+          "run_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Run Date"
+          },
+          "run_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Run Id"
+          },
+          "board_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Board Date"
+          },
+          "api_brief_run_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Api Brief Run Id"
+          },
+          "gate": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AgentRunGate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "stages": {
+            "items": {
+              "$ref": "#/components/schemas/AgentRunStage"
+            },
+            "type": "array",
+            "title": "Stages",
+            "default": []
+          },
+          "board": {
+            "items": {
+              "$ref": "#/components/schemas/AgentRunBoardRow"
+            },
+            "type": "array",
+            "title": "Board",
+            "default": []
+          },
+          "guard": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GuardSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "audit": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AuditSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "transcripts": {
+            "items": {
+              "$ref": "#/components/schemas/TranscriptRef"
+            },
+            "type": "array",
+            "title": "Transcripts",
+            "default": []
+          }
+        },
+        "type": "object",
+        "title": "AgentRunResponse",
+        "description": "One morning's harness run.\n\n\ud83d\udd34 A GATE REFUSAL IS A 200 WITH `gate.ok: false` AND AN EMPTY `stages[]`. 404 means NO RUN WAS\nLANDED for that date, and nothing else. If a refusal ever answered 4xx the page would go blank\nand the refusal \u2014 the single most important thing to show that morning \u2014 would be invisible."
+      },
+      "AgentRunStage": {
+        "properties": {
+          "stage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stage"
+          },
+          "agent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agent"
+          },
+          "seq": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seq"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "report_sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Report Sha256"
+          },
+          "report": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Report"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "tokens_estimated": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tokens Estimated"
+          }
+        },
+        "type": "object",
+        "title": "AgentRunStage"
+      },
+      "AuditSummary": {
+        "properties": {
+          "lines": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lines"
+          },
+          "sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sha256"
+          }
+        },
+        "type": "object",
+        "title": "AuditSummary"
       },
       "Backdrop": {
         "properties": {
@@ -1061,6 +1703,45 @@
         "title": "EiaRefresh",
         "description": "FIN-188: the EIA weekly energy-inventory leg (crude stocks + natgas storage; no Kite token).\nWEEKLY cadence-aware \u2014 `action:\"skipped\"` when the stored week is current (no new release, no\nfetch). `ok:false` + `error` when EIA is down/misconfigured (context OMITTED, dot goes red) \u2014\nisolated to this leg. NOT an implied open; released data surfaced as a FACT."
       },
+      "GateCheck": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "ok": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ok"
+          },
+          "detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "GateCheck"
+      },
       "GenerateResponse": {
         "properties": {
           "run_id": {
@@ -1174,6 +1855,226 @@
           "brief_ready"
         ],
         "title": "GenerateStatusResponse"
+      },
+      "GuardClaim": {
+        "properties": {
+          "kind": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kind"
+          },
+          "instrument": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instrument"
+          },
+          "field": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Field"
+          },
+          "found": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Found"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          },
+          "expected": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Expected",
+            "default": []
+          },
+          "expected_prose": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Prose"
+          }
+        },
+        "type": "object",
+        "title": "GuardClaim",
+        "description": "\u26a0\ufe0f FIN-232: ONE UNGROUNDED CLAIM. A single blocked Write can carry four of them, and the\n2026-09-05 log did \u2014 so a decision count under-reports the numerator 4:1, which is the ratio\nFIN-175 died for want of seeing. `expected` is a REAL LIST here; concatenated into prose it was\n890 bytes of scan levels and the front end was right to refuse to parse it back out."
+      },
+      "GuardDecision": {
+        "properties": {
+          "decision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decision"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "claims": {
+            "items": {
+              "$ref": "#/components/schemas/GuardClaim"
+            },
+            "type": "array",
+            "title": "Claims",
+            "default": []
+          },
+          "claim_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Claim Count"
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agent Id"
+          },
+          "ts": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ts"
+          },
+          "path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Path"
+          }
+        },
+        "type": "object",
+        "title": "GuardDecision",
+        "description": "\u26a0\ufe0f THE DECISION, NOT A COUNT (G2). A count cannot say whether the guard is working or\nstrangling the report \u2014 that needs the reason and the agent. \u26a0\ufe0f AND ONE DECISION IS NOT ONE\nCLAIM (FIN-232): `reason` stays the human sentence, verbatim, and `claims[]` is what the panel\ncounts."
+      },
+      "GuardSummary": {
+        "properties": {
+          "lines": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lines"
+          },
+          "sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sha256"
+          },
+          "decisions": {
+            "items": {
+              "$ref": "#/components/schemas/GuardDecision"
+            },
+            "type": "array",
+            "title": "Decisions",
+            "default": []
+          },
+          "denied": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Denied"
+          },
+          "claim_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Claim Count"
+          }
+        },
+        "type": "object",
+        "title": "GuardSummary"
       },
       "HTTPValidationError": {
         "properties": {
@@ -2213,6 +3114,161 @@
         ],
         "title": "RunStep"
       },
+      "ScanBundle": {
+        "properties": {
+          "instrument_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instrument Id"
+          },
+          "factors": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Factors"
+          },
+          "interest_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interest Score"
+          },
+          "scan": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scan"
+          },
+          "bundle": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bundle"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "title": "ScanBundle",
+        "description": "One instrument's scan output. `data` is the RAW score-input and is present only under\n?full=true \u2014 it duplicates `bundle`, and dropping it is what takes the payload from ~27.5 KB to\n~15.7 KB so subagent compaction cannot silently lose instruments (SAD \u00a74.1)."
+      },
+      "ScanTodayResponse": {
+        "properties": {
+          "board_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Board Date"
+          },
+          "ratios": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ratios"
+          },
+          "scan": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Scan",
+            "default": []
+          },
+          "ranked": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Ranked",
+            "default": []
+          },
+          "deep_brief_set": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Deep Brief Set",
+            "default": []
+          },
+          "bundles": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ScanBundle"
+            },
+            "type": "object",
+            "title": "Bundles",
+            "default": {}
+          },
+          "usdinr": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Usdinr"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "title": "ScanTodayResponse",
+        "description": "FIN-227: the deterministic board (FIN-203) over HTTP \u2014 the harness laptop's only market\ninput. Typed so the FE's generated zod contract cannot silently drop a field (FIN-159/168)."
+      },
       "ServedAiRead": {
         "properties": {
           "what_changed": {
@@ -3230,6 +4286,45 @@
           "value"
         ],
         "title": "Tone"
+      },
+      "TranscriptRef": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sha256"
+          },
+          "bytes": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bytes"
+          }
+        },
+        "type": "object",
+        "title": "TranscriptRef"
       },
       "ValidationError": {
         "properties": {
