@@ -104,6 +104,16 @@ export function emitContracts(specText, outDir) {
   }
   code = code.slice(0, cut).replace(/\n+$/, '\n')
 
+  // ⚠️ ZOD v4 COMPAT. openapi-zod-client emits v3's single-argument
+  // `z.record(Value)` for an OpenAPI `additionalProperties` map; Zod v4 requires
+  // `z.record(keyType, valueType)` and the generated file otherwise fails
+  // typecheck. Deterministic textual fixup, applied HERE so `gen:contracts` and
+  // `check:contracts` produce byte-identical output (FIN-218).
+  code = code.replace(
+    /\bz\.record\(\s*([A-Za-z_$][\w$]*)\s*\)/g,
+    'z.record(z.string(), $1)',
+  )
+
   const schemasText = HEADER + code
   writeFileSync(schemasOut, schemasText)
   rmSync(rawOut, { force: true })

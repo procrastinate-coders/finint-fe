@@ -115,6 +115,40 @@ export function formatPct(
 }
 
 /**
+ * A percentage the backend ships as a FRACTION: `-0.0081` → `−0.81%`.
+ *
+ * ⚠️ A `_pct` SUFFIX DOES NOT MEAN ONE THING ON THIS BOARD. `implied_open_pct`
+ * (1.1776) and `intl_change_pct` (2.2765) are already percentages and go through
+ * `formatPct`; `premium_pct` (-0.0081) is a fraction and goes through THIS. The
+ * convention was read off the crossmarket analyst's own prose, which prints both
+ * forms side by side — "-0.81% to import parity … (premium_pct -0.0081)" — and
+ * confirmed on a second instrument (SILVER: +3.28% / 0.0328). Do not "simplify"
+ * the two into one formatter; the difference is in the data, not the code.
+ */
+export function formatFractionPct(
+  value: number | null | undefined,
+  { decimals = 2 }: NumberOpts = {},
+): string {
+  if (isMissing(value)) return DASH
+  return formatPct(value * 100, { decimals })
+}
+
+/**
+ * A SHARE the backend ships as a fraction: `0.4499` → `45.0%`.
+ *
+ * ⚠️ Unsigned, unlike `formatFractionPct`. A sign encodes a DIRECTION, and a
+ * share of open interest has none — "+45.0% of OI" reads as a change of 45%,
+ * which is a different and much more alarming statement than "45.0% of OI".
+ */
+export function formatSharePct(
+  value: number | null | undefined,
+  { decimals = 1 }: NumberOpts = {},
+): string {
+  if (isMissing(value)) return DASH
+  return `${grouped(decimals).format(value * 100)}%`
+}
+
+/**
  * A COT percentile: the backend ships a 0–1 fraction (0.7381) → "74th". null →
  * "—" (Tier-B has no CFTC COT, by design — that is honest, not an error).
  */

@@ -1,0 +1,162 @@
+{
+  "run_date": "2026-09-04",
+  "run_id": "2026-09-04-082938",
+  "board_date": "2026-09-04",
+  "api_brief_run_id": null,
+  "gate": {
+    "board_date": "2026-09-04",
+    "checks": [
+      {
+        "detail": "9 instruments on the board (need >= 9)",
+        "name": "instrument_count",
+        "ok": true
+      },
+      {
+        "detail": "0/9 closes unsettled",
+        "name": "any_settled_close",
+        "ok": true
+      },
+      {
+        "detail": "9/9 continuous series stale by > 3 sessions \u2014 max 36",
+        "name": "any_fresh_continuous",
+        "ok": false
+      }
+    ],
+    "instruments": 9,
+    "ok": false,
+    "reason": "9/9 continuous series stale by > 3 sessions \u2014 max 36",
+    "stale": [
+      "ALUMINIUM",
+      "COPPER",
+      "CRUDEOIL",
+      "GOLD",
+      "LEAD",
+      "NATURALGAS",
+      "NICKEL",
+      "SILVER",
+      "ZINC"
+    ],
+    "unsettled": []
+  },
+  "board": [
+    {
+      "instrument": "ALUMINIUM",
+      "data_tier": "B",
+      "oi_state": "SHORT_COVERING",
+      "total_oi": 4365,
+      "oi_change": -84,
+      "oi_gap_sessions": 3,
+      "oi_gap_label": "over 3 sessions",
+      "cot_percentile": 0.8729,
+      "cot_confidence": "weak correlation to price",
+      "implied_open_pct": null
+    },
+    {
+      "instrument": "COPPER",
+      "data_tier": "A",
+      "oi_state": "LONG_LIQUIDATION",
+      "total_oi": 10997,
+      "oi_change": -540,
+      "oi_gap_sessions": 3,
+      "oi_gap_label": "over 3 sessions",
+      "cot_percentile": 0.0,
+      "cot_confidence": null,
+      "implied_open_pct": 0.5004785509158616
+    },
+    {
+      "instrument": "CRUDEOIL",
+      "data_tier": "A",
+      "oi_state": "NEW_LONGS",
+      "total_oi": 17306,
+      "oi_change": 7029,
+      "oi_gap_sessions": 3,
+      "oi_gap_label": "over 3 sessions",
+      "cot_percentile": 0.0757,
+      "cot_confidence": null,
+      "implied_open_pct": 0.7951188268787712
+    },
+    {
+      "instrument": "GOLD",
+      "data_tier": "A",
+      "oi_state": "LONG_LIQUIDATION",
+      "total_oi": 10693,
+      "oi_change": -329,
+      "oi_gap_sessions": 3,
+      "oi_gap_label": "over 3 sessions",
+      "cot_percentile": 0.0,
+      "cot_confidence": null,
+      "implied_open_pct": 1.1775973475874446
+    },
+    {
+      "instrument": "LEAD",
+      "data_tier": "B",
+      "oi_state": "NEW_SHORTS",
+      "total_oi": 763,
+      "oi_change": 177,
+      "oi_gap_sessions": 3,
+      "oi_gap_label": "over 3 sessions",
+      "cot_percentile": 0.0,
+      "cot_confidence": "correlation to price unverified",
+      "implied_open_pct": null
+    },
+    {
+      "instrument": "NATURALGAS",
+      "data_tier": "A",
+      "oi_state": "SHORT_COVERING",
+      "total_oi": 34072,
+      "oi_change": -6905,
+      "oi_gap_sessions": 3,
+      "oi_gap_label": "over 3 sessions",
+      "cot_percentile": 0.9075,
+      "cot_confidence": null,
+      "implied_open_pct": -0.10396359042219583
+    },
+    {
+      "instrument": "NICKEL",
+      "data_tier": "B",
+      "oi_state": null,
+      "total_oi": 449,
+      "oi_change": null,
+      "oi_gap_sessions": 4,
+      "oi_gap_label": "over 4 sessions",
+      "cot_percentile": 0.0942,
+      "cot_confidence": "correlation to price unverified",
+      "implied_open_pct": null
+    },
+    {
+      "instrument": "SILVER",
+      "data_tier": "A",
+      "oi_state": "NEW_SHORTS",
+      "total_oi": 12674,
+      "oi_change": 4392,
+      "oi_gap_sessions": 3,
+      "oi_gap_label": "over 3 sessions",
+      "cot_percentile": 0.2873,
+      "cot_confidence": null,
+      "implied_open_pct": 0.9384852665945465
+    },
+    {
+      "instrument": "ZINC",
+      "data_tier": "B",
+      "oi_state": "NEW_LONGS",
+      "total_oi": 2673,
+      "oi_change": 97,
+      "oi_gap_sessions": 3,
+      "oi_gap_label": "over 3 sessions",
+      "cot_percentile": 0.615,
+      "cot_confidence": null,
+      "implied_open_pct": null
+    }
+  ],
+  "guard": {
+    "lines": 0,
+    "sha256": null,
+    "decisions": []
+  },
+  "audit": {
+    "lines": 0,
+    "sha256": null
+  },
+  "transcripts": [],
+  "stages": []
+}

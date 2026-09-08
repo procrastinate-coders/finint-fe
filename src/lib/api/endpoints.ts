@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { tokenStore } from '@/lib/auth/session'
 import { apiRequest } from './client'
 import {
+  agentRunResponse,
   briefListItem,
   generateResponse,
   generateStatusResponse,
@@ -12,6 +13,7 @@ import {
   readinessResponse,
   refreshSpineResponse,
   servedBrief,
+  type AgentRunResponse,
   type BriefListItem,
   type GenerateResponse,
   type GenerateStatusResponse,
@@ -148,4 +150,16 @@ export function getBrief(
 
 export function getBriefs(signal?: AbortSignal): Promise<BriefListItem[]> {
   return apiRequest('/briefs', briefListResponse, { signal })
+}
+
+// --- agent run (FIN-227 Stream C) ------------------------------------------
+// The harness's second read on the same board. One run per date; a GATE REFUSAL
+// is a complete run with no agent output, not a 404 (SAD §5, gap 3).
+export function getAgentRun(
+  date: string,
+  signal?: AbortSignal,
+): Promise<AgentRunResponse> {
+  return apiRequest(`/agent-run/${encodeURIComponent(date)}`, agentRunResponse, {
+    signal,
+  })
 }

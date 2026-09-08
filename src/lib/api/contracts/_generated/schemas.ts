@@ -430,6 +430,159 @@ const LmeCotrIngestResponse = z
     percentiles_updated: z.number().int(),
   })
   .passthrough()
+const ScanBundle = z
+  .object({
+    instrument_id: z.union([z.string(), z.null()]),
+    factors: z.union([z.object({}).partial().passthrough(), z.null()]),
+    interest_score: z.union([z.number(), z.null()]),
+    scan: z.union([z.object({}).partial().passthrough(), z.null()]),
+    bundle: z.union([z.object({}).partial().passthrough(), z.null()]),
+    data: z.union([z.object({}).partial().passthrough(), z.null()]),
+  })
+  .partial()
+  .passthrough()
+const ScanTodayResponse = z
+  .object({
+    board_date: z.union([z.string(), z.null()]),
+    ratios: z.union([z.object({}).partial().passthrough(), z.null()]),
+    scan: z.array(z.object({}).partial().passthrough()).default([]),
+    ranked: z.array(z.object({}).partial().passthrough()).default([]),
+    deep_brief_set: z.array(z.string()).default([]),
+    bundles: z.record(z.string(), ScanBundle).default({}),
+    usdinr: z.union([z.object({}).partial().passthrough(), z.null()]),
+  })
+  .partial()
+  .passthrough()
+const GateCheck = z
+  .object({
+    name: z.union([z.string(), z.null()]),
+    ok: z.union([z.boolean(), z.null()]),
+    detail: z.union([z.string(), z.null()]),
+  })
+  .partial()
+  .passthrough()
+const AgentRunGate = z
+  .object({
+    ok: z.union([z.boolean(), z.null()]),
+    reason: z.union([z.string(), z.null()]),
+    instruments: z.union([z.number(), z.null()]),
+    checks: z.array(GateCheck).default([]),
+    stale: z.array(z.string()).default([]),
+    unsettled: z.array(z.string()).default([]),
+    checked_at: z.union([z.string(), z.null()]),
+  })
+  .partial()
+  .passthrough()
+const AgentRunStage = z
+  .object({
+    stage: z.union([z.string(), z.null()]),
+    agent: z.union([z.string(), z.null()]),
+    seq: z.union([z.number(), z.null()]),
+    created_at: z.union([z.string(), z.null()]),
+    report_sha256: z.union([z.string(), z.null()]),
+    report: z.union([z.object({}).partial().passthrough(), z.null()]),
+    status: z.union([z.string(), z.null()]),
+    model: z.union([z.string(), z.null()]),
+    tokens_estimated: z.union([z.number(), z.null()]),
+  })
+  .partial()
+  .passthrough()
+const AgentRunBoardRow = z
+  .object({
+    instrument: z.union([z.string(), z.null()]),
+    data_tier: z.union([z.string(), z.null()]),
+    oi_state: z.union([z.string(), z.null()]),
+    total_oi: z.union([z.number(), z.null()]),
+    oi_change: z.union([z.number(), z.null()]),
+    oi_gap_sessions: z.union([z.number(), z.null()]),
+    oi_gap_label: z.union([z.string(), z.null()]),
+    cot_percentile: z.union([z.number(), z.null()]),
+    cot_confidence: z.union([z.string(), z.null()]),
+    implied_open_pct: z.union([z.number(), z.null()]),
+  })
+  .partial()
+  .passthrough()
+const GuardClaim = z
+  .object({
+    kind: z.union([z.string(), z.null()]),
+    instrument: z.union([z.string(), z.null()]),
+    field: z.union([z.string(), z.null()]),
+    found: z.union([z.string(), z.null()]),
+    value: z.union([z.number(), z.null()]),
+    expected: z.array(z.number()).default([]),
+    expected_prose: z.union([z.string(), z.null()]),
+  })
+  .partial()
+  .passthrough()
+const GuardDecision = z
+  .object({
+    decision: z.union([z.string(), z.null()]),
+    reason: z.union([z.string(), z.null()]),
+    claims: z.array(GuardClaim).default([]),
+    claim_count: z.union([z.number(), z.null()]),
+    agent_id: z.union([z.string(), z.null()]),
+    ts: z.union([z.string(), z.null()]),
+    path: z.union([z.string(), z.null()]),
+  })
+  .partial()
+  .passthrough()
+const GuardSummary = z
+  .object({
+    lines: z.union([z.number(), z.null()]),
+    sha256: z.union([z.string(), z.null()]),
+    decisions: z.array(GuardDecision).default([]),
+    denied: z.union([z.number(), z.null()]),
+    claim_count: z.union([z.number(), z.null()]),
+  })
+  .partial()
+  .passthrough()
+const AuditSummary = z
+  .object({
+    lines: z.union([z.number(), z.null()]),
+    sha256: z.union([z.string(), z.null()]),
+  })
+  .partial()
+  .passthrough()
+const TranscriptRef = z
+  .object({
+    name: z.union([z.string(), z.null()]),
+    sha256: z.union([z.string(), z.null()]),
+    bytes: z.union([z.number(), z.null()]),
+  })
+  .partial()
+  .passthrough()
+const AgentRunResponse = z
+  .object({
+    run_date: z.union([z.string(), z.null()]),
+    run_id: z.union([z.string(), z.null()]),
+    board_date: z.union([z.string(), z.null()]),
+    api_brief_run_id: z.union([z.string(), z.null()]),
+    gate: z.union([AgentRunGate, z.null()]),
+    stages: z.array(AgentRunStage).default([]),
+    board: z.array(AgentRunBoardRow).default([]),
+    guard: z.union([GuardSummary, z.null()]),
+    audit: z.union([AuditSummary, z.null()]),
+    transcripts: z.array(TranscriptRef).default([]),
+  })
+  .partial()
+  .passthrough()
+const AgentRunRejected = z
+  .object({
+    index: z.number().int(),
+    call: z.union([z.number(), z.null()]).optional(),
+    stage: z.union([z.string(), z.null()]).optional(),
+    agent: z.union([z.string(), z.null()]).optional(),
+    instrument_id: z.union([z.string(), z.null()]).optional(),
+    reason: z.string(),
+  })
+  .passthrough()
+const AgentRunIngestResponse = z
+  .object({
+    stored: z.number().int(),
+    scored_calls: z.number().int(),
+    rejected: z.array(AgentRunRejected).optional().default([]),
+  })
+  .passthrough()
 const LoginUrlResponse = z.object({ url: z.string() }).passthrough()
 const GenerateResponse = z
   .object({
@@ -535,6 +688,20 @@ export const schemas = {
   RefreshResponse,
   LmeCotrRejected,
   LmeCotrIngestResponse,
+  ScanBundle,
+  ScanTodayResponse,
+  GateCheck,
+  AgentRunGate,
+  AgentRunStage,
+  AgentRunBoardRow,
+  GuardClaim,
+  GuardDecision,
+  GuardSummary,
+  AuditSummary,
+  TranscriptRef,
+  AgentRunResponse,
+  AgentRunRejected,
+  AgentRunIngestResponse,
   LoginUrlResponse,
   GenerateResponse,
   RunStep,

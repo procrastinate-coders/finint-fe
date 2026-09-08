@@ -9,6 +9,8 @@ export {
   formatSignedNumber,
   formatPct,
   formatPercentile,
+  formatFractionPct,
+  formatSharePct,
   formatUsd,
 } from './number'
-export { istClock, istTime, istDate, istDateTime } from './time'
+export { istClock, istTime, istDate, istDateTime, istToday } from './time'
