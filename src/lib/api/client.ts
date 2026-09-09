@@ -29,6 +29,46 @@ export class ApiError extends Error {
   }
 }
 
+/**
+ * ⚠️ THE API COULD NOT BE REACHED AT ALL — no response, no status, no server
+ * opinion. This is NOT an auth failure and must never be reported as one: a dead
+ * resolver, an offline laptop and a down box all land here, and telling someone
+ * their session expired sends them to re-type a password that was never wrong,
+ * against a server that cannot hear them.
+ *
+ * On 2026-09-09 this was a raw `TypeError: Failed to fetch` escaping the auth
+ * bootstrap; nothing caught it and every route rendered a generic boundary.
+ * Naming it is what lets each layer decide honestly what to say.
+ */
+export class NetworkError extends Error {
+  constructor(cause?: unknown) {
+    super('Cannot reach the API')
+    this.name = 'NetworkError'
+    this.cause = cause
+  }
+}
+
+/**
+ * `fetch`, with a rejection turned into a NAMED failure.
+ *
+ * ⚠️ AN ABORT IS NOT AN OUTAGE. React Query aborts in-flight requests on unmount
+ * and on refetch, so an AbortError passes through untouched — dressing an
+ * ordinary navigation up as "cannot reach the API" would cry outage several
+ * times a session and teach the reader to ignore the message that matters.
+ */
+async function netFetch(url: string, init: RequestInit): Promise<Response> {
+  try {
+    return await fetch(url, init)
+  } catch (cause) {
+    // ⚠️ NOT `instanceof Error`. An abort arrives as a DOMException, which does
+    // not extend Error in every runtime (it does not in jsdom) — so an
+    // instanceof check silently reclassifies every cancelled request as an
+    // outage. Match on the name, which is what the spec actually guarantees.
+    if ((cause as { name?: string } | null)?.name === 'AbortError') throw cause
+    throw new NetworkError(cause)
+  }
+}
+
 // Called when the session is terminally unauthenticated (refresh failed/absent).
 // The app wires this to router navigation toward /login.
 let onUnauthorized: (() => void) | null = null
@@ -61,7 +101,11 @@ let refreshInFlight: Promise<string | null> | null = null
 async function doRefresh(): Promise<string | null> {
   const refreshToken = tokenStore.getRefreshToken()
   if (!refreshToken) return null
-  const res = await fetch(`${BASE}/auth/refresh`, {
+  // ⚠️ A THROW HERE MEANS UNREACHABLE and propagates as NetworkError — the
+  // session is NOT cleared. Only a server that ANSWERED and refused the token
+  // clears it; wiping a good refresh token because the wifi dropped would log
+  // Father out of a system he never left.
+  const res = await netFetch(`${BASE}/auth/refresh`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ refresh_token: refreshToken }),
@@ -89,10 +133,41 @@ export function refreshAccessToken(): Promise<string | null> {
  * mints a fresh one via /auth/refresh — that is correct, not a bug). Returns
  * false when there is no session to restore → the guard sends you to /login.
  */
+export type AccessResult =
+  | { ok: true }
+  /** No refresh token on this device — nobody has signed in here. */
+  | { ok: false; reason: 'no-session' }
+  /** The server ANSWERED and refused the token. The session is over. */
+  | { ok: false; reason: 'rejected' }
+  /** No answer at all. The session may be perfectly good; we cannot tell. */
+  | { ok: false; reason: 'unreachable' }
+
+/**
+ * The gate, with its REASON — because the three ways in are three different
+ * facts and the screen must be able to say which one happened.
+ *
+ * ⚠️ IT DOES NOT THROW ON A DEAD NETWORK. That throw is what took the app down:
+ * it escaped into `_authenticated.beforeLoad`, no route caught it, and every
+ * route including root rendered TanStack Router's default error boundary. An
+ * unreachable API degrades to the login screen; it does not kill the app.
+ */
+export async function checkAccess(): Promise<AccessResult> {
+  if (tokenStore.getAccessToken()) return { ok: true }
+  if (!tokenStore.getRefreshToken()) return { ok: false, reason: 'no-session' }
+  try {
+    return (await refreshAccessToken())
+      ? { ok: true }
+      : { ok: false, reason: 'rejected' }
+  } catch (err) {
+    if (err instanceof NetworkError) return { ok: false, reason: 'unreachable' }
+    // An abort, or anything genuinely unexpected, stays itself.
+    throw err
+  }
+}
+
+/** The boolean form, for callers that only need "may I render this?". */
 export async function ensureAccessToken(): Promise<boolean> {
-  if (tokenStore.getAccessToken()) return true
-  if (!tokenStore.getRefreshToken()) return false
-  return Boolean(await refreshAccessToken())
+  return (await checkAccess()).ok
 }
 
 interface RequestOptions {
@@ -119,7 +194,7 @@ export async function apiRequest<T>(
     const headers: Record<string, string> = {}
     if (opts.body !== undefined) headers['Content-Type'] = 'application/json'
     if (token) headers.Authorization = `Bearer ${token}`
-    return fetch(`${BASE}${path}`, {
+    return netFetch(`${BASE}${path}`, {
       method: opts.method ?? 'GET',
       headers,
       body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined,

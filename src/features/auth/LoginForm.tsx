@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff, WifiOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -8,7 +8,16 @@ import { Glass, BrandMark, Wordmark } from '@/design-system'
 import { ApiError } from '@/lib/api/client'
 import { useAuth } from '@/lib/auth'
 
-export function LoginForm() {
+/** Why the guard sent you to this screen. Three different facts (see checkAccess). */
+export type LoginReason = 'no-session' | 'rejected' | 'unreachable'
+
+/**
+ * ⚠️ `reason` arrives as a PROP, not via useSearch(). The route owns the search
+ * params and passes them down, so this form still renders standalone — which is
+ * how it is tested, and which keeps a presentation component from depending on
+ * where in the router it happens to sit.
+ */
+export function LoginForm({ reason }: { reason?: LoginReason } = {}) {
   const { login } = useAuth()
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
@@ -62,6 +71,27 @@ export function LoginForm() {
             Pre-market intelligence
           </p>
         </div>
+
+        {/* ⚠️ THE OUTAGE BANNER. An unreachable API is NOT a sign-out, and this
+            screen must not imply one — "your session expired" is a lie the
+            reader acts on by re-entering a password that was never wrong,
+            against a server that cannot hear them. The refresh token is
+            deliberately still on the device (see doRefresh), so the honest thing
+            to say is that they are still signed in and the network is not. */}
+        {reason === 'unreachable' && (
+          <div
+            role="status"
+            className="mb-5 flex items-start gap-2.5 rounded-[10px] border-[0.5px] border-apex-yellow/40 bg-apex-yellow-tint px-3.5 py-3"
+          >
+            <WifiOff className="mt-px size-4 shrink-0 text-apex-yellow" aria-hidden />
+            <p className="text-[12.5px] leading-[18px] text-apex-fg-secondary">
+              <span className="font-medium text-apex-fg">Cannot reach the API.</span>{' '}
+              You are still signed in — this is a connection problem, not a session
+              that ended. The brief is unaffected. Retry when the connection is
+              back; signing in again is not required, and will not work until it is.
+            </p>
+          </div>
+        )}
 
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-1.5">
