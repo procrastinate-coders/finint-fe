@@ -9,7 +9,6 @@ export {
   formatSignedNumber,
   formatPct,
   formatPercentile,
-  formatFractionPct,
   formatSharePct,
   formatUsd,
 } from './number'

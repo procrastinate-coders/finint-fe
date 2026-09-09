@@ -3,6 +3,42 @@
 *The living state of the build. Updated at the END of every session; read FIRST at the start of
 the next. Never close a session with a stale CONTEXT.*
 
+---
+
+## 🔑 HOUSE RULE — ABSENT IS NOT ZERO. Read this before rendering any count.
+
+**A field that is missing and a field that is present and zero are DIFFERENT FACTS. Render them
+differently, always.** Zero says "we measured, and it was none." Absent says "we do not know."
+Showing absent as zero fabricates a measurement — law 1 in the one disguise that keeps getting past
+review, because the code looks correct and the screen looks finished.
+
+This has bitten **three times in one feature**, each time by a different mechanism:
+
+1. **Zod `.default([])`** — the generated contract defaults `guard.decisions` to `[]`, so "not served"
+   and "genuinely empty" parse identically. Recovered by reading the run's separate `lines` count: a
+   count with no decisions is the log not being served; a zero count is a run that logged nothing.
+2. **A sibling field as the discriminator** — `guard.lines` is what made (1) recoverable at all. When
+   a contract cannot express absence, look for the neighbouring field that can.
+3. **A reader defaulting `None` to `0`** — a guard log written before `claims` existed had no key, and
+   the count defaulted to zero. "1 denied (0 claims)" said the denial rested on nothing. The backend
+   now returns `None` and counts `unrecorded_claims` separately; the panel says "claim counts not
+   recorded" and never "(0 claims)".
+
+**How to apply it:**
+- Never `?? 0`, `|| 0`, or `.length` on a possibly-absent collection to produce a number a user reads.
+- When the schema cannot distinguish the two (`.default([])`, `.default({})`), find the sibling that
+  can — a count, a hash, an `unrecorded_*` field — and say which case you are in, in words.
+- Prefer three branches to two: *has a value* · *is genuinely zero/empty* · *was never recorded*.
+- The rule applies one level down too. A summary that distinguishes them over rows that do not has
+  only moved the lie.
+
+Same principle, other faces: `null` renders as **"—"**, never `0` (law 1); a z-score never renders
+without its window; a percentile never without its confidence. A number without what establishes it
+is a number that states more than it knows.
+
+---
+
+
 **Updated:** 2026-07-17 — **MOBILE RESPONSIVENESS pass.** The fixed 64px icon-rail + `pl-[104px]`
 was eating ~1/3 of a phone screen and breaking layouts. Now: below `lg` the sidebar is an OFF-CANVAS
 DRAWER (hidden, a hamburger in the header opens it as an overlay with a scrim; a link/scrim tap
@@ -284,18 +320,17 @@ fields it wrote, because a hardcoded list that silently drops a new arrival is l
 new place. Every absence is typed: rejected / did not land / unreadable / landed-but-uncovered.
 ⚠️ **A QUARANTINED REPORT IS NOT CONTENT.** `.bad` name + `status:"failed"` are welded by a database
 CHECK (FIN-231 G3); EITHER signal is treated as rejected, and the body is never rendered.
-⚠️ **FIN-228 Stream A fields are NOT SERVED YET.** `push_agent_run.BOARD_FIELDS` ships 9 keys; the
-four analysts cite 34, all already in the scan bundle. `stream-a-fields.ts` reads them off the board
-row's `.passthrough()` — DELETE it once BOARD_FIELDS is extended and the contract regenerated. The
-board-level `ratios` block is not served at any level either.
-⚠️ **THE PREMIUM Z NEVER RENDERS WITHOUT ITS WINDOW** (`premiumReading()`): the window is per
-instrument (GOLD 196, SILVER 216) against a 180 floor, so a bare z is FIN-215's defect again. A z
-with no window is WITHHELD and named as withheld. A ratio's `value` (today's actual contracts) and
-its `percentile` (250 back-adjusted CONTINUOUS sessions) are labelled apart, with `basis` verbatim.
-⚠️ **UNIT TRAP: a `_pct` suffix does not mean one thing.** `implied_open_pct` (1.1776) and
-`intl_change_pct` are already percentages → `formatPct`; `premium_pct` (-0.0081) is a FRACTION →
-`formatFractionPct`. Confirmed off the crossmarket analyst's own prose on two instruments. Shares
-(`next_oi_share`) use `formatSharePct` — UNSIGNED, because a share has no direction.
+⚠️ **ALL 39 BOARD FIELDS ARE SERVED AND TYPED** (FIN-228 Stream C). `BOARD_FIELDS` went 9 → 39,
+derived from the agents' own `sources[]` — a derivation that found six nobody had listed
+(`lme_value`/`lme_change_pct`/`lme_as_of` for every Tier B, `eia_value`/`eia_wow`/`eia_as_of` for the
+energy pair); a backend test re-derives the list and fails when an agent cites something unshipped.
+`ratios` is a typed top-level key. The `stream-a-fields.ts` shim that read these off
+`board[].passthrough()` is **DELETED** — a hand-written escape hatch beside a generated contract is
+how the two drift (same discipline that retired the provisional agent-run contract).
+🔴 **`premium_pct` CHANGED SCALE: fraction → PERCENTAGE POINTS** (-0.0081 became -1.58), matching
+every sibling `_pct`. **`formatFractionPct` was DELETED**, not left lying around — through it GOLD
+would print −0.0158%. `formatSharePct` STAYS: a share is genuinely a fraction, and it is unsigned
+because "45.0% of OI" and "+45.0%" are different statements.
 ⚠️ **A REFUSED GATE DOES NOT MEAN NOTHING RAN.** The real 2026-09-08 run refused (9/9 closes
 unsettled) and landed all four analysts anyway; `GatePanel` takes `stagesLanded` and says "the gate
 refused, and N stages landed regardless — read it against this refusal" rather than the false "no

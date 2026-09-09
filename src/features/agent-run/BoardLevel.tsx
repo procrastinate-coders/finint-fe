@@ -1,6 +1,6 @@
 import { formatNumber, formatPercentile } from '@/lib/format'
+import type { AgentRunRatio } from '@/lib/api/contracts'
 import type { AnalystReport, AnalystSpec } from './report-shape'
-import type { RatioBlock } from './stream-a-fields'
 
 /**
  * What each analyst said about the WHOLE board, plus the board-level blocks only
@@ -23,7 +23,7 @@ export function BoardLevel({
   ratios,
 }: {
   reports: Array<{ spec: AnalystSpec; report: AnalystReport }>
-  ratios: Array<{ key: string; ratio: RatioBlock }>
+  ratios: Array<{ key: string; ratio: AgentRunRatio }>
 }) {
   if (reports.length === 0 && ratios.length === 0) {
     return (
@@ -103,7 +103,7 @@ export function BoardLevel({
  * is rendered verbatim beneath both — summarising it into a label would lose the
  * one sentence that makes the pair safe to read.
  */
-function Ratio({ name, r }: { name: string; r: RatioBlock }) {
+function Ratio({ name, r }: { name: string; r: AgentRunRatio }) {
   const pair =
     r.numerator && r.denominator ? `${r.numerator} / ${r.denominator}` : name
   return (

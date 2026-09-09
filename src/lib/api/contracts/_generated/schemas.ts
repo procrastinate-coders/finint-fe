@@ -499,6 +499,48 @@ const AgentRunBoardRow = z
     cot_percentile: z.union([z.number(), z.null()]),
     cot_confidence: z.union([z.string(), z.null()]),
     implied_open_pct: z.union([z.number(), z.null()]),
+    last_close: z.union([z.number(), z.null()]),
+    last_close_settled: z.union([z.boolean(), z.null()]),
+    atr: z.union([z.number(), z.null()]),
+    atr_avg: z.union([z.number(), z.null()]),
+    cont_stale_sessions: z.union([z.number(), z.null()]),
+    support_level: z.union([z.number(), z.null()]),
+    resistance_level: z.union([z.number(), z.null()]),
+    dist_to_support: z.union([z.number(), z.null()]),
+    dist_to_resistance: z.union([z.number(), z.null()]),
+    dist_to_support_atr: z.union([z.number(), z.null()]),
+    dist_to_resistance_atr: z.union([z.number(), z.null()]),
+    near_next_spread: z.union([z.number(), z.null()]),
+    near_next_spread_change: z.union([z.number(), z.null()]),
+    term_structure: z.union([z.string(), z.null()]),
+    spread_basis: z.union([z.string(), z.null()]),
+    next_oi_share: z.union([z.number(), z.null()]),
+    sessions_to_expiry: z.union([z.number(), z.null()]),
+    roll_basis: z.union([z.string(), z.null()]),
+    intl_change_pct: z.union([z.number(), z.null()]),
+    usdinr_change_pct: z.union([z.number(), z.null()]),
+    premium_pct: z.union([z.number(), z.null()]),
+    premium_z: z.union([z.number(), z.null()]),
+    premium_window: z.union([z.number(), z.null()]),
+    premium_basis: z.union([z.string(), z.null()]),
+    lme_value: z.union([z.number(), z.null()]),
+    lme_change_pct: z.union([z.number(), z.null()]),
+    lme_as_of: z.union([z.string(), z.null()]),
+    eia_value: z.union([z.number(), z.null()]),
+    eia_wow: z.union([z.number(), z.null()]),
+    eia_as_of: z.union([z.string(), z.null()]),
+  })
+  .partial()
+  .passthrough()
+const AgentRunRatio = z
+  .object({
+    value: z.union([z.number(), z.null()]),
+    percentile: z.union([z.number(), z.null()]),
+    window: z.union([z.number(), z.null()]),
+    unit_convention: z.union([z.string(), z.null()]),
+    numerator: z.union([z.string(), z.null()]),
+    denominator: z.union([z.string(), z.null()]),
+    basis: z.union([z.string(), z.null()]),
   })
   .partial()
   .passthrough()
@@ -533,6 +575,7 @@ const GuardSummary = z
     decisions: z.array(GuardDecision).default([]),
     denied: z.union([z.number(), z.null()]),
     claim_count: z.union([z.number(), z.null()]),
+    unrecorded_claims: z.union([z.number(), z.null()]),
   })
   .partial()
   .passthrough()
@@ -560,6 +603,7 @@ const AgentRunResponse = z
     gate: z.union([AgentRunGate, z.null()]),
     stages: z.array(AgentRunStage).default([]),
     board: z.array(AgentRunBoardRow).default([]),
+    ratios: z.record(z.string(), AgentRunRatio).default({}),
     guard: z.union([GuardSummary, z.null()]),
     audit: z.union([AuditSummary, z.null()]),
     transcripts: z.array(TranscriptRef).default([]),
@@ -694,6 +738,7 @@ export const schemas = {
   AgentRunGate,
   AgentRunStage,
   AgentRunBoardRow,
+  AgentRunRatio,
   GuardClaim,
   GuardDecision,
   GuardSummary,

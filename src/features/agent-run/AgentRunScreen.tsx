@@ -19,7 +19,6 @@ import {
   type AnalystReport,
   type AnalystSpec,
 } from './report-shape'
-import { ratiosOf } from './stream-a-fields'
 
 /**
  * FIN-227/228/231 Stream C — ONE harness run. A second read on the same board
@@ -127,7 +126,11 @@ export function AgentRunScreen({ date }: { date: string }) {
   const boardLevel = specs
     .map((spec) => ({ spec, report: parsed.get(spec.agent) }))
     .filter((x): x is { spec: AnalystSpec; report: AnalystReport } => !!x.report)
-  const ratios = ratiosOf(data)
+  // `ratios` is a typed top-level key now — read straight off the contract.
+  const ratios = Object.entries(data.ratios ?? {}).map(([key, ratio]) => ({
+    key,
+    ratio,
+  }))
 
   return (
     <div className="mx-auto max-w-[1000px] pb-10">
