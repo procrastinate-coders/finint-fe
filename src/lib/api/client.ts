@@ -144,34 +144,59 @@ async function parseJsonBody(res: Response, path: string): Promise<unknown> {
 /**
  * How long ONE attempt at a normal read may take.
  *
- * Derived from two facts already in this codebase:
- *  - `staleTime: 30_000` (lib/query/client.ts) — the app's own statement of how
- *    long a value stays trustworthy. A value that took LONGER to fetch than it
- *    remains valid is stale before it lands, so the whole attempt sequence must
- *    fit inside it.
- *  - `retry: failureCount < 2` — 3 attempts, plus React Query's exponential
- *    backoff of 1s + 2s between them. The retry policy MULTIPLIES any timeout,
- *    so the per-attempt budget is what is left after the backoff, divided by the
- *    attempts that consume it.
+ * ⚠️ THE PREMISE WAS WRONG AND IT TOOK THE APP DOWN (2026-09-09). The first
+ * version budgeted the WHOLE RETRY SEQUENCE inside `staleTime`:
+ * `(30_000 − 3_000) / 3 attempts` = 9s per attempt. Then a real morning arrived —
+ * `/readiness` is 18,250 bytes and took **10.49s** over a phone hotspot, under 1s
+ * from the EC2 box itself — and the client cancelled at 9s a request that needed
+ * 10.5s. Every data endpoint died; only `/auth/*` survived, because those
+ * responses are 0.4–0.5 kB. The formula was sound; the assumption underneath it
+ * was not.
+ *
+ * ⚠️ `staleTime` IS NOT A DEADLINE FOR ACQUIRING A VALUE. It says how long a
+ * value we already HOLD stays worth keeping. Retries are recovery from failure,
+ * not part of the cost of one successful fetch, and charging them against the
+ * freshness window forced a per-attempt budget smaller than a single response.
+ *
+ * ⚠️ THE CORRECTED PREMISE, applied at the right granularity: ONE attempt must
+ * finish inside the window in which its result would still be considered fresh.
+ * A fetch that takes longer than `staleTime` lands on a value the app already
+ * wants to refetch — it never gets ahead. That is a real statement about this
+ * codebase's own constant, it still scales when the constant moves, and it is
+ * NOT a number anybody chose.
+ *
+ * ⚠️ AND A STALE-BUT-ARRIVED VALUE BEATS A FRESH-BUT-CANCELLED ONE. Cancelling at
+ * 9s gave the reader NOTHING, which is strictly worse than a read that lands a
+ * few seconds past its freshness window.
  */
-export function deriveReadTimeoutMs({
-  staleTimeMs,
+export function deriveReadTimeoutMs({ staleTimeMs }: { staleTimeMs: number }): number {
+  return staleTimeMs
+}
+
+/** One attempt, one freshness window: 30s. ~2.9x the 10.49s measured today. */
+export const READ_TIMEOUT_MS = deriveReadTimeoutMs({ staleTimeMs: 30_000 })
+
+/**
+ * What the reader actually waits before a hang is named.
+ *
+ * ⚠️ THE RETRY POLICY STILL MULTIPLIES THE BUDGET — that part of the original
+ * reasoning was right, and raising the per-attempt budget made it worse, not
+ * better. Left unhandled this would be 3 x 30s + 3s = 93s of skeleton before the
+ * error screen. So `lib/query/client.ts` does NOT retry a TimeoutError: if one
+ * attempt exhausted the whole freshness window, two more will too, and they buy
+ * 60 further seconds to learn nothing. Worst case is one attempt.
+ */
+export function deriveWorstCaseWaitMs({
+  perAttemptMs,
   attempts,
   backoffMs,
 }: {
-  staleTimeMs: number
+  perAttemptMs: number
   attempts: number
   backoffMs: number
 }): number {
-  return Math.floor((staleTimeMs - backoffMs) / attempts)
+  return perAttemptMs * attempts + backoffMs
 }
-
-/** 3 attempts inside a 30s staleTime, less React Query's 1s + 2s backoff. */
-export const READ_TIMEOUT_MS = deriveReadTimeoutMs({
-  staleTimeMs: 30_000,
-  attempts: 3,
-  backoffMs: 3_000,
-})
 
 /**
  * How long POST /refresh may take.

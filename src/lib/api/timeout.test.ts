@@ -3,11 +3,13 @@ import {
   apiRequest,
   deriveReadTimeoutMs,
   deriveRefreshTimeoutMs,
+  deriveWorstCaseWaitMs,
   READ_TIMEOUT_MS,
   REFRESH_TIMEOUT_MS,
   TimeoutError,
   NetworkError,
 } from './client'
+import { createQueryClient } from '@/lib/query/client'
 
 /**
  * ⚠️ MSW IS BYPASSED HERE, DELIBERATELY — a hang is a NETWORK-LAYER FACT.
@@ -50,34 +52,56 @@ function hangs() {
 // the VALUE — derived, not picked
 // ============================================================================
 describe('the timeout value is derived from constants that already exist', () => {
-  it('a read budget is the staleTime, split across the attempts that consume it', () => {
-    // 3 attempts (retry: failureCount < 2) + React Query's 1s/2s backoff, inside
-    // a 30s staleTime. A value that took longer to fetch than it stays valid is
-    // stale before it lands.
-    expect(deriveReadTimeoutMs({ staleTimeMs: 30_000, attempts: 3, backoffMs: 3_000 })).toBe(9_000)
-    expect(READ_TIMEOUT_MS).toBe(9_000)
+  it('ONE attempt is budgeted against the staleTime it must land inside', () => {
+    // ⚠️ THE CORRECTED PREMISE (2026-09-09). The first version charged the whole
+    // retry sequence to the freshness window and produced 9s — which cancelled a
+    // real 10.49s /readiness and took the app down for a morning. staleTime says
+    // how long a value we HOLD stays worth keeping; a fetch that outlives it
+    // lands on something the app already wants to refetch.
+    expect(deriveReadTimeoutMs({ staleTimeMs: 30_000 })).toBe(30_000)
+    expect(READ_TIMEOUT_MS).toBe(30_000)
   })
 
-  it('⚠️ SCALES with the retry policy — it is not a number someone chose', () => {
-    // Double the attempts and the per-attempt budget must shrink, or the reader
-    // waits twice as long. This is what stops the value going stale.
-    expect(deriveReadTimeoutMs({ staleTimeMs: 30_000, attempts: 6, backoffMs: 3_000 })).toBe(4_500)
-    expect(deriveReadTimeoutMs({ staleTimeMs: 60_000, attempts: 3, backoffMs: 3_000 })).toBe(19_000)
+  it('SCALES with the staleTime — it is not a number someone chose', () => {
+    expect(deriveReadTimeoutMs({ staleTimeMs: 60_000 })).toBe(60_000)
+    expect(deriveReadTimeoutMs({ staleTimeMs: 15_000 })).toBe(15_000)
   })
 
-  it('⚠️ POST /refresh gets the BACKEND’s own budget, not the read budget', () => {
-    // A refresh legitimately takes ~30s of work (10 news queries). Timing it out
-    // on the read budget would report a failure for work that is still running
-    // and about to succeed. The FE gives up exactly when the backend's own
-    // single-flight lock would — `_derive_refresh_lock_ttl` = (q*2s + 10s) * 3.
+  it('clears the MEASURED failure by a real margin', () => {
+    // /readiness: 18,250 bytes, 10.49s from the laptop on 2026-09-09. 10.5s is
+    // what the link did that day, not a floor — so the margin is asserted, and
+    // shrinking staleTime cannot silently re-create the outage.
+    const MEASURED_WORST_READ_MS = 10_490
+    expect(READ_TIMEOUT_MS).toBeGreaterThanOrEqual(MEASURED_WORST_READ_MS * 2)
+  })
+
+  it('the retry policy MULTIPLIES it, so a timeout is not retried', () => {
+    // Unhandled this would be 3 x 30s + 3s = 93s of skeleton before the error
+    // screen — worse than the 30s it replaced.
+    expect(
+      deriveWorstCaseWaitMs({
+        perAttemptMs: READ_TIMEOUT_MS,
+        attempts: 3,
+        backoffMs: 3_000,
+      }),
+    ).toBe(93_000)
+    const client = createQueryClient()
+    const retry = client.getDefaultOptions().queries?.retry as (
+      n: number,
+      e: Error,
+    ) => boolean
+    expect(retry(0, new TimeoutError('/readiness', READ_TIMEOUT_MS))).toBe(false)
+    expect(retry(0, new Error('flaky'))).toBe(true)
+  })
+
+  it('POST /refresh keeps the BACKEND own budget, untouched', () => {
     expect(deriveRefreshTimeoutMs(10)).toBe(90_000)
     expect(REFRESH_TIMEOUT_MS).toBe(90_000)
-    // and it scales with the query count, exactly as the backend's does
     expect(deriveRefreshTimeoutMs(3)).toBe(48_000)
   })
 
-  it('the slow budget is comfortably longer than the read budget', () => {
-    expect(REFRESH_TIMEOUT_MS).toBeGreaterThan(READ_TIMEOUT_MS * 3)
+  it('the slow budget is still longer than the read budget', () => {
+    expect(REFRESH_TIMEOUT_MS).toBeGreaterThan(READ_TIMEOUT_MS)
   })
 })
 
