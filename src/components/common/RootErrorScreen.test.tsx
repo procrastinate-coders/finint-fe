@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { Route as RootRoute } from '@/routes/__root'
-import { ApiError, NetworkError } from '@/lib/api/client'
+import { ApiError, NetworkError, TimeoutError } from '@/lib/api/client'
 import { RootErrorScreen } from './RootErrorScreen'
 
 /**
@@ -43,5 +43,16 @@ describe('the root error screen names what went wrong', () => {
   it('a non-Error throw still gets named rather than swallowed', () => {
     render(<RootErrorScreen error={'a bare string'} />)
     expect(screen.getByText('a bare string')).toBeVisible()
+  })
+
+  it('⚠️ a TIMEOUT reads differently from an unreachable API', () => {
+    render(<RootErrorScreen error={new TimeoutError('/readiness', 9000)} />)
+    expect(
+      screen.getByRole('heading', { name: /taking too long/i }),
+    ).toBeInTheDocument()
+    // it points at the SERVER, not at this machine's connection
+    expect(screen.getByText(/up but struggling/i)).toBeInTheDocument()
+    expect(document.body.textContent).not.toMatch(/cannot reach the api/i)
+    expect(document.body.textContent).not.toMatch(/never reached the server/i)
   })
 })

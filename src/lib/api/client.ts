@@ -49,6 +49,152 @@ export class NetworkError extends Error {
 }
 
 /**
+ * ⚠️ THE SERVER ANSWERED, AND ANSWERED TOO SLOWLY — a different fact from being
+ * unreachable, and it must read differently. Unreachable means nothing replied;
+ * this means the box accepted the connection and is struggling. On a 2GB
+ * t3.small that has been OOM-killed and has had a lock-exhaustion incident, that
+ * is the realistic failure, and before this it had NO failure mode at all: the
+ * query hung forever and the skeleton never resolved.
+ */
+export class TimeoutError extends Error {
+  readonly timeoutMs: number
+  readonly path: string
+  constructor(path: string, timeoutMs: number) {
+    super(`The server is taking too long — ${path} did not answer within ${timeoutMs}ms`)
+    this.name = 'TimeoutError'
+    this.path = path
+    this.timeoutMs = timeoutMs
+  }
+}
+
+/**
+ * ⚠️ THE SERVER ANSWERED WITH SOMETHING THAT IS NOT THE JSON WE ASKED FOR.
+ *
+ * A malformed body, an empty 200, or an nginx HTML 502 all reject inside
+ * `res.json()` BEFORE zod ever sees them, and used to escape as a bare
+ * `SyntaxError: Unexpected token '<'` — which names neither the endpoint, the
+ * status, nor the fact that a proxy answered instead of the app.
+ *
+ * So it carries WHAT WAS ACTUALLY RECEIVED. "Expected JSON, got text/html (502):
+ * <!DOCTYPE html…" identifies nginx in one glance; the SyntaxError identified
+ * nothing.
+ */
+export class MalformedResponseError extends Error {
+  readonly path: string
+  readonly status: number
+  readonly contentType: string
+  readonly bodyStart: string
+  constructor(
+    path: string,
+    status: number,
+    contentType: string,
+    bodyStart: string,
+    cause?: unknown,
+  ) {
+    super(
+      bodyStart === ''
+        ? `Expected JSON from ${path}, got an empty body (${status}, ${contentType || 'no content-type'})`
+        : `Expected JSON from ${path}, got ${contentType || 'no content-type'} (${status}): ${bodyStart}`,
+    )
+    this.name = 'MalformedResponseError'
+    this.path = path
+    this.status = status
+    this.contentType = contentType
+    this.bodyStart = bodyStart
+    this.cause = cause
+  }
+}
+
+/** Enough of the body to recognise WHAT answered, not enough to bury the message. */
+const BODY_SAMPLE_CHARS = 100
+
+/**
+ * Read a response body as JSON, naming what came back when it is not JSON.
+ *
+ * ⚠️ `res.text()` FIRST, then `JSON.parse` — not `res.json()`. The body can only
+ * be consumed once, and `res.json()` consumes it while telling us nothing about
+ * what it consumed. Reading the text keeps the evidence.
+ */
+async function parseJsonBody(res: Response, path: string): Promise<unknown> {
+  const contentType = res.headers.get('content-type') ?? ''
+  let text: string
+  try {
+    text = await res.text()
+  } catch (cause) {
+    throw new MalformedResponseError(path, res.status, contentType, '', cause)
+  }
+  const sample = text.slice(0, BODY_SAMPLE_CHARS)
+  if (text.trim() === '') {
+    throw new MalformedResponseError(path, res.status, contentType, '')
+  }
+  try {
+    return JSON.parse(text) as unknown
+  } catch (cause) {
+    throw new MalformedResponseError(path, res.status, contentType, sample, cause)
+  }
+}
+
+// === TIMEOUTS — DERIVED, NOT PICKED ======================================
+//
+// ⚠️ A TIMEOUT TUNED TO A BENCHMARK GOES STALE THE MOMENT THE BENCHMARK DOES, so
+// both budgets below are EXPRESSIONS over constants that already exist and
+// already mean something. Change the retry policy or the staleTime and these
+// move with them.
+
+/**
+ * How long ONE attempt at a normal read may take.
+ *
+ * Derived from two facts already in this codebase:
+ *  - `staleTime: 30_000` (lib/query/client.ts) — the app's own statement of how
+ *    long a value stays trustworthy. A value that took LONGER to fetch than it
+ *    remains valid is stale before it lands, so the whole attempt sequence must
+ *    fit inside it.
+ *  - `retry: failureCount < 2` — 3 attempts, plus React Query's exponential
+ *    backoff of 1s + 2s between them. The retry policy MULTIPLIES any timeout,
+ *    so the per-attempt budget is what is left after the backoff, divided by the
+ *    attempts that consume it.
+ */
+export function deriveReadTimeoutMs({
+  staleTimeMs,
+  attempts,
+  backoffMs,
+}: {
+  staleTimeMs: number
+  attempts: number
+  backoffMs: number
+}): number {
+  return Math.floor((staleTimeMs - backoffMs) / attempts)
+}
+
+/** 3 attempts inside a 30s staleTime, less React Query's 1s + 2s backoff. */
+export const READ_TIMEOUT_MS = deriveReadTimeoutMs({
+  staleTimeMs: 30_000,
+  attempts: 3,
+  backoffMs: 3_000,
+})
+
+/**
+ * How long POST /refresh may take.
+ *
+ * ⚠️ THE READ BUDGET WOULD KILL A LEGITIMATE REFRESH. A spine refresh runs 10
+ * news queries server-side and takes ~30s of real work; giving up at 9s would
+ * report a failure for work that is still running and about to succeed — the
+ * fabrication this whole codebase exists to avoid, in a new place.
+ *
+ * So it mirrors the BACKEND's own derivation for the same operation:
+ * `_derive_refresh_lock_ttl` = (queries × 2s + 10s) × 3. The FE gives up exactly
+ * when the backend's own single-flight guard would, and scales with the query
+ * count for the same reason the backend does (30s was tuned to a 3-query runtime
+ * and went stale when the set grew).
+ */
+export function deriveRefreshTimeoutMs(queries: number): number {
+  return (queries * 2_000 + 10_000) * 3
+}
+
+/** 9 mains + 1 macro = 10 queries per refresh (see the backend's budget math). */
+export const REFRESH_TIMEOUT_MS = deriveRefreshTimeoutMs(10)
+
+/**
  * `fetch`, with a rejection turned into a NAMED failure.
  *
  * ⚠️ AN ABORT IS NOT AN OUTAGE. React Query aborts in-flight requests on unmount
@@ -76,18 +222,42 @@ export function setUnauthorizedHandler(fn: (() => void) | null) {
   onUnauthorized = fn
 }
 
-async function toApiError(res: Response): Promise<ApiError> {
+/**
+ * ⚠️ A FAILED RESPONSE STAYS AN ApiError, ALWAYS — even when its body is HTML.
+ * `ApiError.status` is what callers branch on (a 404 from /agent-run means "no
+ * run landed", which is a different PAGE from a gate refusal), so turning an
+ * nginx 502 into a MalformedResponseError would break that reading to gain a
+ * name we can add to the message instead.
+ *
+ * So the status is preserved and the EVIDENCE is folded into the message: a bare
+ * "Bad Gateway" does not say that nginx answered instead of the app, and
+ * "Expected JSON, got text/html: <!DOCTYPE html…" does, in one glance.
+ */
+async function toApiError(res: Response, path: string): Promise<ApiError> {
+  const contentType = res.headers.get('content-type') ?? ''
+  let text = ''
   try {
-    const parsed = apiErrorBody.safeParse(await res.json())
-    if (parsed.success) {
-      return new ApiError(
-        res.status,
-        messageFromErrorBody(parsed.data) ?? res.statusText ?? 'request failed',
-        parsed.data,
-      )
-    }
+    text = await res.text()
   } catch {
-    /* non-JSON body */
+    /* body unreadable — fall through to the status line */
+  }
+  if (text.trim() !== '') {
+    try {
+      const parsed = apiErrorBody.safeParse(JSON.parse(text))
+      if (parsed.success) {
+        return new ApiError(
+          res.status,
+          messageFromErrorBody(parsed.data) ?? res.statusText ?? 'request failed',
+          parsed.data,
+        )
+      }
+    } catch {
+      /* not JSON at all — say what it was */
+    }
+    return new ApiError(
+      res.status,
+      `Expected JSON from ${path}, got ${contentType || 'no content-type'} (${res.status}): ${text.slice(0, BODY_SAMPLE_CHARS)}`,
+    )
   }
   return new ApiError(res.status, res.statusText || 'request failed')
 }
@@ -175,6 +345,8 @@ interface RequestOptions {
   body?: unknown
   auth?: boolean // default true
   signal?: AbortSignal
+  /** Per-attempt budget. Defaults to READ_TIMEOUT_MS; /refresh passes its own. */
+  timeoutMs?: number
 }
 
 /**
@@ -190,16 +362,49 @@ export async function apiRequest<T>(
   opts: RequestOptions = {},
 ): Promise<T> {
   const auth = opts.auth ?? true
-  const send = (token: string | null) => {
+  const timeoutMs = opts.timeoutMs ?? READ_TIMEOUT_MS
+
+  /**
+   * One attempt, with its own clock.
+   *
+   * ⚠️ THE BUDGET IS PER ATTEMPT, not per call — the 401 path below sends twice,
+   * and a shared clock would give the retry whatever the first attempt left over.
+   *
+   * ⚠️ A TIMEOUT AND A CALLER'S ABORT BOTH SURFACE AS AbortError, so the two are
+   * told apart by `timedOut`, set only by our own timer. React Query cancelling a
+   * query on unmount must stay a cancellation; reporting it as "the server is
+   * taking too long" would blame the backend for ordinary navigation.
+   */
+  const send = async (token: string | null): Promise<Response> => {
     const headers: Record<string, string> = {}
     if (opts.body !== undefined) headers['Content-Type'] = 'application/json'
     if (token) headers.Authorization = `Bearer ${token}`
-    return netFetch(`${BASE}${path}`, {
-      method: opts.method ?? 'GET',
-      headers,
-      body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined,
-      signal: opts.signal,
-    })
+
+    const controller = new AbortController()
+    let timedOut = false
+    const timer = setTimeout(() => {
+      timedOut = true
+      controller.abort()
+    }, timeoutMs)
+    const onCallerAbort = () => controller.abort()
+    opts.signal?.addEventListener('abort', onCallerAbort, { once: true })
+
+    try {
+      return await netFetch(`${BASE}${path}`, {
+        method: opts.method ?? 'GET',
+        headers,
+        body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined,
+        signal: controller.signal,
+      })
+    } catch (err) {
+      if (timedOut) throw new TimeoutError(path, timeoutMs)
+      throw err
+    } finally {
+      // ⚠️ ALWAYS clear it: a leaked timer fires later and aborts an unrelated
+      // request, which would look like a random intermittent failure.
+      clearTimeout(timer)
+      opts.signal?.removeEventListener('abort', onCallerAbort)
+    }
   }
 
   let res = await send(auth ? tokenStore.getAccessToken() : null)
@@ -212,11 +417,14 @@ export async function apiRequest<T>(
     if (res.status === 401) {
       tokenStore.clear()
       onUnauthorized?.()
-      throw await toApiError(res)
+      throw await toApiError(res, path)
     }
   }
 
-  if (!res.ok) throw await toApiError(res)
+  if (!res.ok) throw await toApiError(res, path)
   if (res.status === 204 || schema === null) return undefined as T
-  return schema.parse(await res.json())
+  // ⚠️ NOT res.json(): a bad body must name what it actually was (law 1 applied
+  // to our own errors — "SyntaxError: Unexpected token '<'" tells nobody that
+  // nginx answered instead of the app).
+  return schema.parse(await parseJsonBody(res, path))
 }

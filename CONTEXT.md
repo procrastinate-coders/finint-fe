@@ -92,6 +92,32 @@ full reasoning and limits are in the test file — read them before trusting a g
 
 ---
 
+**2026-09-09 (b) — A HANG AND A BAD BODY NOW HAVE FAILURE MODES.** Two entries off the MSW
+blind-spot table; the rest of it is still reported-not-built.
+- ⚠️ **`apiRequest` has a PER-ATTEMPT timeout, DERIVED not picked.** `READ_TIMEOUT_MS` = 9s =
+  `(staleTime 30_000 − React Query's 1s+2s backoff) / 3 attempts`. The anchors are constants that
+  already mean something: a value that took longer to fetch than it stays valid is stale before it
+  lands, and `retry: failureCount < 2` MULTIPLIES any timeout, so the per-attempt budget is what is
+  left after the backoff. Change the retry policy and `deriveReadTimeoutMs()` moves with it — a
+  timeout tuned to a benchmark goes stale the moment the benchmark does.
+- ⚠️ **POST /refresh gets 90s, mirroring the BACKEND's own `_derive_refresh_lock_ttl`**
+  = `(queries × 2s + 10s) × 3`. A refresh runs ~10 news queries and takes ~30s of real work; the read
+  budget would report a failure for work that is still running and about to succeed. The FE gives up
+  exactly when the backend's own single-flight guard would, and scales with the query count for the
+  same reason (30s was tuned to a 3-query runtime and went stale when the set grew).
+- ⚠️ **A TIMEOUT IS NOT AN OUTAGE.** `TimeoutError` ≠ `NetworkError`: one means the box answered and
+  is struggling (look at the backend), the other that nothing answered (look at this machine). The
+  root screen says "The server is taking too long / up but struggling" vs "Cannot reach the API".
+  Timeout and a caller's abort both surface as AbortError, so they are told apart by a `timedOut`
+  flag set only by our own timer — React Query cancelling on unmount must stay a cancellation.
+- ⚠️ **`res.json()` is wrapped** (`parseJsonBody` reads `res.text()` FIRST so the evidence survives).
+  `MalformedResponseError` carries status + content-type + the first 100 chars:
+  "Expected JSON from /readiness, got text/html (200): <!DOCTYPE html…" identifies nginx in one
+  glance; `SyntaxError: Unexpected token '<'` identified nothing. An EMPTY 200 is its own message.
+- ⚠️ **A FAILED response STAYS an `ApiError`** — `.status` is what callers branch on (a 404 from
+  /agent-run means "no run landed", a different PAGE from a gate refusal). The evidence goes into the
+  MESSAGE rather than changing the type, so nothing that reads `.status` breaks to gain a name.
+
 **2026-09-09 — THE NETWORK-FAILURE PATH.** A dead DNS resolver (the outage) revealed a real FE bug:
 `fetch` rejecting made `ensureAccessToken()` throw, `_authenticated.beforeLoad` threw, nothing caught
 it, and every route including root showed TanStack Router's default "Something went wrong!" with the
