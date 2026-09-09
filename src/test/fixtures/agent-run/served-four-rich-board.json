@@ -196,10 +196,10 @@
       "roll_basis": "GOLD26DECFUT OI over GOLD26OCTFUT + GOLD26DECFUT",
       "intl_change_pct": 2.2765360703397963,
       "usdinr_change_pct": -1.0744778469976457,
-      "premium_pct": -1.580657878826035,
-      "premium_z": null,
-      "premium_window": 110,
-      "premium_basis": "premium computed; z REFUSED \u2014 110 stored observations, 180 required",
+      "premium_pct": null,
+      "premium_z": -0.3525,
+      "premium_window": 196,
+      "premium_basis": "reference x USD/INR x (1 + 15% import duty); z over 196 sessions (floor 180)",
       "lme_value": null,
       "lme_change_pct": null,
       "lme_as_of": null,
@@ -364,10 +364,10 @@
       "roll_basis": "no next contract stored \u2014 roll share undefined with one contract",
       "intl_change_pct": 2.0348268776169354,
       "usdinr_change_pct": -1.0744778469976457,
-      "premium_pct": 2.9175757611103936,
-      "premium_z": null,
-      "premium_window": 0,
-      "premium_basis": "premium computed; z REFUSED \u2014 0 stored observations, 180 required",
+      "premium_pct": null,
+      "premium_z": 0.2137,
+      "premium_window": 216,
+      "premium_basis": "reference x USD/INR x (1 + 15% import duty); z over 216 sessions (floor 180)",
       "lme_value": null,
       "lme_change_pct": null,
       "lme_as_of": null,
@@ -419,23 +419,23 @@
     }
   ],
   "ratios": {
-    "gold_silver": {
-      "value": null,
-      "percentile": null,
-      "window": 0,
-      "unit_convention": "per_gram",
-      "numerator": "GOLD",
-      "denominator": "SILVER",
-      "basis": "refused \u2014 a continuous series is 36 sessions stale (ceiling 3)"
-    },
     "crude_natgas": {
-      "value": null,
-      "percentile": null,
-      "window": 0,
-      "unit_convention": "as_quoted",
-      "numerator": "CRUDEOIL",
+      "basis": "CRUDEOIL and NATURALGAS as quoted, in their own units \u2014 a cross-unit reading by convention; value from today's actual contracts, percentile over 250 back-adjusted continuous sessions (the two bases differ slightly in level)",
       "denominator": "NATURALGAS",
-      "basis": "refused \u2014 a continuous series is 36 sessions stale (ceiling 3)"
+      "numerator": "CRUDEOIL",
+      "percentile": 0.7204,
+      "unit_convention": "as_quoted",
+      "value": 31.60340546293012,
+      "window": 250
+    },
+    "gold_silver": {
+      "basis": "GOLD and SILVER normalised to rupees per gram (10g and 1000g quotes); value from today's actual contracts, percentile over 250 back-adjusted continuous sessions (the two bases differ slightly in level)",
+      "denominator": "SILVER",
+      "numerator": "GOLD",
+      "percentile": 0.5019,
+      "unit_convention": "per_gram",
+      "value": 63.92704562365709,
+      "window": 250
     }
   },
   "guard": {

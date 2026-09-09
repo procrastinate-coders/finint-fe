@@ -748,11 +748,341 @@
               }
             ],
             "title": "Implied Open Pct"
+          },
+          "last_close": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Close"
+          },
+          "last_close_settled": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Close Settled"
+          },
+          "atr": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Atr"
+          },
+          "atr_avg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Atr Avg"
+          },
+          "cont_stale_sessions": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cont Stale Sessions"
+          },
+          "support_level": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Support Level"
+          },
+          "resistance_level": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resistance Level"
+          },
+          "dist_to_support": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dist To Support"
+          },
+          "dist_to_resistance": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dist To Resistance"
+          },
+          "dist_to_support_atr": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dist To Support Atr"
+          },
+          "dist_to_resistance_atr": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dist To Resistance Atr"
+          },
+          "near_next_spread": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Near Next Spread"
+          },
+          "near_next_spread_change": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Near Next Spread Change"
+          },
+          "term_structure": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Term Structure"
+          },
+          "spread_basis": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spread Basis"
+          },
+          "next_oi_share": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Oi Share"
+          },
+          "sessions_to_expiry": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sessions To Expiry"
+          },
+          "roll_basis": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Roll Basis"
+          },
+          "intl_change_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Intl Change Pct"
+          },
+          "usdinr_change_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Usdinr Change Pct"
+          },
+          "premium_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Premium Pct"
+          },
+          "premium_z": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Premium Z"
+          },
+          "premium_window": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Premium Window"
+          },
+          "premium_basis": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Premium Basis"
+          },
+          "lme_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lme Value"
+          },
+          "lme_change_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lme Change Pct"
+          },
+          "lme_as_of": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lme As Of"
+          },
+          "eia_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Eia Value"
+          },
+          "eia_wow": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Eia Wow"
+          },
+          "eia_as_of": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Eia As Of"
           }
         },
         "type": "object",
         "title": "AgentRunBoardRow",
-        "description": "\u26a0\ufe0f FLAT AND TYPED (G1). Not the raw bundle \u2014 `ScanBundle.bundle` is an opaque `{}` in the\nspec, which gives the FE no contract and no drift protection (FIN-218's failure in a new\nplace). cot_confidence sits beside cot_percentile because they are rendered as one element."
+        "description": "\u26a0\ufe0f FLAT AND TYPED (G1), and now CARRYING WHAT THE ANALYSTS ACTUALLY CITE.\n\nThe list is DERIVED from the agents' own sources[] arrays, not transcribed: they cite 34\ndistinct board fields and this shipped nine, so twenty-six were computed, stored, served on\nGET /scan/today and structurally unable to reach the page \u2014 FIN-198's shape for the fifth time.\nA hand-copied list is how a field goes missing; the transcription this arrived with omitted the\nLME context and the whole EIA block.\n\n\ud83d\udd34 EVERY `_pct` FIELD HERE IS PERCENTAGE POINTS. premium_pct used to be the one exception \u2014 a\nfraction wearing the same suffix \u2014 which cost the front end two formatters and a verification\nagainst the analyst's own prose. Converted at source; see scan.py.\n\nNo opaque `{}` passthrough: that was G1's finding and it is the FIN-218 failure in a new place."
       },
       "AgentRunGate": {
         "properties": {
@@ -853,6 +1183,90 @@
           "scored_calls"
         ],
         "title": "AgentRunIngestResponse"
+      },
+      "AgentRunRatio": {
+        "properties": {
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          },
+          "percentile": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Percentile"
+          },
+          "window": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Window"
+          },
+          "unit_convention": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Convention"
+          },
+          "numerator": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Numerator"
+          },
+          "denominator": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Denominator"
+          },
+          "basis": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Basis"
+          }
+        },
+        "type": "object",
+        "title": "AgentRunRatio",
+        "description": "\u26a0\ufe0f BOARD-LEVEL, so it is a top-level key rather than being copied onto the two legs \u2014 a\npair's ratio is not a property of either instrument, and any analyst may cite it."
       },
       "AgentRunRejected": {
         "properties": {
@@ -987,6 +1401,14 @@
             "type": "array",
             "title": "Board",
             "default": []
+          },
+          "ratios": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/AgentRunRatio"
+            },
+            "type": "object",
+            "title": "Ratios",
+            "default": {}
           },
           "guard": {
             "anyOf": [
@@ -2071,6 +2493,17 @@
               }
             ],
             "title": "Claim Count"
+          },
+          "unrecorded_claims": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unrecorded Claims"
           }
         },
         "type": "object",

@@ -78,15 +78,22 @@ export function GuardPanel({ guard }: { guard: Guard | null | undefined }) {
   // of them, and "1 denied" reads as a guard barely firing. Judging whether the
   // guard is working or strangling the report needs the claim count beside it.
   //
-  // ⚠️ ZERO IS NOT A CLAIM COUNT HERE. The guard WRITER does not emit `claims`
-  // yet — the pusher and the endpoint carry them, so a real denial arrives with
-  // `claim_count: 0`. Printing "1 denied (0 claims)" would state that a denial
-  // rested on nothing, which is a fabrication about the guard. A count is shown
-  // only when it is genuinely positive; otherwise the prose reason stands alone.
-  const counted =
+  // ⚠️ ABSENT IS NOT ZERO — the house rule, and the THIRD place it has bitten
+  // this feature (zod's .default([]) erasing absent-vs-empty; guard_log's `lines`
+  // as the second signal; now this). A denial written BEFORE FIN-232 carries no
+  // `claims` key at all, and the reader returns None for it rather than 0. The
+  // writer was never broken: a real four-claim denial produces claim_count 4 end
+  // to end. So:
+  //   recorded > 0                  → "N denied (M claims)"
+  //   recorded 0, all unrecorded    → "claim counts not recorded" — NOT "(0 claims)"
+  //   recorded 0, none unrecorded   → "0 claims recorded", which is a real fact
+  // Printing "1 denied (0 claims)" over a denial that simply predates the claim
+  // record would state that the denial rested on nothing.
+  const recorded =
     guard.claim_count ??
-    denies.reduce((n, d) => n + (d.claim_count ?? (d.claims ?? []).length), 0)
-  const claims = counted > 0 ? counted : null
+    denies.reduce((n, d) => n + (d.claim_count ?? 0), 0)
+  const unrecorded =
+    guard.unrecorded_claims ?? denies.filter((d) => d.claim_count == null).length
 
   return (
     <div>
@@ -97,12 +104,25 @@ export function GuardPanel({ guard }: { guard: Guard | null | undefined }) {
             {guard.denied ?? denies.length}
           </span>{' '}
           denied
-          {claims !== null && (
-            <span className="text-apex-fg-tertiary">
-              (<span className="apex-tabular">{claims}</span>{' '}
-              {claims === 1 ? 'claim' : 'claims'})
-            </span>
-          )}
+          <span className="text-apex-fg-tertiary">
+            {recorded > 0 ? (
+              <>
+                (<span className="apex-tabular">{recorded}</span>{' '}
+                {recorded === 1 ? 'claim' : 'claims'}
+                {unrecorded > 0 && (
+                  <>
+                    {' '}+ <span className="apex-tabular">{unrecorded}</span> not
+                    recorded
+                  </>
+                )}
+                )
+              </>
+            ) : unrecorded > 0 ? (
+              <>(claim counts not recorded)</>
+            ) : (
+              <>(0 claims recorded)</>
+            )}
+          </span>
         </span>
         <span className="inline-flex items-center gap-1.5 text-apex-fg-secondary">
           <Check className="size-3.5 text-apex-green" aria-hidden />
@@ -189,11 +209,22 @@ export function GuardPanel({ guard }: { guard: Guard | null | undefined }) {
                   ))}
                 </ul>
               ) : (
-                d.reason && (
-                  <p className="mt-1 max-w-[100ch] text-[12px] leading-[17px] text-apex-fg-secondary">
-                    {d.reason}
-                  </p>
-                )
+                <>
+                  {d.reason && (
+                    <p className="mt-1 max-w-[100ch] text-[12px] leading-[17px] text-apex-fg-secondary">
+                      {d.reason}
+                    </p>
+                  )}
+                  {/* Same rule one level down: a denial with NO claim record reads
+                      differently from one that recorded none. */}
+                  {denied && (
+                    <p className="mt-0.5 text-[10.5px] text-apex-fg-tertiary">
+                      {d.claim_count == null
+                        ? 'claims not recorded for this decision — the reason above is the whole record'
+                        : 'no individual claims recorded against this denial'}
+                    </p>
+                  )}
+                </>
               )}
             </li>
           )

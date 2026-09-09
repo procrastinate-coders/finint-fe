@@ -1,14 +1,13 @@
 import { TriangleAlert } from 'lucide-react'
 import type { AgentRunBoardRow } from '@/lib/api/contracts'
 import {
-  formatFractionPct,
   formatNumber,
   formatPct,
   formatPercentile,
   formatSharePct,
   formatSignedNumber,
+  istDate,
 } from '@/lib/format'
-import { extrasOf, premiumReading } from './stream-a-fields'
 
 /**
  * The deterministic facts ONE instrument's four analysts read — rendered once,
@@ -23,6 +22,11 @@ import { extrasOf, premiumReading } from './stream-a-fields'
  * a column. The one exception is a value whose companion is missing: those are
  * named as withheld, because silence there would read as "not measured" when the
  * truth is "measured, but not safely reportable".
+ *
+ * All 39 fields come straight off the GENERATED contract — `AgentRunBoardRow` is
+ * flat and typed end to end, so there is no local schema between this and the
+ * spec. The `stream-a-fields.ts` shim that read them off `.passthrough()` while
+ * the backend shipped nine is deleted.
  */
 export function BoardFacts({ row }: { row: AgentRunBoardRow | undefined }) {
   if (!row) {
@@ -38,17 +42,14 @@ export function BoardFacts({ row }: { row: AgentRunBoardRow | undefined }) {
     )
   }
 
-  const x = extrasOf(row)
-  const premium = premiumReading(x)
+  const premium = premiumReading(row)
 
   return (
     <div className="border-b-[0.5px] border-apex-border-subtle bg-apex-secondary/30 px-4 py-2.5">
-      <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1.5">
-        <Tag>board</Tag>
+      {/* --- positioning + the close ---------------------------------------- */}
+      <Row tag="board">
         {row.total_oi != null && <Fact>OI {formatNumber(row.total_oi)}</Fact>}
-        {row.oi_change != null && (
-          <Fact>Δ {formatSignedNumber(row.oi_change)}</Fact>
-        )}
+        {row.oi_change != null && <Fact>Δ {formatSignedNumber(row.oi_change)}</Fact>}
         {/* ⚠️ The percentile and its caveat are ONE element — a bare percentile is
             a number whose meaning was never established. */}
         {row.cot_percentile != null && (
@@ -64,141 +65,239 @@ export function BoardFacts({ row }: { row: AgentRunBoardRow | undefined }) {
             )}
           </span>
         )}
+        {row.last_close != null && (
+          <Fact>
+            close {formatNumber(row.last_close, { decimals: 2 })}
+            {/* ⚠️ An UNSETTLED close is provisional — the exchange has not final­ised
+                it. Saying so is the difference between a price and a placeholder,
+                and it is the check the gate refuses on. */}
+            {row.last_close_settled === false && (
+              <span className="ml-1 text-[10.5px] text-apex-yellow">unsettled</span>
+            )}
+          </Fact>
+        )}
+      </Row>
+
+      {/* --- the overnight legs --------------------------------------------- */}
+      <Row
+        tag="overnight"
+        when={
+          row.implied_open_pct != null ||
+          row.intl_change_pct != null ||
+          row.usdinr_change_pct != null
+        }
+      >
         {row.implied_open_pct != null && (
-          <Fact>implied open {formatPct(row.implied_open_pct, { decimals: 2 })}</Fact>
+          <Fact>implied open {formatPct(row.implied_open_pct)}</Fact>
         )}
-        {x.intl_change_pct != null && (
-          <Fact>reference {formatPct(x.intl_change_pct, { decimals: 2 })}</Fact>
+        {row.intl_change_pct != null && (
+          <Fact>reference {formatPct(row.intl_change_pct)}</Fact>
         )}
-        {x.usdinr_change_pct != null && (
-          <Fact>USD/INR {formatPct(x.usdinr_change_pct, { decimals: 2 })}</Fact>
+        {row.usdinr_change_pct != null && (
+          <Fact>USD/INR {formatPct(row.usdinr_change_pct)}</Fact>
         )}
-      </div>
+      </Row>
 
-      {/* --- term structure + the roll ------------------------------------- */}
-      {(x.term_structure != null ||
-        x.near_next_spread != null ||
-        x.sessions_to_expiry != null ||
-        x.next_oi_share != null) && (
-        <div className="mt-1.5 flex flex-wrap items-baseline gap-x-4 gap-y-1">
-          <Tag>structure</Tag>
-          {x.term_structure && (
-            <span className="text-[12px] text-apex-fg-secondary">
-              {x.term_structure}
-            </span>
-          )}
-          {x.near_next_spread != null && (
-            <Fact>
-              near/next {formatSignedNumber(x.near_next_spread)}
-              {x.near_next_spread_change != null && (
-                <> ({formatSignedNumber(x.near_next_spread_change)} on the session)</>
-              )}
-            </Fact>
-          )}
-          {x.sessions_to_expiry != null && (
-            <Fact>{formatNumber(x.sessions_to_expiry)} sessions to expiry</Fact>
-          )}
-          {/* A share of the two-contract book — unsigned; it is not a change. */}
-          {x.next_oi_share != null && (
-            <Fact>next contract holds {formatSharePct(x.next_oi_share)} of OI</Fact>
-          )}
-          {(x.spread_basis || x.roll_basis) && (
-            <Basis>{[x.spread_basis, x.roll_basis].filter(Boolean).join(' · ')}</Basis>
-          )}
-        </div>
-      )}
+      {/* --- term structure + the roll -------------------------------------- */}
+      <Row
+        tag="structure"
+        when={
+          row.term_structure != null ||
+          row.near_next_spread != null ||
+          row.sessions_to_expiry != null ||
+          row.next_oi_share != null
+        }
+      >
+        {row.term_structure && (
+          <span className="text-[12px] text-apex-fg-secondary">{row.term_structure}</span>
+        )}
+        {row.near_next_spread != null && (
+          <Fact>
+            near/next {formatSignedNumber(row.near_next_spread, { decimals: 2 })}
+            {row.near_next_spread_change != null && (
+              <>
+                {' '}
+                ({formatSignedNumber(row.near_next_spread_change, { decimals: 2 })} on
+                the session)
+              </>
+            )}
+          </Fact>
+        )}
+        {row.sessions_to_expiry != null && (
+          <Fact>{formatNumber(row.sessions_to_expiry)} sessions to expiry</Fact>
+        )}
+        {/* A share of the two-contract book — unsigned; it is not a change. */}
+        {row.next_oi_share != null && (
+          <Fact>next contract holds {formatSharePct(row.next_oi_share)} of OI</Fact>
+        )}
+        {(row.spread_basis || row.roll_basis) && (
+          <Basis>{[row.spread_basis, row.roll_basis].filter(Boolean).join(' · ')}</Basis>
+        )}
+      </Row>
 
-      {/* --- import-parity premium ----------------------------------------- */}
-      {premium.kind !== 'absent' && (
-        <div className="mt-1.5 flex flex-wrap items-baseline gap-x-4 gap-y-1">
-          <Tag>premium</Tag>
-          {premium.kind === 'z_unusable' ? (
-            <>
-              {premium.pct != null && (
-                <Fact>{formatFractionPct(premium.pct)} to import parity</Fact>
-              )}
-              {/* ⚠️ A z with no sample size behind it is not a reading. */}
-              <span className="inline-flex items-center gap-1 text-[11px] text-apex-yellow">
-                <TriangleAlert className="size-3 shrink-0" aria-hidden />
-                z withheld — the board carries no window for it, and a z-score
-                without its sample size states more than it knows
-              </span>
-            </>
-          ) : (
-            <>
-              {premium.pct != null && (
-                <Fact>{formatFractionPct(premium.pct)} to import parity</Fact>
-              )}
-              {/* ⚠️ THE Z AND ITS WINDOW ARE ONE ELEMENT. 196 sessions against a
-                  180 floor is close enough to the floor that the window is part
-                  of the reading, not a footnote. */}
-              {premium.z != null && premium.window != null && (
-                <Fact>
-                  z {formatSignedNumber(premium.z, { decimals: 2 })} over{' '}
-                  {formatNumber(premium.window)} sessions
-                </Fact>
-              )}
-              {premium.basis && <Basis>{premium.basis}</Basis>}
-            </>
-          )}
-        </div>
-      )}
+      {/* --- import-parity premium ------------------------------------------ */}
+      <Row tag="premium" when={premium.kind !== 'absent'}>
+        {premium.kind !== 'absent' && premium.pct != null && (
+          // ⚠️ PERCENTAGE POINTS, like every sibling `_pct` on this board. It was
+          // the one fraction until FIN-228 Stream C converted it; rendering it
+          // through a fraction formatter now would print −1.58% as −0.0158%.
+          <Fact>{formatPct(premium.pct)} to import parity</Fact>
+        )}
+        {premium.kind === 'z_unusable' ? (
+          <span className="inline-flex items-center gap-1 text-[11px] text-apex-yellow">
+            <TriangleAlert className="size-3 shrink-0" aria-hidden />
+            z withheld — the board carries no window for it, and a z-score without
+            its sample size states more than it knows
+          </span>
+        ) : (
+          premium.kind === 'shown' &&
+          premium.z != null &&
+          premium.window != null && (
+            // ⚠️ THE Z AND ITS WINDOW ARE ONE ELEMENT. The window is PER INSTRUMENT
+            // (GOLD 196, SILVER 216) against a 180 floor — close enough to the floor
+            // that it is part of the reading, not a footnote.
+            <Fact>
+              z {formatSignedNumber(premium.z, { decimals: 2 })} over{' '}
+              {formatNumber(premium.window)} sessions
+            </Fact>
+          )
+        )}
+        {premium.kind !== 'absent' && premium.basis && <Basis>{premium.basis}</Basis>}
+      </Row>
 
-      {/* --- levels + volatility ------------------------------------------- */}
-      {(x.support_level != null ||
-        x.resistance_level != null ||
-        x.atr != null ||
-        x.dist_to_support_atr != null) && (
-        <div className="mt-1.5 flex flex-wrap items-baseline gap-x-4 gap-y-1">
-          <Tag>levels</Tag>
-          {x.support_level != null && (
-            <Fact>
-              support {formatNumber(x.support_level)}
-              {/* An ATR multiple is the comparable figure; raw points are not
-                  comparable across instruments, so both are labelled. */}
-              {x.dist_to_support_atr != null ? (
-                <> ({formatNumber(x.dist_to_support_atr, { decimals: 2 })} ATR below)</>
-              ) : (
-                x.dist_to_support != null && (
-                  <> ({formatNumber(x.dist_to_support)} points below — no ATR multiple)</>
-                )
-              )}
-            </Fact>
-          )}
-          {x.resistance_level != null && (
-            <Fact>
-              resistance {formatNumber(x.resistance_level)}
-              {x.dist_to_resistance_atr != null ? (
-                <> ({formatNumber(x.dist_to_resistance_atr, { decimals: 2 })} ATR above)</>
-              ) : (
-                x.dist_to_resistance != null && (
-                  <> ({formatNumber(x.dist_to_resistance)} points above — no ATR multiple)</>
-                )
-              )}
-            </Fact>
-          )}
-          {x.atr != null && (
-            <Fact>
-              ATR {formatNumber(x.atr, { decimals: 0 })}
-              {x.atr_avg != null && <> vs {formatNumber(x.atr_avg)} avg</>}
-            </Fact>
-          )}
-          {x.cont_stale_sessions != null && x.cont_stale_sessions > 0 && (
-            <span className="text-[11px] text-apex-yellow">
-              continuous series stale {formatNumber(x.cont_stale_sessions)} sessions
-            </span>
-          )}
-        </div>
-      )}
+      {/* --- levels + volatility -------------------------------------------- */}
+      <Row
+        tag="levels"
+        when={
+          row.support_level != null ||
+          row.resistance_level != null ||
+          row.atr != null ||
+          row.cont_stale_sessions != null
+        }
+      >
+        {row.support_level != null && (
+          <Fact>
+            support {formatNumber(row.support_level, { decimals: 2 })}
+            <Distance atr={row.dist_to_support_atr} points={row.dist_to_support} where="below" />
+          </Fact>
+        )}
+        {row.resistance_level != null && (
+          <Fact>
+            resistance {formatNumber(row.resistance_level, { decimals: 2 })}
+            <Distance
+              atr={row.dist_to_resistance_atr}
+              points={row.dist_to_resistance}
+              where="above"
+            />
+          </Fact>
+        )}
+        {row.atr != null ? (
+          <Fact>
+            ATR {formatNumber(row.atr, { decimals: 2 })}
+            {row.atr_avg != null && <> vs {formatNumber(row.atr_avg, { decimals: 2 })} avg</>}
+          </Fact>
+        ) : (
+          <span className="text-[11px] text-apex-yellow">
+            no ATR on the board — nothing here can be sized against volatility
+          </span>
+        )}
+        {row.cont_stale_sessions != null && row.cont_stale_sessions > 0 && (
+          <span className="text-[11px] text-apex-yellow">
+            continuous series stale {formatNumber(row.cont_stale_sessions)} sessions
+          </span>
+        )}
+      </Row>
+
+      {/* --- the LME reference (Tier B's whole international leg) ------------ */}
+      <Row
+        tag="LME"
+        when={row.lme_value != null || row.lme_change_pct != null || row.lme_as_of != null}
+      >
+        {row.lme_value != null && <Fact>{formatNumber(row.lme_value, { decimals: 2 })}</Fact>}
+        {row.lme_change_pct != null && <Fact>{formatPct(row.lme_change_pct)}</Fact>}
+        {/* ⚠️ An as-of date is not decoration on a Tier B leg — LME 3M is the only
+            international reference these four have, and its age is the reading. */}
+        {row.lme_as_of && <Stamp>as of {istDate(row.lme_as_of)}</Stamp>}
+      </Row>
+
+      {/* --- the EIA inventory print (the energy pair) ----------------------- */}
+      <Row
+        tag="EIA"
+        when={row.eia_value != null || row.eia_wow != null || row.eia_as_of != null}
+      >
+        {row.eia_value != null && <Fact>{formatNumber(row.eia_value)}</Fact>}
+        {row.eia_wow != null && <Fact>w/w {formatSignedNumber(row.eia_wow)}</Fact>}
+        {row.eia_as_of && <Stamp>as of {istDate(row.eia_as_of)}</Stamp>}
+      </Row>
     </div>
   )
 }
 
-function Tag({ children }: { children: React.ReactNode }) {
+// ============================================================================
+// ⚠️ THE PREMIUM Z NEVER TRAVELS WITHOUT ITS WINDOW
+// ============================================================================
+type PremiumReading =
+  | { kind: 'absent' }
+  /** A z with no sample size behind it is withheld, and the page says why. */
+  | { kind: 'z_unusable'; pct: number | null | undefined; basis: string | null | undefined }
+  | {
+      kind: 'shown'
+      pct: number | null | undefined
+      z: number | null | undefined
+      window: number | null | undefined
+      basis: string | null | undefined
+    }
+
+/**
+ * ⚠️ A Z-SCORE WITHOUT ITS SAMPLE SIZE IS FIN-215's DEFECT IN A NEW PLACE. The
+ * window is per instrument and sits close to its own floor — 196 and 216 sessions
+ * against a floor of 180 — so it is part of the reading, not a footnote. A
+ * `premium_z` with no `premium_window` beside it is therefore WITHHELD and named
+ * as withheld; it is never quietly printed as if the sample were established.
+ *
+ * The percentage needs no window and is shown either way. A window with no z is
+ * not shown alone either: the backend refuses the z when the sample is short and
+ * says so in `premium_basis`, which is rendered verbatim instead of summarised.
+ *
+ * ⚠️ THIS RULE OUTLIVED THE SHIM IT SHIPPED IN. `stream-a-fields.ts` existed only
+ * to read fields off an untyped passthrough and is deleted; the rule is rendering
+ * policy, so it lives with the rendering.
+ */
+function premiumReading(row: AgentRunBoardRow): PremiumReading {
+  const hasZ = row.premium_z != null
+  const hasWindow = row.premium_window != null
+  if (!hasZ && row.premium_pct == null) return { kind: 'absent' }
+  if (hasZ && !hasWindow) {
+    return { kind: 'z_unusable', pct: row.premium_pct, basis: row.premium_basis }
+  }
+  return {
+    kind: 'shown',
+    pct: row.premium_pct,
+    z: row.premium_z,
+    window: row.premium_window,
+    basis: row.premium_basis,
+  }
+}
+
+// --- small pieces ---------------------------------------------------------
+
+function Row({
+  tag,
+  when = true,
+  children,
+}: {
+  tag: string
+  when?: boolean
+  children: React.ReactNode
+}) {
+  if (!when) return null
   return (
-    <span className="text-[9.5px] font-medium uppercase tracking-[0.06em] text-apex-fg-tertiary">
+    <div className="mt-1.5 flex flex-wrap items-baseline gap-x-4 gap-y-1 first:mt-0">
+      <span className="text-[9.5px] font-medium uppercase tracking-[0.06em] text-apex-fg-tertiary">
+        {tag}
+      </span>
       {children}
-    </span>
+    </div>
   )
 }
 
@@ -208,11 +307,37 @@ function Fact({ children }: { children: React.ReactNode }) {
   )
 }
 
+/**
+ * ⚠️ An ATR multiple is comparable across instruments; raw points are not. When
+ * the board has no ATR the distance is still shown — labelled as points, and
+ * labelled as NOT normalised, so it is never read as the comparable figure.
+ */
+function Distance({
+  atr,
+  points,
+  where,
+}: {
+  atr: number | null | undefined
+  points: number | null | undefined
+  where: 'above' | 'below'
+}) {
+  if (atr != null) return <> ({formatNumber(atr, { decimals: 2 })} ATR {where})</>
+  if (points != null)
+    return <> ({formatNumber(points, { decimals: 2 })} points {where} — no ATR multiple)</>
+  return null
+}
+
 /** The backend's own words for how a figure was derived — rendered verbatim. */
 function Basis({ children }: { children: React.ReactNode }) {
   return (
     <span className="basis-full text-[10.5px] leading-[15px] text-apex-fg-tertiary">
       {children}
     </span>
+  )
+}
+
+function Stamp({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="apex-tabular text-[10.5px] text-apex-fg-tertiary">{children}</span>
   )
 }

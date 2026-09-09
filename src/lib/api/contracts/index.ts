@@ -93,6 +93,9 @@ export type AgentRunGate = z.infer<typeof schemas.AgentRunGate>
 export type AgentRunStage = z.infer<typeof schemas.AgentRunStage>
 export type AgentRunBoardRow = z.infer<typeof schemas.AgentRunBoardRow>
 export type GuardDecision = z.infer<typeof schemas.GuardDecision>
+// FIN-228 Stream C: the cross-instrument ratios travel as a TOP-LEVEL key —
+// a pair's ratio is a property of neither leg, and any analyst may cite it.
+export type AgentRunRatio = z.infer<typeof schemas.AgentRunRatio>
 
 // --- error (hand-authored — the {detail} envelope isn't in the spec) -----
 export * from './error'

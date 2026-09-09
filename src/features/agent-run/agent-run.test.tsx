@@ -8,6 +8,7 @@ import servedCurrent from '@/test/fixtures/agent-run/served-current.json'
 import servedFour from '@/test/fixtures/agent-run/served-four-analysts.json'
 import servedFourNarrow from '@/test/fixtures/agent-run/served-four-narrow-board.json'
 import servedFourOneBad from '@/test/fixtures/agent-run/served-four-one-rejected.json'
+import servedFourRich from '@/test/fixtures/agent-run/served-four-rich-board.json'
 import servedGuardClaims from '@/test/fixtures/agent-run/served-guard-claims.json'
 import servedHealthy from '@/test/fixtures/agent-run/served-healthy.json'
 import servedRefused from '@/test/fixtures/agent-run/served-refused.json'
@@ -16,35 +17,45 @@ import { AgentRunScreen } from './AgentRunScreen'
 /**
  * ⚠️ WHAT IS AND IS NOT REAL IN THESE FIXTURES — read this before trusting a pass.
  *
- * REAL, copied from harness artifacts, nothing invented:
+ * ⚠️ THIS HEADER IS PART OF THE TEST. It said "PROPOSED, NOT OBSERVED" for the
+ * wide board, top-level ratios and guard claims[]. All three now ship, and the
+ * note has been corrected — because "proposed" quietly becomes
+ * "stale-and-wrong" with nothing prompting a revisit (FIN-236: a stale fixture
+ * held a wrong assertion green for two tickets). Re-read this whenever a payload
+ * shape lands.
+ *
+ * ALL REAL, and all OBSERVED — nothing here is a proposed shape any more:
  *  - `served-refused` / `served-healthy` / `served-current` — the 2026-09-04 and
- *    2026-09-05 runs, assembled by the harness's own `push_agent_run.gather()` and
- *    `read_agent_run()`.
- *  - `served-four-*` — the REAL four-analyst run at `runs/2026-09-08`: all four of
- *    `analyst_{positioning,technical,crossmarket,news}.json` verbatim, the real
- *    gate (which REFUSED — 9/9 closes unsettled — while the analysts ran anyway),
- *    the real guard log, and the real scan bundles.
+ *    2026-09-05 runs, assembled by the harness's own `push_agent_run.gather()`
+ *    and `read_agent_run()`.
+ *  - `served-four-*` — the REAL four-analyst run at `runs/2026-09-08`: all four
+ *    analyst reports verbatim, the real gate (which REFUSED — 9/9 closes
+ *    unsettled — while the analysts ran anyway), and the real guard log.
+ *  - The BOARD in `served-four-analysts` / `-one-rejected` is built by the
+ *    backend's own `board_from_scan()` + `ratios_from_scan()` over the backend's
+ *    own post-conversion fixture (`tests/harness/fixtures/scan_full_fin228.json`)
+ *    — all 39 fields, `premium_pct` in PERCENTAGE POINTS.
  *
- * ⚠️ NOT YET REAL — the shape is proposed, and the page is only PROVISIONALLY
- * verified until a run lands carrying it:
- *  - `board[]` beyond nine fields. `push_agent_run.BOARD_FIELDS` ships nine keys;
- *    the four analysts collectively cite thirty-four. The wide `board[]` here was
- *    built by the SAME `board_from_scan` logic over the SAME real scan bundle with
- *    the field list widened — so the values and names are real, but the endpoint
- *    does not serve them yet.
- *  - top-level `ratios` — real values, straight out of the real scan.json, but the
- *    endpoint carries no `ratios` key at all today.
- *  `served-four-narrow-board` is the shape the endpoint ACTUALLY serves right now,
- *  and it is what keeps the honest "not served" paths under test.
+ * ⚠️ NOT `runs/2026-09-08/scan.json`. That scan predates the premium_pct
+ * conversion and still holds fractions; building the board from it would bake the
+ * OLD scale into a fixture and hold a wrong assertion green — the FIN-236 trap
+ * this ticket names.
  *
- * ⚠️ The four analysts ran against an earlier scan snapshot than the one on disk,
- * so some prose (e.g. "atr is null") describes an earlier board than the values
- * beside it. That mismatch is left in deliberately: the page renders board facts
- * and agent prose APART precisely so a divergence between them is visible rather
- * than smoothed over. No assertion here claims the two agree.
+ * The three board fixtures exercise different, genuinely-occurring states:
+ *  - `served-four-analysts` — the post-conversion board. Its z is REFUSED (110
+ *    observations against a 180 floor) and its ratios are REFUSED (a 36-session
+ *    stale series), both with the backend's basis sentence saying so.
+ *  - `served-four-rich-board` — the same run with the z, its window and the
+ *    ratios that SURVIVED, taken verbatim from the real 2026-09-08 scan (all
+ *    scale-invariant). ⚠️ Its `premium_pct` is deliberately NULL: that scan's
+ *    value is at the old scale, and a fixture claims nothing it cannot source.
+ *  - `served-four-narrow-board` — the ORIGINAL nine fields and no ratios. KEPT on
+ *    purpose: a field that stops being served must still degrade honestly.
  *
- * When a real run lands with the wide board, this page is verified against it
- * before FIN-228 Stream C closes.
+ * ⚠️ The analysts ran against an earlier scan snapshot than the boards here, so
+ * some prose describes an earlier board than the values beside it. Left in
+ * deliberately: the page renders board facts and agent prose APART precisely so a
+ * divergence is visible rather than smoothed over. No assertion claims they agree.
  */
 function mount(payload: unknown, date = '2026-09-08') {
   const parsed = agentRunResponse.parse(payload) // drift fails loudly, here first
@@ -216,16 +227,38 @@ describe('FIN-228 — three reports must never pass for four', () => {
 // ⚠️ THE NEW STREAM A FIELDS — never without their window or basis
 // ============================================================================
 describe('FIN-228 Stream A fields — a figure never outruns its basis', () => {
-  it('⚠️ the premium z renders ONLY with its window, and the window is per instrument', async () => {
+  it('renders the 39-field board: structure, the roll and their bases', async () => {
     mount(servedFour)
     await screen.findByText('The board')
-    // GOLD: premium_z -0.3525 over 196 sessions
+    const gold = within(panel('GOLD'))
+    expect(gold.getByText('contango')).toBeInTheDocument()
+    expect(gold.getByText(/near\/next \+1,587\.00/)).toBeInTheDocument()
+    expect(gold.getByText(/20 sessions to expiry/)).toBeInTheDocument()
+    expect(gold.getByText(/next contract holds 43\.0% of OI/)).toBeInTheDocument()
+    expect(
+      gold.getByText(/GOLD26DECFUT minus GOLD26OCTFUT · GOLD26DECFUT OI over/),
+    ).toBeInTheDocument()
+  })
+
+  it('🔴 premium_pct renders as PERCENTAGE POINTS, not as a fraction', async () => {
+    // GOLD is -1.580657878826035. Through a fraction formatter it would print
+    // −0.0158%; through formatPct it prints −1.58%, which is what it means.
+    mount(servedFour)
+    await screen.findByText('The board')
+    const gold = within(panel('GOLD'))
+    expect(gold.getByText(/−1\.58% to import parity/)).toBeInTheDocument()
+    expect(gold.queryByText(/−0\.02% to import parity/)).toBeNull()
+    expect(gold.queryByText(/−0\.0158%/)).toBeNull()
+  })
+
+  it('⚠️ the premium z renders ONLY with its window, and the window is per instrument', async () => {
+    mount(servedFourRich)
+    await screen.findByText('The board')
     expect(within(panel('GOLD')).getByText(/z −0\.35 over 196 sessions/)).toBeInTheDocument()
     // SILVER's window differs — which is exactly why the z cannot travel alone
     expect(
       within(panel('SILVER')).getAllByText(/over 216 sessions/).length,
     ).toBeGreaterThan(0)
-    // and the basis is rendered verbatim, not summarised away
     expect(
       within(panel('GOLD')).getByText(/reference x USD\/INR x \(1 \+ 15% import duty\)/),
     ).toBeInTheDocument()
@@ -233,8 +266,8 @@ describe('FIN-228 Stream A fields — a figure never outruns its basis', () => {
 
   it('⚠️ a z with NO window is withheld, not printed', async () => {
     const noWindow = {
-      ...servedFour,
-      board: servedFour.board.map((b) =>
+      ...servedFourRich,
+      board: servedFourRich.board.map((b) =>
         b.instrument === 'GOLD' ? { ...b, premium_window: null } : b,
       ),
     }
@@ -244,48 +277,91 @@ describe('FIN-228 Stream A fields — a figure never outruns its basis', () => {
     expect(gold.getByText(/z withheld/)).toBeInTheDocument()
     expect(gold.getByText(/without its sample size states more than it knows/)).toBeInTheDocument()
     expect(gold.queryByText(/z −0\.35/)).toBeNull()
-    // the percentage itself needs no window and is still shown
-    expect(gold.getByText(/−2\.28% to import parity/)).toBeInTheDocument()
   })
 
-  it('renders term structure, the spread and the roll with their bases', async () => {
+  it('⚠️ a z the BACKEND refused is absent, and its basis says why', async () => {
+    // The post-conversion board: 110 stored observations against a 180 floor, so
+    // premium_z is null while premium_window is 110. A window with no z is not a
+    // reading either — neither is printed, and the backend's sentence explains it.
     mount(servedFour)
     await screen.findByText('The board')
     const gold = within(panel('GOLD'))
-    expect(gold.getByText('contango')).toBeInTheDocument()
-    expect(gold.getByText(/near\/next \+1,527/)).toBeInTheDocument()
-    expect(gold.getByText(/18 sessions to expiry/)).toBeInTheDocument()
-    expect(gold.getByText(/next contract holds 45.0% of OI/)).toBeInTheDocument()
+    expect(gold.queryByText(/^z /)).toBeNull()
+    expect(gold.queryByText(/over 110 sessions/)).toBeNull()
     expect(
-      gold.getByText(/GOLD26DECFUT minus GOLD26OCTFUT · GOLD26DECFUT OI over/),
+      gold.getByText(/z REFUSED — 110 stored observations, 180 required/),
     ).toBeInTheDocument()
   })
 
-  it('⚠️ a ratio’s VALUE and its PERCENTILE are told apart, with the basis', async () => {
+  it('⚠️ renders the SIX fields the hand-written list missed — LME and EIA', async () => {
     mount(servedFour)
+    await screen.findByText('The board')
+    // the crossmarket analyst cites the LME context for every Tier B instrument
+    const zinc = within(panel('ZINC'))
+    expect(zinc.getByText('LME')).toBeInTheDocument()
+    expect(zinc.getByText('3,877.00')).toBeInTheDocument()
+    expect(zinc.getByText('−1.35%')).toBeInTheDocument()
+    expect(zinc.getByText(/as of 03 Sept 2026/)).toBeInTheDocument()
+    // the news analyst cites the EIA block for the energy pair
+    const crude = within(panel('CRUDEOIL'))
+    expect(crude.getByText('EIA')).toBeInTheDocument()
+    expect(crude.getByText('4,24,460')).toBeInTheDocument()
+    expect(crude.getByText(/w\/w −4,450/)).toBeInTheDocument()
+    // ...and neither block appears where the board carries none
+    expect(within(panel('GOLD')).queryByText('LME')).toBeNull()
+    expect(within(panel('GOLD')).queryByText('EIA')).toBeNull()
+  })
+
+  it('flags an UNSETTLED close — a provisional price is not a price', async () => {
+    const unsettled = {
+      ...servedFour,
+      board: servedFour.board.map((b) =>
+        b.instrument === 'GOLD' ? { ...b, last_close_settled: false } : b,
+      ),
+    }
+    mount(unsettled)
+    await screen.findByText('The board')
+    expect(within(panel('GOLD')).getByText('unsettled')).toBeInTheDocument()
+  })
+
+  it('says nothing about settlement when the close IS settled', async () => {
+    // the real post-conversion board carries last_close_settled: true
+    mount(servedFour)
+    await screen.findByText('The board')
+    expect(within(panel('GOLD')).getByText(/close 1,53,500/)).toBeInTheDocument()
+    expect(within(panel('GOLD')).queryByText('unsettled')).toBeNull()
+  })
+
+  it('⚠️ a ratio’s VALUE and its PERCENTILE are told apart, with the basis', async () => {
+    mount(servedFourRich)
     await screen.findByText('The board as a whole')
     expect(screen.getByText('GOLD / SILVER')).toBeInTheDocument()
     expect(screen.getAllByText(/\(today’s actual contracts\)/)).toHaveLength(2)
     expect(screen.getAllByText(/over 250 continuous sessions/)).toHaveLength(2)
     expect(screen.getByText(/units: per_gram/)).toBeInTheDocument()
-    // the backend's own sentence about the two bases differing, verbatim
     expect(
       screen.getByText(/normalised to rupees per gram.*the two bases differ slightly in level/),
     ).toBeInTheDocument()
   })
 
+  it('a REFUSED ratio shows its refusal, not a blank or a zero', async () => {
+    mount(servedFour)
+    await screen.findByText('The board as a whole')
+    expect(screen.getByText('GOLD / SILVER')).toBeInTheDocument()
+    expect(screen.queryByText(/\(today’s actual contracts\)/)).toBeNull()
+    expect(
+      screen.getAllByText(/refused — a continuous series is 36 sessions stale/).length,
+    ).toBe(2)
+  })
+
   it('labels a raw-points distance as NOT ATR-normalised when no ATR multiple exists', async () => {
-    const noAtr = {
-      ...servedFour,
-      board: servedFour.board.map((b) =>
-        b.instrument === 'GOLD'
-          ? { ...b, dist_to_support_atr: null, dist_to_resistance_atr: null }
-          : b,
-      ),
-    }
-    mount(noAtr)
+    mount(servedFour)
     await screen.findByText('The board')
+    // the post-conversion board has atr null across the board
     expect(within(panel('GOLD')).getByText(/points below — no ATR multiple/)).toBeInTheDocument()
+    expect(
+      within(panel('GOLD')).getByText(/no ATR on the board — nothing here can be sized/),
+    ).toBeInTheDocument()
   })
 })
 
@@ -298,7 +374,7 @@ describe('FIN-228 — the fields the endpoint does not serve yet', () => {
     await screen.findByText('The board')
     const gold = within(panel('GOLD'))
     // the nine served fields still render
-    expect(gold.getByText(/OI 10,461/)).toBeInTheDocument()
+    expect(gold.getByText(/OI 10,693/)).toBeInTheDocument()
     // ⚠️ The analysts' PROSE quotes these figures too, so the negative assertions
     // target what ONLY the board strip renders: its own section labels and its
     // own formatting. "not in the strip" is the claim, not "not on the page".
@@ -306,6 +382,17 @@ describe('FIN-228 — the fields the endpoint does not serve yet', () => {
     expect(gold.queryByText('premium')).toBeNull()
     expect(gold.queryByText('levels')).toBeNull()
     expect(gold.queryByText('contango')).toBeNull() // exact match = the strip's span
+    // `implied_open_pct` IS one of the original nine, so the overnight row still
+    // renders — with only the leg the narrow board carries, and neither of the
+    // two it does not.
+    expect(gold.getByText(/implied open \+1\.18%/)).toBeInTheDocument()
+    // ⚠️ EXACT strings, not regexes: the crossmarket analyst's PROSE quotes these
+    // same figures, so a loose matcher would match the paragraph and assert the
+    // wrong thing. The claim is "not in the strip", not "not on the page".
+    expect(gold.queryByText('reference +2.28%')).toBeNull()
+    expect(gold.queryByText('USD/INR −1.07%')).toBeNull()
+    expect(within(panel('ZINC')).queryByText('LME')).toBeNull()
+    expect(within(panel('CRUDEOIL')).queryByText('EIA')).toBeNull()
     expect(gold.queryByText(/z −0\.35 over 196 sessions/)).toBeNull()
     // the analysts' prose STILL renders — the numbers are just never mined from it
     expect(gold.getByText(/read as LONG_LIQUIDATION/)).toBeInTheDocument()
@@ -324,7 +411,7 @@ describe('FIN-228 — the fields the endpoint does not serve yet', () => {
     expect(
       within(panel('GOLD')).getByText(/board facts for this instrument are not served/i),
     ).toBeInTheDocument()
-    expect(within(panel('GOLD')).queryByText(/OI 10,461/)).toBeNull()
+    expect(within(panel('GOLD')).queryByText(/OI 10,693/)).toBeNull()
   })
 })
 
@@ -415,31 +502,34 @@ describe('FIN-227 — the guard is visible, denials included', () => {
   })
 
   it('⚠️ counts CLAIMS as well as decisions — one deny can carry four', async () => {
-    // ⚠️ The claims are real (the four ungrounded numbers named in the real
-    // 2026-09-05 deny reason); only their STRUCTURE is new — the guard writer
-    // does not emit `claims` yet, so this shape is proposed, not observed.
+    // ⚠️ OBSERVED, not constructed: this decision comes from running the real
+    // provenance guard over the real post-conversion board and reading it back
+    // through the real push_agent_run.guard_decisions() — the endpoint's own path.
     mount(servedGuardClaims, '2026-09-05')
     await screen.findByText('deny')
     expect(screen.getByText('denied').parentElement?.textContent).toMatch(
       /1\s*denied\s*\(\s*4\s*claims\s*\)/,
     )
     // each claim on its own line, naming the instrument and the field
-    expect(screen.getByText('CRUDEOIL · cot_read')).toBeInTheDocument()
-    expect(screen.getByText('ALUMINIUM · cot_read')).toBeInTheDocument()
-    expect(
-      screen.getByText(/no scan level for ZINC matches it/),
-    ).toBeInTheDocument()
+    expect(screen.getByText('CRUDEOIL · read')).toBeInTheDocument()
+    expect(screen.getByText('ALUMINIUM · read')).toBeInTheDocument()
+    expect(screen.getAllByText(/\+575\.[1-4]%/).length).toBe(4)
   })
 
-  it('⚠️ never prints "(0 claims)" beside a real denial', async () => {
-    // The real 2026-09-08 run: a genuine deny, but the writer emits no claims, so
-    // claim_count is 0. "1 denied (0 claims)" would say the denial rested on
-    // nothing. The prose reason stands alone instead.
+  it('⚠️ ABSENT IS NOT ZERO — a pre-FIN-232 log reads "not recorded"', async () => {
+    // The real 2026-09-08 guard log has no `claims` key at all, so the reader
+    // returns None. "1 denied (0 claims)" would state that the denial rested on
+    // nothing; the writer was never broken, the log simply predates the field.
     mount(servedFour)
     await screen.findByText('deny')
     const counts = screen.getByText('denied').parentElement?.textContent ?? ''
     expect(counts).toMatch(/1\s*denied/)
-    expect(counts).not.toMatch(/claim/)
+    expect(counts).toMatch(/claim counts not recorded/)
+    expect(counts).not.toMatch(/\(0 claims/)
+    // and the same distinction one level down, on the decision itself
+    expect(
+      screen.getByText(/claims not recorded for this decision/),
+    ).toBeInTheDocument()
   })
 
   it('when the decisions are NOT served, says so instead of showing a count as the log', async () => {
