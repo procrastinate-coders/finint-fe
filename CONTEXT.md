@@ -38,6 +38,31 @@ is a number that states more than it knows.
 
 ---
 
+## 🔑 HOUSE RULE — A TIMEOUT DERIVED ON A FAST LINK IS AN UNTESTED ASSUMPTION ABOUT EVERY OTHER LINK
+
+**Every test in this repo runs against localhost with MSW. None runs against a slow real network.**
+So any budget expressed in TIME — timeouts, poll intervals, debounce, "is it still loading" — is
+validated only on the fastest link in existence, and ships as an assumption about the one the reader
+is actually on.
+
+That shipped a 9s read timeout (2026-09-09) which cancelled a real 10.49s `/readiness`. Every data
+endpoint died for a morning; only `/auth/*` survived, because those responses are 0.4–0.5 kB and the
+big ones are 18 kB. The derivation was sound and its scaling test passed — **the premise was wrong,
+and no test could see it, because no test transfers bytes over anything slower than loopback.**
+
+**How to apply it:**
+- Before shipping a time budget, state the link it assumes and the response size it must carry.
+  `18_250 bytes / 30s = 608 B/s` is a checkable claim; "30 seconds" is not.
+- Assert the MARGIN against a MEASURED worst case in a test (see `timeout.test.ts`), so shrinking the
+  constant it derives from cannot silently re-create the outage.
+- Verify by throttling — DevTools → Network → a custom profile at the measured rate, against the real
+  API. Slow 4G (~50 kB/s) is NOT slow enough: the incident link ran at 1.7 kB/s, thirty times slower.
+- ⚠️ The retry policy MULTIPLIES any per-attempt budget. Raise one and you raise the wait before a
+  hang is named. Change them together, and do not retry a failure that already spent the whole
+  budget.
+
+---
+
 ## 🔑 HOUSE RULE — EVERY MOCK IS A CLAIM, AND NOTHING CHECKS IT
 
 **A mock asserts "the real thing behaves this way." Nothing verifies that assertion, so a mock's
@@ -91,6 +116,28 @@ spec stays fresh: if `check:contracts` is disabled or left red, this trigger goe
 full reasoning and limits are in the test file — read them before trusting a green.
 
 ---
+
+**2026-09-09 (c) — THE READ BUDGET WAS 9s AND CANCELLED A REAL 10.49s READ.** Measured:
+`/readiness` = 18,250 bytes, **10.49s** from the laptop, **<1s** from the EC2 box — the time is
+TRANSFER, not computation. Reproduced exactly at the incident rate: 18,250 B at 1,740 B/s = 10.495s.
+- ⚠️ **The formula was right; the PREMISE was wrong.** It charged the whole retry sequence to
+  `staleTime`: `(30_000 − 3_000) / 3` = 9s per attempt. But `staleTime` says how long a value we
+  HOLD stays worth keeping — it is not a deadline for acquiring one, and retries are recovery, not
+  part of the cost of one successful fetch.
+- **Corrected premise: ONE attempt must land inside the freshness window.** `deriveReadTimeoutMs`
+  is now `staleTimeMs` → **30s**. Still derived, still scales, no hardcoded number. 2.9× the measured
+  10.49s; empirically the budget covers 18 kB down to 608 B/s (verified with a throttled transfer).
+- ⚠️ **A stale-but-arrived value beats a fresh-but-cancelled one.** Cancelling gave the reader
+  NOTHING, which is strictly worse than a value a few seconds past its freshness window.
+- ⚠️ **Timeouts are NO LONGER RETRIED** (`lib/query/client.ts`). Raising the per-attempt budget would
+  otherwise have made a hang take 3×30s+3s = 93s to name itself, worse than the 30s it replaced.
+- ⚠️ **`ScreenError` now names a timeout** — that is the path Father actually hits (a failed query
+  surfaces via `useQuery().isError` and NEVER reaches the router's `errorComponent`, so
+  RootErrorScreen's wording did not cover it). It used to say "Check the backend connection", which
+  points at the connection when the server answered slowly.
+- The REFRESH budget (90s, mirroring `_derive_refresh_lock_ttl`) is untouched.
+- NOTE: the backend is separately slimming `/readiness` from 18 kB to under 2 kB — that is the real
+  fix; this protects every future large endpoint.
 
 **2026-09-09 (b) — A HANG AND A BAD BODY NOW HAVE FAILURE MODES.** Two entries off the MSW
 blind-spot table; the rest of it is still reported-not-built.

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { RotateCw, TriangleAlert } from 'lucide-react'
 import { Skeleton } from '@/design-system'
-import { ApiError } from '@/lib/api/client'
+import { ApiError, NetworkError, TimeoutError } from '@/lib/api/client'
 
 /** Flat, glass-free loading state (data stays flat — law 9/10). */
 export function ScreenLoading() {
@@ -18,8 +18,15 @@ export function ScreenLoading() {
 }
 
 /**
- * A specific, recoverable error: names the failure + offers Retry in place. An
- * ApiError carries the backend's own message; anything else gets a plain line.
+ * A specific, recoverable error: names the failure + offers Retry in place.
+ *
+ * ⚠️ THIS IS THE ERROR FATHER ACTUALLY SEES. A failed query surfaces through
+ * `useQuery().isError` and renders HERE — it never reaches the router's
+ * `errorComponent`, so RootErrorScreen's careful wording does not cover this
+ * path. Until 2026-09-09 a TimeoutError fell into the generic branch and read
+ * "Check the backend connection", which points at the connection when the truth
+ * is that the server answered slowly. Same discipline as everywhere else:
+ * unreachable, too-slow and refused are three different facts.
  */
 export function ScreenError({
   error,
@@ -29,9 +36,13 @@ export function ScreenError({
   onRetry?: () => void
 }) {
   const msg =
-    error instanceof ApiError
-      ? error.message
-      : 'Could not load this screen. Check the backend connection.'
+    error instanceof TimeoutError
+      ? `The server is taking too long — ${error.path} did not answer within ${Math.round(error.timeoutMs / 1000)}s. It is up, but slow.`
+      : error instanceof NetworkError
+        ? 'Cannot reach the API — the request never reached the server.'
+        : error instanceof ApiError
+          ? error.message
+          : 'Could not load this screen. Check the backend connection.'
   return (
     <div
       role="alert"
