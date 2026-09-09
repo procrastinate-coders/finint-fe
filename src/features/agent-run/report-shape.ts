@@ -13,6 +13,14 @@ import type { AgentRunStage } from '@/lib/api/contracts'
  * So a report is `safeParse`d at the point of use, and one that does not match is
  * shown as unrenderable rather than half-rendered (never infer).
  *
+ * PROPOSED-UNTIL: AnalystReport
+ * ⚠️ The schemas below are hand-written because the endpoint types
+ * `stages[].report` as an opaque object — there is nothing to generate from. The
+ * marker above is a TRIPWIRE (see `scripts/proposed-markers.test.ts`): if the
+ * backend ever adds an `AnalystReport` schema to its OpenAPI, that test fails and
+ * says to verify this reader against the real contract and generate it instead.
+ * A hand-written schema beside a generatable one is how the two drift (FFE-004).
+ *
  * The shapes below are the ones the agents ACTUALLY emit, read from the real
  * four-analyst run at `runs/2026-09-08/analyst_{positioning,technical,
  * crossmarket,news}.json`. All four share ONE envelope — `agent`, `run_date`,

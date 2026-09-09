@@ -38,6 +38,26 @@ is a number that states more than it knows.
 
 ---
 
+## 🔑 HOUSE RULE — A "PROPOSED SHAPE" NOTE MUST NAME ITS TRIGGER
+
+When code or a fixture stands in for a backend shape that does not exist yet, **never** write only
+prose ("not served yet", "proposed, not observed"). Prose is correct the day it is written and
+silently wrong the day the backend ships — two such notes went stale-and-wrong in one afternoon
+(FIN-236). Write the marker instead, naming the schema whose arrival makes the note obsolete:
+
+```
+PROPOSED-UNTIL: SomeSchemaName
+```
+
+`scripts/proposed-markers.test.ts` asserts every named schema is ABSENT from the committed spec, so
+the build FAILS with a file:line and "verify against the real shape, then delete the marker" the
+moment it lands. ⚠️ It is a tripwire on ONE condition — the named schema now existing. It cannot
+catch a note that was always wrong, one naming no schema, or a shape that changed without a new
+schema name (FIN-218's contract check covers that last one). ⚠️ It only works while the committed
+spec stays fresh: if `check:contracts` is disabled or left red, this trigger goes quiet with it. The
+full reasoning and limits are in the test file — read them before trusting a green.
+
+---
 
 **Updated:** 2026-07-17 — **MOBILE RESPONSIVENESS pass.** The fixed 64px icon-rail + `pl-[104px]`
 was eating ~1/3 of a phone screen and breaking layouts. Now: below `lg` the sidebar is an OFF-CANVAS
