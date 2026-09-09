@@ -38,6 +38,39 @@ is a number that states more than it knows.
 
 ---
 
+## 🔑 HOUSE RULE — EVERY MOCK IS A CLAIM, AND NOTHING CHECKS IT
+
+**A mock asserts "the real thing behaves this way." Nothing verifies that assertion, so a mock's
+blind spots are invisible — and a suite is green precisely where it cannot see.** Twice in two days a
+passing suite missed a production failure because the test exercised a SUBSTITUTE that could not fail
+the way the real thing fails:
+
+- **FIN-231** — `GET /agent-run/{date}` 500'd on its first real request behind 234 lines of passing
+  tests. They injected their own reader, so the production path never executed. The seam audit that
+  followed found **9 of 12 `_default_*` functions never run in the whole suite**.
+- **2026-09-09** — a dead DNS resolver made `fetch` REJECT, `ensureAccessToken()` let the TypeError
+  escape, and every route including root rendered TanStack Router's default boundary. **190 tests
+  could not see it**: `setup.ts` starts MSW for every test, and MSW *answers* requests. It can return
+  a 500; it cannot make `fetch` reject. The one failure mode that took the app down was unreachable
+  by any test in the suite.
+
+**How to apply it:**
+- For each mock, ask: *what can the real thing do that this cannot?* Failing to respond at all,
+  hanging, half-responding, and being unreachable are usually on that list.
+- Test the **failure of the transport**, not just the failure statuses it can carry. A rejecting
+  `fetch` needs `vi.stubGlobal` — configuring it *through* MSW tests MSW, not the network.
+- Prefer exercising the production path over injecting a substitute for it. When you must inject,
+  write down what the substitute cannot do.
+- A seam that only ever runs under a mock is untested, however many assertions surround it.
+
+⚠️ Known blind spots of this suite's MSW setup, unfilled by choice (see the FIN-236 report): request
+timeouts, aborted/cancelled requests, malformed JSON bodies, a 200 with an empty body, a response
+that never completes, CORS/opaque responses, and non-JSON error bodies. Only *rejection* is covered
+so far — `src/lib/api/network-failure.test.tsx` (seam) and `src/app/network-failure.test.tsx`
+(screen).
+
+---
+
 ## 🔑 HOUSE RULE — A "PROPOSED SHAPE" NOTE MUST NAME ITS TRIGGER
 
 When code or a fixture stands in for a backend shape that does not exist yet, **never** write only
@@ -58,6 +91,30 @@ spec stays fresh: if `check:contracts` is disabled or left red, this trigger goe
 full reasoning and limits are in the test file — read them before trusting a green.
 
 ---
+
+**2026-09-09 — THE NETWORK-FAILURE PATH.** A dead DNS resolver (the outage) revealed a real FE bug:
+`fetch` rejecting made `ensureAccessToken()` throw, `_authenticated.beforeLoad` threw, nothing caught
+it, and every route including root showed TanStack Router's default "Something went wrong!" with the
+cause behind a toggle. Now:
+- `NetworkError` + `netFetch()` in `lib/api/client.ts` name an unreachable API. ⚠️ An **AbortError
+  passes through untouched** — React Query aborts on unmount, and dressing that up as an outage would
+  cry wolf every navigation. ⚠️ Matched by `name`, NOT `instanceof Error`: a DOMException does not
+  extend Error in jsdom, and the instanceof check silently reclassified every cancel as an outage
+  (a test caught this).
+- `checkAccess(): AccessResult` returns a REASON — `no-session` / `rejected` / `unreachable` — and
+  never throws on a dead network; `ensureAccessToken()` is the boolean wrapper. The reason travels
+  to `/login` as a search param and the form says "Cannot reach the API. You are still signed in."
+  ⚠️ **A network failure must never read as a sign-out** — that sends Father to re-type a password
+  that was never wrong, at a server that cannot hear him.
+- ⚠️ **The session is NOT cleared on a network failure** (only a server that ANSWERED and refused
+  clears it). That correctness fix created an infinite redirect loop — `isAuthenticated()` is true
+  while a refresh token exists, so `/login` bounced back to `/` forever. `/login`'s `beforeLoad` now
+  returns early when a `reason` is present. A loop is WORSE than the bug it replaced; there is a
+  regression test counting fetches after settle.
+- `__root.tsx` has an **`errorComponent`** (`components/common/RootErrorScreen`): names the failure,
+  shows the underlying cause ALWAYS VISIBLE (never behind a toggle), and for a NetworkError shows the
+  browser's own words rather than restating the headline.
+- `LoginForm` takes `reason` as a PROP; the route owns search. Keeps the form renderable standalone.
 
 **Updated:** 2026-07-17 — **MOBILE RESPONSIVENESS pass.** The fixed 64px icon-rail + `pl-[104px]`
 was eating ~1/3 of a phone screen and breaking layouts. Now: below `lg` the sidebar is an OFF-CANVAS
