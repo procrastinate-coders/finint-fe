@@ -17,6 +17,10 @@ import {
 export const queryKeys = {
   me: ['auth', 'me'] as const,
   readiness: ['readiness'] as const,
+  // ⚠️ The variant is part of the key: a slim and a full response are different
+  // values, and caching one under the other's key would serve empty tiles from
+  // cache. Invalidations still use the `readiness` PREFIX, which matches both.
+  readinessWith: (evidence: boolean) => ['readiness', { evidence }] as const,
   kiteLoginUrl: ['kite', 'login-url'] as const,
   generateStatus: (runId: string) => ['generate', 'status', runId] as const,
   briefToday: ['brief', 'today'] as const,
@@ -42,10 +46,10 @@ export function useMe() {
  * The readiness gate. The highest-value $0 read — it proves the system is honest.
  * Consumers map over `data.sources` (law 5) and NEVER hardcode the list.
  */
-export function useReadiness() {
+export function useReadiness(evidence = false) {
   return useQuery({
-    queryKey: queryKeys.readiness,
-    queryFn: ({ signal }) => getReadiness(signal),
+    queryKey: queryKeys.readinessWith(evidence),
+    queryFn: ({ signal }) => getReadiness(evidence, signal),
   })
 }
 

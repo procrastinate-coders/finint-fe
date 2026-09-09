@@ -22,7 +22,11 @@ import { GenerateFlow } from './generate/GenerateFlow'
  * surface (FFE-010).
  */
 export function ReadinessScreen() {
-  const readiness = useReadiness()
+  // ⚠️ ASK FOR THE EVIDENCE. FIN-237 moved it behind ?evidence=true and this
+  // screen is the only thing that renders it — the cockpit's Board / Macro /
+  // News tiles read `evidence.board / .macro / .news`, and without the flag they
+  // render empty against a response that is technically valid.
+  const readiness = useReadiness(true)
   const refresh = useRefreshSpine()
   const queryClient = useQueryClient()
   const navigate = useNavigate()
