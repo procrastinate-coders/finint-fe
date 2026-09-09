@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { tokenStore } from '@/lib/auth/session'
-import { apiRequest } from './client'
+import { apiRequest, REFRESH_TIMEOUT_MS } from './client'
 import {
   agentRunResponse,
   briefListItem,
@@ -92,6 +92,10 @@ export function refreshSpine(
   const filtered = sources != null && sources.length > 0
   return apiRequest('/refresh', refreshSpineResponse, {
     method: 'POST',
+    // ⚠️ NOT the read budget. A spine refresh runs ~10 news queries server-side
+    // and takes ~30s of real work; giving up at 9s would report a failure for
+    // work that is still running and about to succeed.
+    timeoutMs: REFRESH_TIMEOUT_MS,
     ...(filtered ? { body: { sources } } : {}),
   })
 }

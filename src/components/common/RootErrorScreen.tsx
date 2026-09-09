@@ -1,5 +1,5 @@
-import { RotateCw, TriangleAlert, WifiOff } from 'lucide-react'
-import { ApiError, NetworkError } from '@/lib/api/client'
+import { Hourglass, RotateCw, TriangleAlert, WifiOff } from 'lucide-react'
+import { ApiError, NetworkError, TimeoutError } from '@/lib/api/client'
 
 /**
  * The last-resort error screen, wired to `__root.tsx` as `errorComponent`.
@@ -23,6 +23,10 @@ export function RootErrorScreen({
   reset?: () => void
 }) {
   const unreachable = error instanceof NetworkError
+  // ⚠️ A TIMEOUT IS NOT AN OUTAGE. The box answered and is struggling — that
+  // points at the server, not at this machine's connection, and sends someone
+  // to a different place to look. Same discipline as unreachable != rejected.
+  const slow = error instanceof TimeoutError
   const api = error instanceof ApiError ? error : null
   // ⚠️ For a NetworkError the headline ALREADY says "cannot reach the API", so the
   // detail line shows the UNDERLYING cause instead — the browser's own words
@@ -43,6 +47,8 @@ export function RootErrorScreen({
         <div className="flex items-center gap-2.5">
           {unreachable ? (
             <WifiOff className="size-5 shrink-0 text-apex-yellow" aria-hidden />
+          ) : slow ? (
+            <Hourglass className="size-5 shrink-0 text-apex-yellow" aria-hidden />
           ) : (
             <TriangleAlert className="size-5 shrink-0 text-apex-red" aria-hidden />
           )}
@@ -55,14 +61,23 @@ export function RootErrorScreen({
           >
             {unreachable
               ? 'Cannot reach the API'
-              : api
+              : slow
+                ? 'The server is taking too long'
+                : api
                 ? `The API returned ${api.status}`
                 : 'This screen failed to render'}
           </h1>
         </div>
 
         <p className="mt-2.5 max-w-[60ch] text-[13px] leading-[20px] text-apex-fg-secondary">
-          {unreachable ? (
+          {slow ? (
+            <>
+              The request reached the server, and no answer came back in time. The
+              API is up but struggling — that is a load or lock problem on the
+              backend, not a connection problem here, and not a fault in the data.
+              Nothing has been lost; the brief is unaffected.
+            </>
+          ) : unreachable ? (
             <>
               The request never reached the server — no response came back at all.
               That is a connection or DNS problem on this machine or network, not a
