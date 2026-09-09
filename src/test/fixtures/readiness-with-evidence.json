@@ -1,0 +1,458 @@
+{
+  "sources": [
+    {
+      "key": "kite",
+      "label": "Kite (price/OI)",
+      "status": "red",
+      "note": "Token expired / absent — daily login required",
+      "critical": true,
+      "human_refreshable": true,
+      "action": "kite_refresh",
+      "blocks_on_red": false
+    },
+    {
+      "key": "comex",
+      "label": "COMEX (overnight)",
+      "status": "green",
+      "note": "Fresh · -5837s ago",
+      "critical": true,
+      "human_refreshable": true,
+      "action": "refresh",
+      "blocks_on_red": false
+    },
+    {
+      "key": "usdinr",
+      "label": "USD/INR",
+      "status": "green",
+      "note": "Fresh · 22h ago",
+      "critical": true,
+      "human_refreshable": true,
+      "action": "refresh",
+      "blocks_on_red": false
+    },
+    {
+      "key": "dxy",
+      "label": "DXY",
+      "status": "green",
+      "note": "Fresh · -5837s ago",
+      "critical": false,
+      "human_refreshable": true,
+      "action": "refresh",
+      "blocks_on_red": false
+    },
+    {
+      "key": "cot",
+      "label": "CFTC COT",
+      "status": "green",
+      "note": "As-of 2026-07-10 — next release Fri",
+      "critical": false,
+      "human_refreshable": true,
+      "action": "refresh",
+      "blocks_on_red": false
+    },
+    {
+      "key": "macro_continuity",
+      "label": "Macro prev-continuity",
+      "status": "amber",
+      "note": "stored prev gapped (COMEX 13d, DXY 13d, USDINR 13d) — overnight leg sourced LIVE, not blocking",
+      "critical": false,
+      "human_refreshable": false,
+      "action": null,
+      "blocks_on_red": false
+    },
+    {
+      "key": "board",
+      "label": "Board completeness",
+      "status": "red",
+      "note": "missing/stale movers: GOLD (floor) stale 13d; SILVER (floor) stale 13d; CRUDEOIL (floor) stale 13d; NATURALGAS (unranked) stale 13d; COPPER (unranked) stale 13d; ZINC (unranked) stale 13d; ALUMINIUM (unranked) stale 13d; LEAD (unranked) stale 13d; NICKEL (unranked) stale 13d — needs a price/OI backfill",
+      "critical": false,
+      "human_refreshable": false,
+      "action": null,
+      "blocks_on_red": true
+    },
+    {
+      "key": "news",
+      "label": "News (GNews)",
+      "status": "green",
+      "note": "18 stored articles · 4 overnight-fresh · 3/6 queries ok · fetched 22:19 IST",
+      "critical": true,
+      "human_refreshable": true,
+      "action": "refresh",
+      "blocks_on_red": false
+    }
+  ],
+  "can_generate": false,
+  "blocked_reason": "Kite token expired — refresh to generate",
+  "fresh_count": "5/8",
+  "evidence": {
+    "board": [
+      {
+        "instrument_id": "GOLD",
+        "segment": "bullion",
+        "data_tier": "A",
+        "contract": "GOLD26AUGFUT",
+        "close": 144319.0,
+        "as_of": "2026-07-02",
+        "oi": 10562,
+        "oi_change": 63,
+        "oi_state": "NEW_LONGS",
+        "cot_percentile": 0.0583,
+        "cot_as_of": "2026-07-10",
+        "is_fresh": false,
+        "age_days": 13
+      },
+      {
+        "instrument_id": "SILVER",
+        "segment": "bullion",
+        "data_tier": "A",
+        "contract": "SILVER26SEPFUT",
+        "close": 231335.0,
+        "as_of": "2026-07-02",
+        "oi": 11873,
+        "oi_change": -62,
+        "oi_state": "SHORT_COVERING",
+        "cot_percentile": 0.7381,
+        "cot_as_of": "2026-07-10",
+        "is_fresh": false,
+        "age_days": 13
+      },
+      {
+        "instrument_id": "CRUDEOIL",
+        "segment": "energy",
+        "data_tier": "A",
+        "contract": "CRUDEOIL26JULFUT",
+        "close": 6441.0,
+        "as_of": "2026-07-02",
+        "oi": 21956,
+        "oi_change": 2090,
+        "oi_state": "NEW_SHORTS",
+        "cot_percentile": 1.0,
+        "cot_as_of": "2026-07-10",
+        "is_fresh": false,
+        "age_days": 13
+      },
+      {
+        "instrument_id": "NATURALGAS",
+        "segment": "energy",
+        "data_tier": "A",
+        "contract": "NATURALGAS26JULFUT",
+        "close": 303.3,
+        "as_of": "2026-07-02",
+        "oi": 24585,
+        "oi_change": 5602,
+        "oi_state": "NEW_SHORTS",
+        "cot_percentile": 0.2097,
+        "cot_as_of": "2026-07-10",
+        "is_fresh": false,
+        "age_days": 13
+      },
+      {
+        "instrument_id": "COPPER",
+        "segment": "base_metals",
+        "data_tier": "A",
+        "contract": "COPPER26JULFUT",
+        "close": 1271.5,
+        "as_of": "2026-07-02",
+        "oi": 13725,
+        "oi_change": 138,
+        "oi_state": "NEW_LONGS",
+        "cot_percentile": 0.855,
+        "cot_as_of": "2026-07-10",
+        "is_fresh": false,
+        "age_days": 13
+      },
+      {
+        "instrument_id": "ZINC",
+        "segment": "base_metals",
+        "data_tier": "B",
+        "contract": "ZINC26JULFUT",
+        "close": 359.75,
+        "as_of": "2026-07-02",
+        "oi": 2510,
+        "oi_change": 31,
+        "oi_state": "NEW_LONGS",
+        "cot_percentile": null,
+        "cot_as_of": null,
+        "is_fresh": false,
+        "age_days": 13
+      },
+      {
+        "instrument_id": "ALUMINIUM",
+        "segment": "base_metals",
+        "data_tier": "B",
+        "contract": "ALUMINIUM26JULFUT",
+        "close": 327.8,
+        "as_of": "2026-07-02",
+        "oi": 3541,
+        "oi_change": -6,
+        "oi_state": "SHORT_COVERING",
+        "cot_percentile": null,
+        "cot_as_of": null,
+        "is_fresh": false,
+        "age_days": 13
+      },
+      {
+        "instrument_id": "LEAD",
+        "segment": "base_metals",
+        "data_tier": "B",
+        "contract": "LEAD26JULFUT",
+        "close": 197.15,
+        "as_of": "2026-07-02",
+        "oi": 558,
+        "oi_change": -10,
+        "oi_state": "SHORT_COVERING",
+        "cot_percentile": null,
+        "cot_as_of": null,
+        "is_fresh": false,
+        "age_days": 13
+      },
+      {
+        "instrument_id": "NICKEL",
+        "segment": "base_metals",
+        "data_tier": "B",
+        "contract": "NICKEL26JULFUT",
+        "close": 1560.1,
+        "as_of": "2026-07-02",
+        "oi": 674,
+        "oi_change": 30,
+        "oi_state": "NEW_SHORTS",
+        "cot_percentile": null,
+        "cot_as_of": null,
+        "is_fresh": false,
+        "age_days": 13
+      }
+    ],
+    "macro": [
+      {
+        "indicator": "BREAKEVEN_10Y",
+        "value": 2.25,
+        "source": "FRED",
+        "as_of": "2026-07-14",
+        "carried_forward": false
+      },
+      {
+        "indicator": "COMEX",
+        "value": 4037.300049,
+        "source": "YAHOO_V8",
+        "as_of": "2026-07-15",
+        "carried_forward": false
+      },
+      {
+        "indicator": "COMEX_OVERNIGHT_EXPECTED",
+        "value": -0.030868,
+        "source": "DERIVED",
+        "as_of": "2026-06-05",
+        "carried_forward": false
+      },
+      {
+        "indicator": "DXY",
+        "value": 120.5046,
+        "source": "FRED",
+        "as_of": "2026-07-15",
+        "carried_forward": true
+      },
+      {
+        "indicator": "INDIA_VIX",
+        "value": 13.75,
+        "source": "NSE",
+        "as_of": "2026-07-15",
+        "carried_forward": false
+      },
+      {
+        "indicator": "US10Y",
+        "value": 4.62,
+        "source": "FRED",
+        "as_of": "2026-07-13",
+        "carried_forward": false
+      },
+      {
+        "indicator": "USDINR",
+        "value": 96.15177,
+        "source": "TWELVE_DATA",
+        "as_of": "2026-07-14",
+        "carried_forward": false
+      }
+    ],
+    "news": {
+      "fetched_at": "2026-07-15T16:49:29.355368+00:00",
+      "count": 18,
+      "fresh_count": 4,
+      "window": {
+        "rule": "overnight-fresh = published at/after min(now−24h, the previous MCX session close 23:30 IST). For the 2026-07-15 pre-open the previous session was 2026-07-14, so the window opened 2026-07-14 21:52 IST.",
+        "threshold": "2026-07-14T16:22:43+00:00"
+      },
+      "articles": [
+        {
+          "headline": "Gold vs Silver: Which commodity offers better return potential in H2 CY26?",
+          "source_name": "Livemint",
+          "url": "https://www.livemint.com/market/commodities/gold-vs-silver-which-commodity-offers-better-return-potential-in-h2-cy26-11782809412555.html",
+          "published_at": "2026-06-30T09:05:15Z",
+          "age_hours": 367.3,
+          "status": "stale",
+          "reason": "published 367.3h ago — before the overnight window opened at 2026-07-14 21:52 IST"
+        },
+        {
+          "headline": "UTI Mutual Fund buys nearly 15 lakh shares of MCX for ₹425 crore",
+          "source_name": "The Hindu Business Line",
+          "url": "https://www.thehindubusinessline.com/markets/uti-mutual-fund-buys-nearly-15-lakh-shares-of-mcx-for-425-crore/article71164848.ece",
+          "published_at": "2026-06-30T07:53:12Z",
+          "age_hours": 368.5,
+          "status": "stale",
+          "reason": "published 368.5h ago — before the overnight window opened at 2026-07-14 21:52 IST"
+        },
+        {
+          "headline": "UTI Mutual Fund buys nearly 15 lakh shares of MCX for Rs 425 crore",
+          "source_name": "The Economic Times",
+          "url": "https://economictimes.indiatimes.com/mf/mf-news/uti-mutual-fund-buys-nearly-15-lakh-shares-of-mcx-for-rs-425-crore/articleshow/132087433.cms",
+          "published_at": "2026-06-30T07:28:00Z",
+          "age_hours": 368.9,
+          "status": "stale",
+          "reason": "published 368.9h ago — before the overnight window opened at 2026-07-14 21:52 IST"
+        },
+        {
+          "headline": "Stock Market Holiday 2026: Are NSE, BSE closed on June 26 for Muharram? Check market closing dates list",
+          "source_name": "The Economic Times",
+          "url": "https://economictimes.indiatimes.com/markets/stocks/news/stock-market-holiday-2026-are-nse-bse-closed-tomorrow-on-june-26-for-muharram-check-market-closing-dates-list/articleshow/131982291.cms",
+          "published_at": "2026-06-25T04:30:00Z",
+          "age_hours": 491.9,
+          "status": "stale",
+          "reason": "published 491.9h ago — before the overnight window opened at 2026-07-14 21:52 IST"
+        },
+        {
+          "headline": "Precious metals snap 2-day fall, gold gains nearly 1% on MCX and silver jumps by Rs 3.7k per kg",
+          "source_name": "India TV News",
+          "url": "https://www.indiatvnews.com/business/markets/precious-metals-snap-2-day-fall-gold-gains-nearly-1-pc-on-mcx-and-silver-jumps-by-rs-3-7k-per-kg-check-city-wise-rates-2026-07-14-1048185",
+          "published_at": "2026-07-14T08:11:02Z",
+          "age_hours": 32.2,
+          "status": "stale",
+          "reason": "published 32.2h ago — before the overnight window opened at 2026-07-14 21:52 IST"
+        },
+        {
+          "headline": "Gold, Silver Rates Today: MCX gold price rises near ₹1.41 lakh per 10 grams, silver gains",
+          "source_name": "Livemint",
+          "url": "https://www.livemint.com/market/commodities/gold-silver-rates-today-mcx-gold-price-rises-near-rs-1-41-lakh-per-10-grams-silver-gains-11784000416110.html",
+          "published_at": "2026-07-14T03:42:07Z",
+          "age_hours": 36.7,
+          "status": "stale",
+          "reason": "published 36.7h ago — before the overnight window opened at 2026-07-14 21:52 IST"
+        },
+        {
+          "headline": "Gold price today: Yellow metal falls Rs 1,500 to Rs 1.47 lakh/10g in Delhi",
+          "source_name": "The Tribune",
+          "url": "https://www.tribuneindia.com/news/business/gold-price-today-yellow-metal-falls-rs-1500-to-rs-1-47-lakh-10g-in-delhi/",
+          "published_at": "2026-07-13T12:31:38Z",
+          "age_hours": 51.9,
+          "status": "stale",
+          "reason": "published 51.9h ago — before the overnight window opened at 2026-07-14 21:52 IST"
+        },
+        {
+          "headline": "Have commodity markets lost their link with physical reality?",
+          "source_name": "BOL News",
+          "url": "https://www.bolnews.com/pakistan/opinion/have-commodity-markets-lost-their-link-with-physical-reality/",
+          "published_at": "2026-07-13T12:10:17Z",
+          "age_hours": 52.2,
+          "status": "stale",
+          "reason": "published 52.2h ago — before the overnight window opened at 2026-07-14 21:52 IST"
+        },
+        {
+          "headline": "India’s retail inflation touches 4.38 per cent in June as silver, gold prices jump",
+          "source_name": "Lokmat Times",
+          "url": "https://www.lokmattimes.com/business/indias-retail-inflation-touches-438-per-cent-in-june-as-silver-gold-prices-jump-1/",
+          "published_at": "2026-07-13T11:27:20Z",
+          "age_hours": 52.9,
+          "status": "stale",
+          "reason": "published 52.9h ago — before the overnight window opened at 2026-07-14 21:52 IST"
+        },
+        {
+          "headline": "Gold Price Drops to Rs 1,41,557; Silver Plummets 2.40%: Key Factors Behind the Fall",
+          "source_name": "Outlook Money",
+          "url": "https://www.outlookmoney.com/invest/gold-price-drops-to-rs-141557-silver-plummets-240-key-factors-behind-the-fall",
+          "published_at": "2026-07-13T06:19:30Z",
+          "age_hours": 58.1,
+          "status": "stale",
+          "reason": "published 58.1h ago — before the overnight window opened at 2026-07-14 21:52 IST"
+        },
+        {
+          "headline": "Gold price drops 1%, silver rates crash over 2% on MCX as inflation fears, rate hike concerns revive",
+          "source_name": "Livemint",
+          "url": "https://www.livemint.com/market/commodities/gold-price-drops-1-silver-rates-crash-over-2-on-mcx-as-inflation-fears-rate-hike-concerns-revive-11783912345951.html",
+          "published_at": "2026-07-13T03:37:51Z",
+          "age_hours": 60.7,
+          "status": "stale",
+          "reason": "published 60.7h ago — before the overnight window opened at 2026-07-14 21:52 IST"
+        },
+        {
+          "headline": "Gold ETFs see strong inflows despite July price drop; silver ETFs post robust comeback",
+          "source_name": "Business Today",
+          "url": "https://www.businesstoday.in/personal-finance/investment/story/gold-etf-inflows-jump-575-in-june-despite-july-price-slump-silver-etfs-rebound-300-542319-2026-07-10",
+          "published_at": "2026-07-10T12:46:43Z",
+          "age_hours": 123.6,
+          "status": "stale",
+          "reason": "published 123.6h ago — before the overnight window opened at 2026-07-14 21:52 IST"
+        },
+        {
+          "headline": "22k gold rate today: Check 24k, 22k, 20k, 18k gold prices (July 10, 2026) at Tanishq, Malabar Gold & Diamonds, Joyalukkas, Kalyan Jewellers and IBJA",
+          "source_name": "The Economic Times",
+          "url": "https://economictimes.indiatimes.com/wealth/invest/22k-gold-rate-today-check-24k-22k-20k-18k-gold-prices-july-10-2026-at-tanishq-malabar-gold-diamonds-joyalukkas-kalyan-jewellers-and-ibja/articleshow/132304513.cms",
+          "published_at": "2026-07-10T06:27:42Z",
+          "age_hours": 129.9,
+          "status": "stale",
+          "reason": "published 129.9h ago — before the overnight window opened at 2026-07-14 21:52 IST"
+        },
+        {
+          "headline": "Gold price falls, silver trades flat on MCX amid increased US Fed rate-hike bets",
+          "source_name": "Livemint",
+          "url": "https://www.livemint.com/market/commodities/gold-and-silver-price-today-gold-price-falls-silver-trades-flat-on-mcx-amid-increased-us-fed-rate-hike-bets-11783654473707.html",
+          "published_at": "2026-07-10T03:41:44Z",
+          "age_hours": 132.7,
+          "status": "stale",
+          "reason": "published 132.7h ago — before the overnight window opened at 2026-07-14 21:52 IST"
+        },
+        {
+          "headline": "Indian markets open cautiously in green amid oil price rise, escalation of supply disruptions risk from Iran",
+          "source_name": "The Tribune",
+          "url": "https://www.tribuneindia.com/news/business/indian-markets-open-cautiously-in-green-amid-oil-price-rise-escalation-of-supply-disruptions-risk-from-iran/",
+          "published_at": "2026-07-15T04:13:19Z",
+          "age_hours": 12.2,
+          "status": "fresh",
+          "reason": null
+        },
+        {
+          "headline": "LPG price today: Check commercial and domestic cooking gas cylinder rate as oil rebounds amid Hormuz blockade",
+          "source_name": "Livemint",
+          "url": "https://www.livemint.com/news/india/lpg-price-today-check-commercial-and-domestic-cooking-gas-cylinder-rate-as-oil-rebounds-amid-hormuz-blockade-11784080789783.html",
+          "published_at": "2026-07-15T02:58:47Z",
+          "age_hours": 13.4,
+          "status": "fresh",
+          "reason": null
+        },
+        {
+          "headline": "Oil Price Today (July 15): Crude oil above $86 as US-Iran exchange fresh strikes. Bigger surge brewing?",
+          "source_name": "The Economic Times",
+          "url": "https://economictimes.indiatimes.com/markets/commodities/news/oil-price-today-july-15-crude-oil-above-86-as-us-iran-exchange-fresh-strikes-bigger-surge-brewing/articleshow/132404132.cms",
+          "published_at": "2026-07-15T02:11:00Z",
+          "age_hours": 14.2,
+          "status": "fresh",
+          "reason": null
+        },
+        {
+          "headline": "Oil price today: Crude tops $85 a barrel as US restores Strait of Hormuz blockade",
+          "source_name": "Times of India",
+          "url": "https://timesofindia.indiatimes.com/business/international-business/oil-price-today-crude-tops-85-a-barrel-as-us-restores-strait-of-hormuz-blockade/articleshow/132404076.cms",
+          "published_at": "2026-07-15T02:09:00Z",
+          "age_hours": 14.2,
+          "status": "fresh",
+          "reason": null
+        }
+      ]
+    }
+  },
+  "brief": {
+    "exists": false,
+    "date": "2026-07-15",
+    "generated_at": null,
+    "is_complete": false,
+    "guard_failed": false,
+    "positioning_only": false
+  }
+}

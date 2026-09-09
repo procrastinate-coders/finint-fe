@@ -72,8 +72,22 @@ export function getMe(signal?: AbortSignal): Promise<User> {
 
 // --- readiness (FIN-160; $0 gate) ----------------------------------------
 
-export function getReadiness(signal?: AbortSignal): Promise<ReadinessResponse> {
-  return apiRequest('/readiness', readinessResponse, { signal })
+/**
+ * The readiness gate. ⚠️ `evidence` IS OFF BY DEFAULT ON THE BACKEND (FIN-237):
+ * the block is 18 kB of the 21 kB response, so the default is now slim (3.3 kB)
+ * and callers ask for it. Only the cockpit needs it — everything else on this
+ * screen (sources rail, decision bar) reads the spine, not the evidence.
+ *
+ * The default here MIRRORS the API's default rather than being convenient, so
+ * nobody gets 18 kB by accident — on a phone hotspot that is 10s of transfer.
+ */
+export function getReadiness(
+  evidence = false,
+  signal?: AbortSignal,
+): Promise<ReadinessResponse> {
+  return apiRequest(`/readiness${evidence ? '?evidence=true' : ''}`, readinessResponse, {
+    signal,
+  })
 }
 
 // --- spine refresh + kite (FIN-160) --------------------------------------
