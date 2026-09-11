@@ -970,6 +970,17 @@
             ],
             "title": "Roll Basis"
           },
+          "liquid_contract_expiry": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Liquid Contract Expiry"
+          },
           "intl_change_pct": {
             "anyOf": [
               {
@@ -991,6 +1002,72 @@
               }
             ],
             "title": "Usdinr Change Pct"
+          },
+          "implied_open_span_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Implied Open Span Days"
+          },
+          "implied_open_span_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Implied Open Span Label"
+          },
+          "intl_span_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Intl Span Days"
+          },
+          "intl_span_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Intl Span Label"
+          },
+          "usdinr_span_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Usdinr Span Days"
+          },
+          "usdinr_span_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Usdinr Span Label"
           },
           "premium_pct": {
             "anyOf": [
@@ -1035,6 +1112,17 @@
               }
             ],
             "title": "Premium Basis"
+          },
+          "import_duty": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Import Duty"
           },
           "lme_value": {
             "anyOf": [

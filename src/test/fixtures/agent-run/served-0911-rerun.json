@@ -1,0 +1,1511 @@
+{
+  "run_date": "2026-09-11-rerun",
+  "run_id": "2026-09-11-031803",
+  "board_date": "2026-09-11",
+  "api_brief_run_id": null,
+  "gate": {
+    "board_date": "2026-09-11",
+    "checks": [
+      {
+        "detail": "9 instruments on the board (need >= 9)",
+        "name": "instrument_count",
+        "ok": true
+      },
+      {
+        "detail": "0/9 closes unsettled",
+        "name": "any_settled_close",
+        "ok": true
+      },
+      {
+        "detail": "0/9 continuous series stale by > 3 sessions \u2014 max 0",
+        "name": "any_fresh_continuous",
+        "ok": true
+      }
+    ],
+    "instruments": 9,
+    "ok": true,
+    "reason": "board healthy",
+    "stale": [],
+    "unsettled": []
+  },
+  "board": [
+    {
+      "instrument": "ALUMINIUM",
+      "data_tier": "B",
+      "oi_state": "LONG_LIQUIDATION",
+      "total_oi": 3826,
+      "oi_change": -445,
+      "oi_gap_sessions": 1,
+      "oi_gap_label": null,
+      "cot_percentile": 0.9311,
+      "cot_confidence": "weak correlation to price",
+      "implied_open_pct": null,
+      "last_close": 349.3,
+      "last_close_settled": true,
+      "atr": 4.442857142857146,
+      "atr_avg": 5.1615476190476155,
+      "cont_stale_sessions": 0,
+      "support_level": 342.5,
+      "resistance_level": 357.95,
+      "dist_to_support": 6.800000000000011,
+      "dist_to_resistance": 8.649999999999977,
+      "dist_to_support_atr": 1.5305466237942138,
+      "dist_to_resistance_atr": 1.9469453376205723,
+      "near_next_spread": -0.1500000000000341,
+      "near_next_spread_change": 1.2499999999999432,
+      "term_structure": "backwardation",
+      "spread_basis": "ALUMINIUM26OCTFUT minus ALUMINIUM26SEPFUT",
+      "next_oi_share": 0.16844164312106064,
+      "sessions_to_expiry": 13,
+      "roll_basis": "ALUMINIUM26OCTFUT OI over ALUMINIUM26SEPFUT + ALUMINIUM26OCTFUT",
+      "liquid_contract_expiry": "2026-09-30",
+      "intl_change_pct": null,
+      "usdinr_change_pct": null,
+      "implied_open_span_days": null,
+      "implied_open_span_label": null,
+      "intl_span_days": null,
+      "intl_span_label": null,
+      "usdinr_span_days": null,
+      "usdinr_span_label": null,
+      "premium_pct": null,
+      "premium_z": null,
+      "premium_window": 0,
+      "premium_basis": "not applicable \u2014 the premium is a bullion parity calculation",
+      "import_duty": null,
+      "lme_value": 3318.0,
+      "lme_change_pct": -0.030129557095515125,
+      "lme_as_of": "2026-09-11",
+      "eia_value": null,
+      "eia_wow": null,
+      "eia_as_of": null
+    },
+    {
+      "instrument": "COPPER",
+      "data_tier": "A",
+      "oi_state": "LONG_LIQUIDATION",
+      "total_oi": 10292,
+      "oi_change": -1062,
+      "oi_gap_sessions": 1,
+      "oi_gap_label": null,
+      "cot_percentile": 0.104,
+      "cot_confidence": null,
+      "implied_open_pct": -4.199511096821073,
+      "last_close": 1372.65,
+      "last_close_settled": true,
+      "atr": 17.52500000000004,
+      "atr_avg": 16.64619047619051,
+      "cont_stale_sessions": 0,
+      "support_level": 1361.1,
+      "resistance_level": 1409.25,
+      "dist_to_support": 11.550000000000182,
+      "dist_to_resistance": 36.59999999999991,
+      "dist_to_support_atr": 0.6590584878744739,
+      "dist_to_resistance_atr": 2.088445078459334,
+      "near_next_spread": 8.599999999999909,
+      "near_next_spread_change": 2.0499999999999545,
+      "term_structure": "contango",
+      "spread_basis": "COPPER26OCTFUT minus COPPER26SEPFUT",
+      "next_oi_share": 0.18511480601741884,
+      "sessions_to_expiry": 13,
+      "roll_basis": "COPPER26OCTFUT OI over COPPER26SEPFUT + COPPER26OCTFUT",
+      "liquid_contract_expiry": "2026-09-30",
+      "intl_change_pct": -4.945983684868082,
+      "usdinr_change_pct": 0.7853140950638382,
+      "implied_open_span_days": 2,
+      "implied_open_span_label": "over 2 calendar days \u2014 NOT overnight",
+      "intl_span_days": 1,
+      "intl_span_label": "overnight",
+      "usdinr_span_days": 2,
+      "usdinr_span_label": "over 2 calendar days \u2014 NOT overnight",
+      "premium_pct": null,
+      "premium_z": null,
+      "premium_window": 0,
+      "premium_basis": "not applicable \u2014 the premium is a bullion parity calculation",
+      "import_duty": null,
+      "lme_value": 14371.0,
+      "lme_change_pct": -2.2713362801768056,
+      "lme_as_of": "2026-09-11",
+      "eia_value": null,
+      "eia_wow": null,
+      "eia_as_of": null
+    },
+    {
+      "instrument": "CRUDEOIL",
+      "data_tier": "A",
+      "oi_state": "NEW_LONGS",
+      "total_oi": 19973,
+      "oi_change": 2822,
+      "oi_gap_sessions": 1,
+      "oi_gap_label": null,
+      "cot_percentile": 0.5544,
+      "cot_confidence": null,
+      "implied_open_pct": 7.532316170964437,
+      "last_close": 9722.0,
+      "last_close_settled": true,
+      "atr": 305.35714285714283,
+      "atr_avg": 356.7952380952381,
+      "cont_stale_sessions": 0,
+      "support_level": 8952.0,
+      "resistance_level": null,
+      "dist_to_support": 770.0,
+      "dist_to_resistance": null,
+      "dist_to_support_atr": 2.521637426900585,
+      "dist_to_resistance_atr": null,
+      "near_next_spread": -370.0,
+      "near_next_spread_change": -114.0,
+      "term_structure": "backwardation",
+      "spread_basis": "CRUDEOIL26OCTFUT minus CRUDEOIL26SEPFUT",
+      "next_oi_share": 0.21885877429700026,
+      "sessions_to_expiry": 6,
+      "roll_basis": "CRUDEOIL26OCTFUT OI over CRUDEOIL26SEPFUT + CRUDEOIL26OCTFUT",
+      "liquid_contract_expiry": "2026-09-21",
+      "intl_change_pct": 6.694429775291089,
+      "usdinr_change_pct": 0.7853140950638382,
+      "implied_open_span_days": 2,
+      "implied_open_span_label": "over 2 calendar days \u2014 NOT overnight",
+      "intl_span_days": 1,
+      "intl_span_label": "overnight",
+      "usdinr_span_days": 2,
+      "usdinr_span_label": "over 2 calendar days \u2014 NOT overnight",
+      "premium_pct": null,
+      "premium_z": null,
+      "premium_window": 0,
+      "premium_basis": "not applicable \u2014 the premium is a bullion parity calculation",
+      "import_duty": null,
+      "lme_value": null,
+      "lme_change_pct": null,
+      "lme_as_of": null,
+      "eia_value": 424069.0,
+      "eia_wow": -391.0,
+      "eia_as_of": "2026-09-04"
+    },
+    {
+      "instrument": "GOLD",
+      "data_tier": "A",
+      "oi_state": "LONG_LIQUIDATION",
+      "total_oi": 10187,
+      "oi_change": -221,
+      "oi_gap_sessions": 1,
+      "oi_gap_label": null,
+      "cot_percentile": 0.042,
+      "cot_confidence": null,
+      "implied_open_pct": -0.39005811415169234,
+      "last_close": 152341.0,
+      "last_close_settled": true,
+      "atr": 2880.8571428571427,
+      "atr_avg": 2708.6785714285716,
+      "cont_stale_sessions": 0,
+      "support_level": 149665.0,
+      "resistance_level": 164773.0,
+      "dist_to_support": 2676.0,
+      "dist_to_resistance": 12432.0,
+      "dist_to_support_atr": 0.9288902112466528,
+      "dist_to_resistance_atr": 4.315382326688486,
+      "near_next_spread": 1538.0,
+      "near_next_spread_change": -106.0,
+      "term_structure": "contango",
+      "spread_basis": "GOLD26DECFUT minus GOLD26OCTFUT",
+      "next_oi_share": 0.46890151712632294,
+      "sessions_to_expiry": 15,
+      "roll_basis": "GOLD26DECFUT OI over GOLD26OCTFUT + GOLD26DECFUT",
+      "liquid_contract_expiry": "2026-10-05",
+      "intl_change_pct": -1.1662137681159424,
+      "usdinr_change_pct": 0.7853140950638382,
+      "implied_open_span_days": 2,
+      "implied_open_span_label": "over 2 calendar days \u2014 NOT overnight",
+      "intl_span_days": 1,
+      "intl_span_label": "overnight",
+      "usdinr_span_days": 2,
+      "usdinr_span_label": "over 2 calendar days \u2014 NOT overnight",
+      "premium_pct": -1.246260303085741,
+      "premium_z": -0.1312,
+      "premium_window": 198,
+      "premium_basis": "reference x USD/INR x (1 + 15% import duty); premium in percentage POINTS; z over 198 sessions (floor 180)",
+      "import_duty": 0.15,
+      "lme_value": null,
+      "lme_change_pct": null,
+      "lme_as_of": null,
+      "eia_value": null,
+      "eia_wow": null,
+      "eia_as_of": null
+    },
+    {
+      "instrument": "LEAD",
+      "data_tier": "B",
+      "oi_state": "LONG_LIQUIDATION",
+      "total_oi": 677,
+      "oi_change": -19,
+      "oi_gap_sessions": 1,
+      "oi_gap_label": null,
+      "cot_percentile": 0.0,
+      "cot_confidence": "correlation to price unverified",
+      "implied_open_pct": null,
+      "last_close": 196.5,
+      "last_close_settled": true,
+      "atr": 1.6035714285714298,
+      "atr_avg": 2.5123809523809495,
+      "cont_stale_sessions": 0,
+      "support_level": 195.5,
+      "resistance_level": 200.0,
+      "dist_to_support": 1.0,
+      "dist_to_resistance": 3.5,
+      "dist_to_support_atr": 0.6236080178173715,
+      "dist_to_resistance_atr": 2.1826280623608003,
+      "near_next_spread": 0.09999999999999432,
+      "near_next_spread_change": 0.3499999999999943,
+      "term_structure": "contango",
+      "spread_basis": "LEAD26OCTFUT minus LEAD26SEPFUT",
+      "next_oi_share": 0.28055260361317746,
+      "sessions_to_expiry": 13,
+      "roll_basis": "LEAD26OCTFUT OI over LEAD26SEPFUT + LEAD26OCTFUT",
+      "liquid_contract_expiry": "2026-09-30",
+      "intl_change_pct": null,
+      "usdinr_change_pct": null,
+      "implied_open_span_days": null,
+      "implied_open_span_label": null,
+      "intl_span_days": null,
+      "intl_span_label": null,
+      "usdinr_span_days": null,
+      "usdinr_span_label": null,
+      "premium_pct": null,
+      "premium_z": null,
+      "premium_window": 0,
+      "premium_basis": "not applicable \u2014 the premium is a bullion parity calculation",
+      "import_duty": null,
+      "lme_value": 1902.5,
+      "lme_change_pct": -0.1836306400839427,
+      "lme_as_of": "2026-09-11",
+      "eia_value": null,
+      "eia_wow": null,
+      "eia_as_of": null
+    },
+    {
+      "instrument": "NATURALGAS",
+      "data_tier": "A",
+      "oi_state": "NEW_SHORTS",
+      "total_oi": 56751,
+      "oi_change": 3512,
+      "oi_gap_sessions": 1,
+      "oi_gap_label": null,
+      "cot_percentile": 1.0,
+      "cot_confidence": null,
+      "implied_open_pct": 1.2138838219032388,
+      "last_close": 270.5,
+      "last_close_settled": true,
+      "atr": 8.728571428571424,
+      "atr_avg": 8.777380952380947,
+      "cont_stale_sessions": 0,
+      "support_level": 259.4,
+      "resistance_level": 286.0,
+      "dist_to_support": 11.100000000000023,
+      "dist_to_resistance": 15.5,
+      "dist_to_support_atr": 1.2716857610474663,
+      "dist_to_resistance_atr": 1.7757774140752873,
+      "near_next_spread": 15.100000000000023,
+      "near_next_spread_change": 1.400000000000034,
+      "term_structure": "contango",
+      "spread_basis": "NATURALGAS26OCTFUT minus NATURALGAS26SEPFUT",
+      "next_oi_share": 0.20066762444012506,
+      "sessions_to_expiry": 10,
+      "roll_basis": "NATURALGAS26OCTFUT OI over NATURALGAS26SEPFUT + NATURALGAS26OCTFUT",
+      "liquid_contract_expiry": "2026-09-25",
+      "intl_change_pct": 0.425230333097093,
+      "usdinr_change_pct": 0.7853140950638382,
+      "implied_open_span_days": 2,
+      "implied_open_span_label": "over 2 calendar days \u2014 NOT overnight",
+      "intl_span_days": 1,
+      "intl_span_label": "overnight",
+      "usdinr_span_days": 2,
+      "usdinr_span_label": "over 2 calendar days \u2014 NOT overnight",
+      "premium_pct": null,
+      "premium_z": null,
+      "premium_window": 0,
+      "premium_basis": "not applicable \u2014 the premium is a bullion parity calculation",
+      "import_duty": null,
+      "lme_value": null,
+      "lme_change_pct": null,
+      "lme_as_of": null,
+      "eia_value": 3254.0,
+      "eia_wow": 40.0,
+      "eia_as_of": "2026-09-04"
+    },
+    {
+      "instrument": "NICKEL",
+      "data_tier": "B",
+      "oi_state": "SHORT_COVERING",
+      "total_oi": 346,
+      "oi_change": -77,
+      "oi_gap_sessions": 1,
+      "oi_gap_label": null,
+      "cot_percentile": 0.0684,
+      "cot_confidence": "correlation to price unverified",
+      "implied_open_pct": null,
+      "last_close": 1605.1,
+      "last_close_settled": true,
+      "atr": 20.285714285714302,
+      "atr_avg": 20.836666666666687,
+      "cont_stale_sessions": 0,
+      "support_level": 1596.0,
+      "resistance_level": 1647.0,
+      "dist_to_support": 9.099999999999909,
+      "dist_to_resistance": 41.90000000000009,
+      "dist_to_support_atr": 0.4485915492957698,
+      "dist_to_resistance_atr": 2.0654929577464816,
+      "near_next_spread": 16.700000000000045,
+      "near_next_spread_change": 2.900000000000091,
+      "term_structure": "contango",
+      "spread_basis": "NICKEL26OCTFUT minus NICKEL26SEPFUT",
+      "next_oi_share": 0.3639705882352941,
+      "sessions_to_expiry": 3,
+      "roll_basis": "NICKEL26OCTFUT OI over NICKEL26SEPFUT + NICKEL26OCTFUT",
+      "liquid_contract_expiry": "2026-09-16",
+      "intl_change_pct": null,
+      "usdinr_change_pct": null,
+      "implied_open_span_days": null,
+      "implied_open_span_label": null,
+      "intl_span_days": null,
+      "intl_span_label": null,
+      "usdinr_span_days": null,
+      "usdinr_span_label": null,
+      "premium_pct": null,
+      "premium_z": null,
+      "premium_window": 0,
+      "premium_basis": "not applicable \u2014 the premium is a bullion parity calculation",
+      "import_duty": null,
+      "lme_value": 16760.0,
+      "lme_change_pct": -0.3567181926278251,
+      "lme_as_of": "2026-09-11",
+      "eia_value": null,
+      "eia_wow": null,
+      "eia_as_of": null
+    },
+    {
+      "instrument": "SILVER",
+      "data_tier": "A",
+      "oi_state": "NEW_SHORTS",
+      "total_oi": 13213,
+      "oi_change": 901,
+      "oi_gap_sessions": 1,
+      "oi_gap_label": null,
+      "cot_percentile": 0.3972,
+      "cot_confidence": null,
+      "implied_open_pct": -4.64097710441086,
+      "last_close": 234099.0,
+      "last_close_settled": true,
+      "atr": 5390.714285714285,
+      "atr_avg": 5871.883333333333,
+      "cont_stale_sessions": 0,
+      "support_level": 231811.0,
+      "resistance_level": 255460.0,
+      "dist_to_support": 2288.0,
+      "dist_to_resistance": 21361.0,
+      "dist_to_support_atr": 0.4244335497548695,
+      "dist_to_resistance_atr": 3.9625546574797936,
+      "near_next_spread": 6451.0,
+      "near_next_spread_change": 298.0,
+      "term_structure": "contango",
+      "spread_basis": "SILVER27MARFUT minus SILVER26DECFUT",
+      "next_oi_share": 0.01483745899194751,
+      "sessions_to_expiry": 41,
+      "roll_basis": "SILVER27MARFUT OI over SILVER26DECFUT + SILVER27MARFUT",
+      "liquid_contract_expiry": "2026-12-04",
+      "intl_change_pct": -5.38400981154501,
+      "usdinr_change_pct": 0.7853140950638382,
+      "implied_open_span_days": 2,
+      "implied_open_span_label": "over 2 calendar days \u2014 NOT overnight",
+      "intl_span_days": 1,
+      "intl_span_label": "overnight",
+      "usdinr_span_days": 2,
+      "usdinr_span_label": "over 2 calendar days \u2014 NOT overnight",
+      "premium_pct": 3.031004263631244,
+      "premium_z": 0.2896,
+      "premium_window": 218,
+      "premium_basis": "reference x USD/INR x (1 + 15% import duty); premium in percentage POINTS; z over 218 sessions (floor 180)",
+      "import_duty": 0.15,
+      "lme_value": null,
+      "lme_change_pct": null,
+      "lme_as_of": null,
+      "eia_value": null,
+      "eia_wow": null,
+      "eia_as_of": null
+    },
+    {
+      "instrument": "ZINC",
+      "data_tier": "B",
+      "oi_state": "LONG_LIQUIDATION",
+      "total_oi": 2356,
+      "oi_change": -259,
+      "oi_gap_sessions": 1,
+      "oi_gap_label": null,
+      "cot_percentile": 0.6418,
+      "cot_confidence": null,
+      "implied_open_pct": null,
+      "last_close": 415.15,
+      "last_close_settled": true,
+      "atr": 10.064285714285713,
+      "atr_avg": 7.425833333333333,
+      "cont_stale_sessions": 0,
+      "support_level": 385.0,
+      "resistance_level": 424.15,
+      "dist_to_support": 30.149999999999977,
+      "dist_to_resistance": 9.0,
+      "dist_to_support_atr": 2.9957416607523046,
+      "dist_to_resistance_atr": 0.894251242015614,
+      "near_next_spread": -8.5,
+      "near_next_spread_change": 0.10000000000002274,
+      "term_structure": "backwardation",
+      "spread_basis": "ZINC26OCTFUT minus ZINC26SEPFUT",
+      "next_oi_share": 0.1692524682651622,
+      "sessions_to_expiry": 13,
+      "roll_basis": "ZINC26OCTFUT OI over ZINC26SEPFUT + ZINC26OCTFUT",
+      "liquid_contract_expiry": "2026-09-30",
+      "intl_change_pct": null,
+      "usdinr_change_pct": null,
+      "implied_open_span_days": null,
+      "implied_open_span_label": null,
+      "intl_span_days": null,
+      "intl_span_label": null,
+      "usdinr_span_days": null,
+      "usdinr_span_label": null,
+      "premium_pct": null,
+      "premium_z": null,
+      "premium_window": 0,
+      "premium_basis": "not applicable \u2014 the premium is a bullion parity calculation",
+      "import_duty": null,
+      "lme_value": 3962.0,
+      "lme_change_pct": -1.0489510489510523,
+      "lme_as_of": "2026-09-11",
+      "eia_value": null,
+      "eia_wow": null,
+      "eia_as_of": null
+    }
+  ],
+  "ratios": {
+    "crude_natgas": {
+      "basis": "CRUDEOIL and NATURALGAS as quoted, in their own units \u2014 a cross-unit reading by convention; value from today's actual contracts, percentile over 250 back-adjusted continuous sessions (the two bases differ slightly in level)",
+      "denominator": "NATURALGAS",
+      "numerator": "CRUDEOIL",
+      "percentile": 0.862,
+      "unit_convention": "as_quoted",
+      "value": 35.940850277264325,
+      "window": 250
+    },
+    "gold_silver": {
+      "basis": "GOLD and SILVER normalised to rupees per gram (10g and 1000g quotes); value from today's actual contracts, percentile over 250 back-adjusted continuous sessions (the two bases differ slightly in level)",
+      "denominator": "SILVER",
+      "numerator": "GOLD",
+      "percentile": 0.5286,
+      "unit_convention": "per_gram",
+      "value": 65.07545952780661,
+      "window": 250
+    }
+  },
+  "guard": {
+    "lines": 19,
+    "sha256": "9f1cdabb9515d8560ff0f56c60d434572113ea59c41bd9945dee7d7f48ce9751",
+    "decisions": [
+      {
+        "decision": "allow",
+        "reason": "every number traces to the board",
+        "claims": [],
+        "claim_count": 0,
+        "agent_id": "aff94f4ed6dd4e83e",
+        "ts": "2026-09-11T07:08:16.295+00:00",
+        "path": "/Users/uditgarg/Personel/Procrastinate Coder/finint/runs/2026-09-11-rerun/analyst_news.json"
+      },
+      {
+        "decision": "allow",
+        "reason": "every number traces to the board",
+        "claims": [],
+        "claim_count": 0,
+        "agent_id": "ab337cf6f4b453aa6",
+        "ts": "2026-09-11T07:08:46.988+00:00",
+        "path": "/Users/uditgarg/Personel/Procrastinate Coder/finint/runs/2026-09-11-rerun/analyst_technical.json"
+      },
+      {
+        "decision": "allow",
+        "reason": "every number traces to the board",
+        "claims": [],
+        "claim_count": 0,
+        "agent_id": "ab8be4711b8e2bcbe",
+        "ts": "2026-09-11T07:09:09.791+00:00",
+        "path": "/Users/uditgarg/Personel/Procrastinate Coder/finint/runs/2026-09-11-rerun/analyst_crossmarket.json"
+      },
+      {
+        "decision": "deny",
+        "reason": "1 ungrounded claim: NICKEL 77 in `oi_read`",
+        "claims": [
+          {
+            "kind": "number",
+            "instrument": "NICKEL",
+            "field": "oi_read",
+            "found": "77",
+            "value": 77.0,
+            "expected": [
+              -77.0,
+              1.0,
+              2.900000000000091,
+              9.099999999999909,
+              16.700000000000045,
+              20.285714285714302,
+              20.836666666666687,
+              41.90000000000009,
+              95.5961,
+              198.0,
+              346.0,
+              1596.0,
+              1605.1,
+              1621.8,
+              1647.0,
+              16760.0
+            ],
+            "expected_prose": "a scan level"
+          }
+        ],
+        "claim_count": 1,
+        "agent_id": "a8cfaf2e51ec7f358",
+        "ts": "2026-09-11T07:09:12.433+00:00",
+        "path": "/Users/uditgarg/Personel/Procrastinate Coder/finint/runs/2026-09-11-rerun/analyst_positioning.json"
+      },
+      {
+        "decision": "deny",
+        "reason": "1 ungrounded claim: NICKEL 77 in `oi_read`",
+        "claims": [
+          {
+            "kind": "number",
+            "instrument": "NICKEL",
+            "field": "oi_read",
+            "found": "77",
+            "value": 77.0,
+            "expected": [
+              -77.0,
+              1.0,
+              2.900000000000091,
+              9.099999999999909,
+              16.700000000000045,
+              20.285714285714302,
+              20.836666666666687,
+              41.90000000000009,
+              95.5961,
+              198.0,
+              346.0,
+              1596.0,
+              1605.1,
+              1621.8,
+              1647.0,
+              16760.0
+            ],
+            "expected_prose": "a scan level"
+          }
+        ],
+        "claim_count": 1,
+        "agent_id": "a8cfaf2e51ec7f358",
+        "ts": "2026-09-11T07:09:34.411+00:00",
+        "path": "/Users/uditgarg/Personel/Procrastinate Coder/finint/runs/2026-09-11-rerun/analyst_positioning.json"
+      },
+      {
+        "decision": "allow",
+        "reason": "every number traces to the board",
+        "claims": [],
+        "claim_count": 0,
+        "agent_id": "a8cfaf2e51ec7f358",
+        "ts": "2026-09-11T07:10:21.750+00:00",
+        "path": "/Users/uditgarg/Personel/Procrastinate Coder/finint/runs/2026-09-11-rerun/analyst_positioning.json"
+      },
+      {
+        "decision": "allow",
+        "reason": "every number traces to the board",
+        "claims": [],
+        "claim_count": 0,
+        "agent_id": "orchestrator-recheck",
+        "ts": "2026-09-11T07:10:35.367+00:00",
+        "path": "runs/2026-09-11-rerun/analyst_positioning.json"
+      },
+      {
+        "decision": "allow",
+        "reason": "every number traces to the board",
+        "claims": [],
+        "claim_count": 0,
+        "agent_id": "orchestrator-recheck",
+        "ts": "2026-09-11T07:10:35.388+00:00",
+        "path": "runs/2026-09-11-rerun/analyst_technical.json"
+      },
+      {
+        "decision": "allow",
+        "reason": "every number traces to the board",
+        "claims": [],
+        "claim_count": 0,
+        "agent_id": "orchestrator-recheck",
+        "ts": "2026-09-11T07:10:35.428+00:00",
+        "path": "runs/2026-09-11-rerun/analyst_crossmarket.json"
+      },
+      {
+        "decision": "allow",
+        "reason": "every number traces to the board",
+        "claims": [],
+        "claim_count": 0,
+        "agent_id": "orchestrator-recheck",
+        "ts": "2026-09-11T07:10:35.446+00:00",
+        "path": "runs/2026-09-11-rerun/analyst_news.json"
+      },
+      {
+        "decision": "allow",
+        "reason": "every number traces to the board",
+        "claims": [],
+        "claim_count": 0,
+        "agent_id": "orchestrator-recheck",
+        "ts": "2026-09-11T07:10:53.340+00:00",
+        "path": "runs/2026-09-11-rerun/analyst_positioning.json"
+      },
+      {
+        "decision": "allow",
+        "reason": "every number traces to the board",
+        "claims": [],
+        "claim_count": 0,
+        "agent_id": "orchestrator-recheck",
+        "ts": "2026-09-11T07:10:53.361+00:00",
+        "path": "runs/2026-09-11-rerun/analyst_technical.json"
+      },
+      {
+        "decision": "allow",
+        "reason": "every number traces to the board",
+        "claims": [],
+        "claim_count": 0,
+        "agent_id": "orchestrator-recheck",
+        "ts": "2026-09-11T07:10:53.398+00:00",
+        "path": "runs/2026-09-11-rerun/analyst_crossmarket.json"
+      },
+      {
+        "decision": "allow",
+        "reason": "every number traces to the board",
+        "claims": [],
+        "claim_count": 0,
+        "agent_id": "orchestrator-recheck",
+        "ts": "2026-09-11T07:10:53.416+00:00",
+        "path": "runs/2026-09-11-rerun/analyst_news.json"
+      },
+      {
+        "decision": "allow",
+        "reason": "every number traces to the board",
+        "claims": [],
+        "claim_count": 0,
+        "agent_id": "a40232c0f6c52ed79",
+        "ts": "2026-09-11T07:15:48.577+00:00",
+        "path": "/Users/uditgarg/Personel/Procrastinate Coder/finint/runs/2026-09-11-rerun/analyst_crossmarket.json"
+      },
+      {
+        "decision": "allow",
+        "reason": "every number traces to the board",
+        "claims": [],
+        "claim_count": 0,
+        "agent_id": "orchestrator-recheck",
+        "ts": "2026-09-11T07:16:21.373+00:00",
+        "path": "runs/2026-09-11-rerun/analyst_positioning.json"
+      },
+      {
+        "decision": "allow",
+        "reason": "every number traces to the board",
+        "claims": [],
+        "claim_count": 0,
+        "agent_id": "orchestrator-recheck",
+        "ts": "2026-09-11T07:16:21.396+00:00",
+        "path": "runs/2026-09-11-rerun/analyst_technical.json"
+      },
+      {
+        "decision": "allow",
+        "reason": "every number traces to the board",
+        "claims": [],
+        "claim_count": 0,
+        "agent_id": "orchestrator-recheck",
+        "ts": "2026-09-11T07:16:21.461+00:00",
+        "path": "runs/2026-09-11-rerun/analyst_crossmarket.json"
+      },
+      {
+        "decision": "allow",
+        "reason": "every number traces to the board",
+        "claims": [],
+        "claim_count": 0,
+        "agent_id": "orchestrator-recheck",
+        "ts": "2026-09-11T07:16:21.490+00:00",
+        "path": "runs/2026-09-11-rerun/analyst_news.json"
+      }
+    ],
+    "denied": 2,
+    "claim_count": 2,
+    "unrecorded_claims": 0
+  },
+  "audit": {
+    "lines": 5,
+    "sha256": "d6c4167ce7414c284644994c8dbd7809cfec4572597a61893c1747cdece38625"
+  },
+  "transcripts": [],
+  "stages": [
+    {
+      "stage": "analyst",
+      "agent": "analyst_crossmarket",
+      "seq": 1,
+      "created_at": "2026-09-11-rerunT07:01:00+00:00",
+      "report_sha256": "3b2a85b9b3eab41fa92ae49d9776eb03cd2904bddaf032088ce9839f351feb46",
+      "report": {
+        "agent": "crossmarket-analyst",
+        "run_date": "2026-09-11",
+        "board_note": "The board is fragmented, not unified, this morning. The international reference legs behind bullion and copper fell sharply overnight \u2014 silver down 5.38%, copper down 4.95%, gold down 1.17% \u2014 while the energy references rose, crude up 6.69% and natural gas up 0.43%. The four LME-priced base metals (zinc, aluminium, lead, nickel) carry no implied open at all: that is a refusal by design, since LME publishes before MCX closes, and it covers four of the board's nine names. Where an implied open does exist, none of it is actually overnight \u2014 every Tier A implied-open span reads 'over 2 calendar days \u2014 NOT overnight', because the rupee leg last moved from 2026-09-08 to 2026-09-10, two calendar days apart, even though each reference leg itself is a genuine one-session overnight move. The rupee's own move over that span, +0.79% (INR weaker against the dollar), is real but it is smaller than most of the reference moves it compounds with \u2014 for gold, silver, copper and crude the reference leg ran 1.17% to 6.69%, dwarfing the rupee \u2014 with one exception: natural gas's own reference move was just 0.43%, smaller than the rupee leg, so there the rupee is the larger of the two legs. On balance the rupee is a contributing factor today, not the story; the international leg is doing the driving in four of five Tier A names. On the bullion side, the Indian import premium shows a small, ordinary gold discount (1.25 percentage points below parity, a z of -0.13 over 198 sessions) against a firmer, richer silver premium (3.03 percentage points above parity, a z of 0.29 over 218 sessions) \u2014 the contrast between an unremarkable gold read and a comparatively rich silver read is itself the finding, not either number alone.",
+        "backdrop": {
+          "usdinr_read": "the rupee weakened 0.79% against the dollar, as read by TWELVE_DATA, from 94.85122 as of 2026-09-08 to 95.5961 as of 2026-09-10 \u2014 a 2-calendar-day span, not overnight",
+          "rupee_is_the_story": false
+        },
+        "instruments": [
+          {
+            "instrument": "GOLD",
+            "tier": "A",
+            "implied_open_read": "-0.39%, and that compound spans 2 calendar days, not overnight",
+            "reference_read": "the international reference fell 1.17% overnight, a single session on the reference's own calendar",
+            "premium_read": "1.25 percentage points below import parity, with a z of -0.13 over 198 sessions \u2014 an ordinary discount",
+            "refused": [],
+            "span": "over 2 calendar days \u2014 NOT overnight",
+            "sources": [
+              "implied_open_pct",
+              "intl_change_pct",
+              "intl_span_label",
+              "usdinr_change_pct",
+              "usdinr_span_label",
+              "implied_open_span_days",
+              "implied_open_span_label",
+              "premium_pct",
+              "premium_z",
+              "premium_window",
+              "premium_basis"
+            ]
+          },
+          {
+            "instrument": "SILVER",
+            "tier": "A",
+            "implied_open_read": "-4.64%, and that compound spans 2 calendar days, not overnight",
+            "reference_read": "the international reference fell 5.38% overnight, a single session on the reference's own calendar",
+            "premium_read": "3.03 percentage points above import parity, with a z of 0.29 over 218 sessions",
+            "refused": [],
+            "span": "over 2 calendar days \u2014 NOT overnight",
+            "sources": [
+              "implied_open_pct",
+              "intl_change_pct",
+              "intl_span_label",
+              "usdinr_change_pct",
+              "usdinr_span_label",
+              "implied_open_span_days",
+              "implied_open_span_label",
+              "premium_pct",
+              "premium_z",
+              "premium_window",
+              "premium_basis"
+            ]
+          },
+          {
+            "instrument": "CRUDEOIL",
+            "tier": "A",
+            "implied_open_read": "+7.53%, and that compound spans 2 calendar days, not overnight",
+            "reference_read": "the international reference rose 6.69% overnight, a single session on the reference's own calendar",
+            "premium_read": "not applicable \u2014 the premium is a bullion parity calculation and does not apply to crude oil",
+            "refused": [
+              "premium_pct",
+              "premium_z"
+            ],
+            "span": "over 2 calendar days \u2014 NOT overnight",
+            "sources": [
+              "implied_open_pct",
+              "intl_change_pct",
+              "intl_span_label",
+              "usdinr_change_pct",
+              "usdinr_span_label",
+              "implied_open_span_days",
+              "implied_open_span_label",
+              "premium_basis"
+            ]
+          },
+          {
+            "instrument": "NATURALGAS",
+            "tier": "A",
+            "implied_open_read": "+1.21%, and that compound spans 2 calendar days, not overnight",
+            "reference_read": "the international reference rose 0.43% overnight, a single session on the reference's own calendar \u2014 smaller than the rupee's own move over its span",
+            "premium_read": "not applicable \u2014 the premium is a bullion parity calculation and does not apply to natural gas",
+            "refused": [
+              "premium_pct",
+              "premium_z"
+            ],
+            "span": "over 2 calendar days \u2014 NOT overnight",
+            "sources": [
+              "implied_open_pct",
+              "intl_change_pct",
+              "intl_span_label",
+              "usdinr_change_pct",
+              "usdinr_span_label",
+              "implied_open_span_days",
+              "implied_open_span_label",
+              "premium_basis"
+            ]
+          },
+          {
+            "instrument": "COPPER",
+            "tier": "A",
+            "implied_open_read": "-4.20%, and that compound spans 2 calendar days, not overnight",
+            "reference_read": "the international reference fell 4.95% overnight, a single session on the reference's own calendar",
+            "premium_read": "not applicable \u2014 the premium is a bullion parity calculation and does not apply to copper",
+            "refused": [
+              "premium_pct",
+              "premium_z"
+            ],
+            "span": "over 2 calendar days \u2014 NOT overnight",
+            "sources": [
+              "implied_open_pct",
+              "intl_change_pct",
+              "intl_span_label",
+              "usdinr_change_pct",
+              "usdinr_span_label",
+              "implied_open_span_days",
+              "implied_open_span_label",
+              "premium_basis"
+            ]
+          },
+          {
+            "instrument": "ZINC",
+            "tier": "B",
+            "implied_open_read": "refused by design \u2014 LME publishes before MCX closes, so no overnight implied-open window applies",
+            "reference_read": "the LME 3-month reading is 3962.0, down 1.05% day-over-day as of 2026-09-11 \u2014 context only, not an overnight leg",
+            "premium_read": "not applicable \u2014 the premium is a bullion parity calculation and does not apply to zinc",
+            "refused": [
+              "implied_open_pct",
+              "intl_change_pct",
+              "usdinr_change_pct",
+              "premium_pct",
+              "premium_z"
+            ],
+            "span": "null \u2014 no implied-open span exists for this instrument",
+            "sources": [
+              "implied_open_pct",
+              "lme_value",
+              "lme_change_pct",
+              "lme_as_of",
+              "premium_basis"
+            ]
+          },
+          {
+            "instrument": "ALUMINIUM",
+            "tier": "B",
+            "implied_open_read": "refused by design \u2014 LME publishes before MCX closes, so no overnight implied-open window applies",
+            "reference_read": "the LME 3-month reading is 3318.0, down 0.03% day-over-day as of 2026-09-11 \u2014 context only, not an overnight leg",
+            "premium_read": "not applicable \u2014 the premium is a bullion parity calculation and does not apply to aluminium",
+            "refused": [
+              "implied_open_pct",
+              "intl_change_pct",
+              "usdinr_change_pct",
+              "premium_pct",
+              "premium_z"
+            ],
+            "span": "null \u2014 no implied-open span exists for this instrument",
+            "sources": [
+              "implied_open_pct",
+              "lme_value",
+              "lme_change_pct",
+              "lme_as_of",
+              "premium_basis"
+            ]
+          },
+          {
+            "instrument": "LEAD",
+            "tier": "B",
+            "implied_open_read": "refused by design \u2014 LME publishes before MCX closes, so no overnight implied-open window applies",
+            "reference_read": "the LME 3-month reading is 1902.5, down 0.18% day-over-day as of 2026-09-11 \u2014 context only, not an overnight leg",
+            "premium_read": "not applicable \u2014 the premium is a bullion parity calculation and does not apply to lead",
+            "refused": [
+              "implied_open_pct",
+              "intl_change_pct",
+              "usdinr_change_pct",
+              "premium_pct",
+              "premium_z"
+            ],
+            "span": "null \u2014 no implied-open span exists for this instrument",
+            "sources": [
+              "implied_open_pct",
+              "lme_value",
+              "lme_change_pct",
+              "lme_as_of",
+              "premium_basis"
+            ]
+          },
+          {
+            "instrument": "NICKEL",
+            "tier": "B",
+            "implied_open_read": "refused by design \u2014 LME publishes before MCX closes, so no overnight implied-open window applies",
+            "reference_read": "the LME 3-month reading is 16760.0, down 0.36% day-over-day as of 2026-09-11 \u2014 context only, not an overnight leg",
+            "premium_read": "not applicable \u2014 the premium is a bullion parity calculation and does not apply to nickel",
+            "refused": [
+              "implied_open_pct",
+              "intl_change_pct",
+              "usdinr_change_pct",
+              "premium_pct",
+              "premium_z"
+            ],
+            "span": "null \u2014 no implied-open span exists for this instrument",
+            "sources": [
+              "implied_open_pct",
+              "lme_value",
+              "lme_change_pct",
+              "lme_as_of",
+              "premium_basis"
+            ]
+          }
+        ]
+      },
+      "status": "ok",
+      "model": "claude-sonnet-4-6",
+      "tokens_estimated": 2027
+    },
+    {
+      "stage": "analyst",
+      "agent": "analyst_news",
+      "seq": 2,
+      "created_at": "2026-09-11-rerunT07:02:00+00:00",
+      "report_sha256": "7bea0f68a48cafa4caee4b7e606d8d2e0bbdf18c3f9ff1acde965c1cd9076097",
+      "report": {
+        "agent": "news-analyst",
+        "run_date": "2026-09-11",
+        "board_note": "The board for this run ships no news or article data at all \u2014 there is no news array anywhere in scan.json, so this is a positioning-only morning for all nine instruments, not a choice made after reading the wires. That silence is most interesting against CRUDEOIL, SILVER and COPPER, which are showing the three largest overnight moves on the board (an implied open of +7.5% on CRUDEOIL, -4.6% on SILVER, -4.2% on COPPER, each built from a genuinely overnight international leg per intl_span_label) with nothing stored to explain any of them: positioning-led, no catalyst, and the size of the move makes the absence worth flagging rather than assuming. GOLD and NATURALGAS show smaller implied opens (-0.39% and +1.21%) and are equally uncovered. The four Tier B metals \u2014 ZINC, ALUMINIUM, LEAD, NICKEL \u2014 have no implied open on the board at all (Tier B carries no international reference leg) and, consistent with the standing expectation for base metals, no coverage either. DXY does not appear anywhere in this scan.json, so no dollar read is possible this morning; EIA prints for CRUDEOIL and NATURALGAS are on the board but both are dated 2026-09-04, a week old against an 2026-09-11 board date, and consensus is not available regardless.",
+        "macro": {
+          "dxy_read": "DXY is not present anywhere in this board's scan.json \u2014 no overnight or stale read is possible for this run",
+          "eia_read": "Crude oil stocks stood at 424,069 thousand barrels as of 2026-09-04, down 391 thousand barrels week-on-week; natural gas storage stood at 3,254 (board units, EIA series) as of the same 2026-09-04 date, up 40 week-on-week. Both prints are a week old against this 2026-09-11 board.",
+          "consensus": "consensus not available"
+        },
+        "catalysts": [],
+        "instruments": [
+          {
+            "instrument": "GOLD",
+            "news_read": "no material overnight catalyst \u2014 no news data of any kind is present on this board",
+            "matches_tape": null,
+            "refused": [],
+            "sources": [
+              "GOLD.implied_open_pct",
+              "GOLD.implied_open_span_label"
+            ]
+          },
+          {
+            "instrument": "SILVER",
+            "news_read": "no material overnight catalyst \u2014 the board shows an overnight international leg down 5.38% and an implied open of -4.64%, but no stored article explains it; this is a positioning-led move with no catalyst on record",
+            "matches_tape": null,
+            "refused": [],
+            "sources": [
+              "SILVER.implied_open_pct",
+              "SILVER.intl_change_pct",
+              "SILVER.intl_span_label"
+            ]
+          },
+          {
+            "instrument": "CRUDEOIL",
+            "news_read": "no material overnight catalyst \u2014 the board shows an overnight international leg up 6.69% and an implied open of +7.53%, the largest move of the nine, with nothing stored to account for it; positioning-led, no catalyst",
+            "matches_tape": null,
+            "refused": [],
+            "sources": [
+              "CRUDEOIL.implied_open_pct",
+              "CRUDEOIL.intl_change_pct",
+              "CRUDEOIL.intl_span_label"
+            ]
+          },
+          {
+            "instrument": "NATURALGAS",
+            "news_read": "no material overnight catalyst \u2014 the only stored fact is the EIA storage print of 3,254 as of 2026-09-04 (up 40 week-on-week), which is a week old and predates this board; no article covers the overnight implied open of +1.21%",
+            "matches_tape": null,
+            "refused": [],
+            "sources": [
+              "NATURALGAS.implied_open_pct",
+              "NATURALGAS.eia_value",
+              "NATURALGAS.eia_as_of",
+              "NATURALGAS.eia_wow"
+            ]
+          },
+          {
+            "instrument": "COPPER",
+            "news_read": "no material overnight catalyst \u2014 the board shows an overnight international leg down 4.95% and an implied open of -4.20%, but no stored article explains it; positioning-led, no catalyst",
+            "matches_tape": null,
+            "refused": [],
+            "sources": [
+              "COPPER.implied_open_pct",
+              "COPPER.intl_change_pct",
+              "COPPER.intl_span_label"
+            ]
+          },
+          {
+            "instrument": "ZINC",
+            "news_read": "no material overnight catalyst, and no coverage of ZINC exists on this board \u2014 consistent with the standing lack of English-language coverage for base metals",
+            "matches_tape": null,
+            "refused": [
+              "implied_open_pct"
+            ],
+            "sources": [
+              "ZINC.implied_open_pct",
+              "ZINC.data_tier"
+            ]
+          },
+          {
+            "instrument": "ALUMINIUM",
+            "news_read": "no material overnight catalyst, and no coverage of ALUMINIUM exists on this board \u2014 consistent with the standing lack of English-language coverage for base metals",
+            "matches_tape": null,
+            "refused": [
+              "implied_open_pct"
+            ],
+            "sources": [
+              "ALUMINIUM.implied_open_pct",
+              "ALUMINIUM.data_tier"
+            ]
+          },
+          {
+            "instrument": "LEAD",
+            "news_read": "no material overnight catalyst, and no coverage of LEAD exists on this board \u2014 consistent with the standing lack of English-language coverage for base metals",
+            "matches_tape": null,
+            "refused": [
+              "implied_open_pct"
+            ],
+            "sources": [
+              "LEAD.implied_open_pct",
+              "LEAD.data_tier"
+            ]
+          },
+          {
+            "instrument": "NICKEL",
+            "news_read": "no material overnight catalyst, and no coverage of NICKEL exists on this board \u2014 consistent with the standing lack of English-language coverage for base metals",
+            "matches_tape": null,
+            "refused": [
+              "implied_open_pct"
+            ],
+            "sources": [
+              "NICKEL.implied_open_pct",
+              "NICKEL.data_tier"
+            ]
+          }
+        ],
+        "fetched": []
+      },
+      "status": "ok",
+      "model": "claude-sonnet-4-6",
+      "tokens_estimated": 1238
+    },
+    {
+      "stage": "analyst",
+      "agent": "analyst_positioning",
+      "seq": 3,
+      "created_at": "2026-09-11-rerunT07:03:00+00:00",
+      "report_sha256": "ce8e5a0472db06fbb1475a5cfd393ce8fc4e20dc0b043fbc80a24273fd29783c",
+      "report": {
+        "agent": "positioning-analyst",
+        "run_date": "2026-09-11",
+        "board_note": "The board leans toward unwinding, not building: six of the nine instruments carry an open-interest state that reads as an exit rather than an entry \u2014 long liquidation in gold, copper, zinc, aluminium and lead, and short covering in nickel \u2014 while only three show fresh money actually arriving: crude oil with new longs, and silver and natural gas both with new shorts. That lean is not uniform in direction, though \u2014 it is an unwind across bullion and base metals sitting alongside fresh conviction in energy and silver, which is a fragmented morning, not a single-direction one. The clearest outlier is crude oil: it is the only instrument on the board where open interest built on a rally, the one unambiguous case of fresh buying rather than an exit, and it carries the single largest open-interest addition on the board in contract terms. Natural gas is the other instrument to flag on its own terms: its open-interest state reads as fresh shorts (price down, open interest up), yet its own overnight and international reference moves are both positive, an internal disagreement the board does not resolve and this report will not either.",
+        "instruments": [
+          {
+            "instrument": "GOLD",
+            "oi_state": "LONG_LIQUIDATION",
+            "oi_read": "Gold's open interest fell by 221 contracts against a total open interest of 10,187 contracts \u2014 a modest retreat, existing longs stepping back rather than a rush for the exit or fresh selling.",
+            "cot_read": "Gold's COT reading sits at the 4.2nd percentile \u2014 an extreme low and among the most stretched readings on the board \u2014 but the board does not give a confidence link between this series and price for gold.",
+            "divergence": null,
+            "refused": [
+              "cot_confidence"
+            ],
+            "sources": [
+              "oi_state",
+              "oi_change",
+              "total_oi",
+              "cot_percentile"
+            ]
+          },
+          {
+            "instrument": "SILVER",
+            "oi_state": "NEW_SHORTS",
+            "oi_read": "Silver's open interest rose by 901 contracts against a total open interest of 13,213 contracts \u2014 a sizeable build, consistent with fresh selling arriving rather than shorts being forced to cover.",
+            "cot_read": "Silver's COT reading sits at 0.3972 \u2014 close to the middle of its range and unremarkable \u2014 and the board does not give a confidence link between this series and price for silver.",
+            "divergence": null,
+            "refused": [
+              "cot_confidence"
+            ],
+            "sources": [
+              "oi_state",
+              "oi_change",
+              "total_oi",
+              "cot_percentile"
+            ]
+          },
+          {
+            "instrument": "CRUDEOIL",
+            "oi_state": "NEW_LONGS",
+            "oi_read": "Crude's open interest rose by 2,822 contracts against a total open interest of 19,973 contracts \u2014 the largest single-session open-interest addition on the board, consistent with fresh buying rather than shorts covering.",
+            "cot_read": "Crude's COT reading sits at 0.5544 \u2014 near the middle of its range and unremarkable \u2014 and the board does not give a confidence link between this series and price for crude.",
+            "divergence": null,
+            "refused": [
+              "cot_confidence"
+            ],
+            "sources": [
+              "oi_state",
+              "oi_change",
+              "total_oi",
+              "cot_percentile"
+            ]
+          },
+          {
+            "instrument": "NATURALGAS",
+            "oi_state": "NEW_SHORTS",
+            "oi_read": "Natural gas's open interest rose by 3,512 contracts against a total open interest of 56,751 contracts \u2014 a sizeable build, the state read as fresh selling entering rather than a squeeze.",
+            "cot_read": "Natural gas's COT reading sits at 1.0 \u2014 the extreme top of its range and the single most crowded reading on the board \u2014 and the board does not give a confidence link between this series and price for natural gas.",
+            "divergence": "The new-shorts state is defined by price falling as open interest rises, yet natural gas's own overnight move is positive: an implied open of +1.21% (spanning 2 calendar days, not overnight) and an international reference move of +0.43% overnight both point up. The open-interest state and the overnight tape disagree here, and the board does not reconcile it.",
+            "refused": [
+              "cot_confidence"
+            ],
+            "sources": [
+              "oi_state",
+              "oi_change",
+              "total_oi",
+              "cot_percentile",
+              "implied_open_pct",
+              "intl_change_pct"
+            ]
+          },
+          {
+            "instrument": "COPPER",
+            "oi_state": "LONG_LIQUIDATION",
+            "oi_read": "Copper's open interest fell by 1,062 contracts against a total open interest of 10,292 contracts \u2014 a sizeable retreat, longs unwinding rather than fresh sellers arriving.",
+            "cot_read": "Copper's COT reading sits at 0.104 \u2014 near the bottom of its range and stretched low \u2014 and the board does not give a confidence link between this series and price for copper.",
+            "divergence": null,
+            "refused": [
+              "cot_confidence"
+            ],
+            "sources": [
+              "oi_state",
+              "oi_change",
+              "total_oi",
+              "cot_percentile"
+            ]
+          },
+          {
+            "instrument": "ZINC",
+            "oi_state": "LONG_LIQUIDATION",
+            "oi_read": "Zinc's open interest fell by 259 contracts against a total open interest of 2,356 contracts \u2014 a sizeable retreat by longs, not fresh selling. This is Tier B: the read is honestly lighter, with no international reference leg on this morning's board.",
+            "cot_read": "Zinc's COT reading sits at 0.6418 \u2014 above the midpoint but not extreme \u2014 and the board does not give a confidence link between this series and price for zinc.",
+            "divergence": null,
+            "refused": [
+              "cot_confidence",
+              "implied_open_pct"
+            ],
+            "sources": [
+              "oi_state",
+              "oi_change",
+              "total_oi",
+              "cot_percentile",
+              "lme_change_pct"
+            ]
+          },
+          {
+            "instrument": "ALUMINIUM",
+            "oi_state": "LONG_LIQUIDATION",
+            "oi_read": "Aluminium's open interest fell by 445 contracts against a total open interest of 3,826 contracts \u2014 a sizeable retreat by longs. This is Tier B: the read is honestly lighter, with no international reference leg on this morning's board.",
+            "cot_read": "Aluminium's COT reading sits at 0.9311 \u2014 near the top of its range and stretched high \u2014 though the board flags only a weak correlation between this series and price for aluminium.",
+            "divergence": null,
+            "refused": [
+              "implied_open_pct"
+            ],
+            "sources": [
+              "oi_state",
+              "oi_change",
+              "total_oi",
+              "cot_percentile",
+              "cot_confidence",
+              "lme_change_pct"
+            ]
+          },
+          {
+            "instrument": "LEAD",
+            "oi_state": "LONG_LIQUIDATION",
+            "oi_read": "Lead's open interest fell by 19 contracts against a total open interest of 677 contracts \u2014 a small trim, not a rush for the exit. This is Tier B: the read is honestly lighter, with no international reference leg on this morning's board.",
+            "cot_read": "Lead's COT reading sits at 0.0 \u2014 the extreme bottom of its range, the single most stretched short reading on the board \u2014 though the board flags the correlation between this series and price for lead as unverified.",
+            "divergence": null,
+            "refused": [
+              "implied_open_pct"
+            ],
+            "sources": [
+              "oi_state",
+              "oi_change",
+              "total_oi",
+              "cot_percentile",
+              "cot_confidence",
+              "lme_change_pct"
+            ]
+          },
+          {
+            "instrument": "NICKEL",
+            "oi_state": "SHORT_COVERING",
+            "oi_read": "Nickel's open interest changed by -77 against a total open interest of 346 contracts \u2014 the largest proportional shift on the board relative to its size, consistent with shorts being forced out rather than longs building. This is Tier B: the read is honestly lighter, with no international reference leg on this morning's board.",
+            "cot_read": "Nickel's COT reading sits at 0.0684 \u2014 near the bottom of its range and stretched low \u2014 though the board flags the correlation between this series and price for nickel as unverified.",
+            "divergence": "Short covering is defined by price rising as open interest falls, yet nickel's London reference fell 0.36% overnight as of 2026-09-11 \u2014 the state and the international tape point in opposite directions, though the London reference and the MCX contract are not the same instrument and the board does not reconcile the two.",
+            "refused": [
+              "implied_open_pct"
+            ],
+            "sources": [
+              "oi_state",
+              "oi_change",
+              "total_oi",
+              "cot_percentile",
+              "cot_confidence",
+              "lme_change_pct"
+            ]
+          }
+        ]
+      },
+      "status": "ok",
+      "model": "claude-sonnet-4-6",
+      "tokens_estimated": 1946
+    },
+    {
+      "stage": "analyst",
+      "agent": "analyst_technical",
+      "seq": 4,
+      "created_at": "2026-09-11-rerunT07:04:00+00:00",
+      "report_sha256": "953e3295d076b99ab85b11bc3b648aa26932f13545219674ad58bff99cc229a3",
+      "report": {
+        "agent": "technical-analyst",
+        "run_date": "2026-09-11",
+        "board_note": "Six of the nine instruments sit under one ATR from their nearest level this morning \u2014 gold 0.93 ATR from support at 149,665, silver 0.42 ATR from support at 231,811, copper 0.66 ATR from support at 1,361.1, zinc 0.89 ATR from resistance at 424.15, lead 0.62 ATR from support at 195.5, and nickel 0.45 ATR from support at 1,596.0 \u2014 so the board reads coiled rather than extended; the three that sit further out are crude oil (2.52 ATR to its only stated support, with no resistance level on the board at all), natural gas (1.27 ATR to support, 1.78 to resistance) and aluminium (1.53 ATR to support, 1.95 to resistance). Volatility does not split cleanly by data tier: today's range is expanding relative to its recent average for gold (2,880.86 vs 2,708.68), copper (17.53 vs 16.65) and zinc (10.06 vs 7.43), compressed for silver (5,390.71 vs 5,871.88), crude oil (305.36 vs 356.80), aluminium (4.44 vs 5.16) and lead (1.60 vs 2.51), and roughly unremarkable for natural gas (8.73 vs 8.78) and nickel (20.29 vs 20.84). The exception is zinc, which combines the widest volatility expansion on the board (today's range roughly 35% above its recent average) with a resistance level under one ATR away, making it the one instrument where a near level and an expanding day line up; crude oil is a second, smaller exception in that the board carries no resistance level for it at all, leaving only a support read. On the cross-instrument ratios: gold sits at 65.08 rupees-per-gram against silver, normalised to rupees per gram from the 10-gram and kilogram quotes, a percentile of 0.5286 over a 250-session back-adjusted continuous window \u2014 roughly the middle of its recent range. Crude oil sits at 35.94 as quoted (rupees per barrel over rupees per mmBtu, a genuinely cross-unit reading), a percentile of 0.862 over the same 250-session window \u2014 high in its recent range.",
+        "instruments": [
+          {
+            "instrument": "GOLD",
+            "level_read": "Support sits at 149,665, a distance of 2,676 points and 0.93 ATR below the last close; resistance sits at 164,773, a distance of 12,432 points and 4.32 ATR above.",
+            "volatility_read": "Today's range is 2,880.86 against a recent average of 2,708.68 \u2014 modestly above average, i.e. expanding.",
+            "in_play": "Support at 0.93 ATR is within a normal day's reach on this modestly expanding session; resistance at 4.32 ATR is well beyond it.",
+            "term_structure": "Contango, with the deferred contract 1,538 points above the front at last close, having narrowed by 106 points on the session; fifteen sessions to expiry, with 46.9% of open interest already on the deferred contract.",
+            "degraded": null,
+            "refused": [],
+            "sources": [
+              "dist_to_support_atr",
+              "dist_to_support",
+              "support_level",
+              "dist_to_resistance_atr",
+              "dist_to_resistance",
+              "resistance_level",
+              "atr",
+              "atr_avg",
+              "cont_stale_sessions",
+              "term_structure",
+              "near_next_spread",
+              "near_next_spread_change",
+              "sessions_to_expiry",
+              "next_oi_share"
+            ]
+          },
+          {
+            "instrument": "SILVER",
+            "level_read": "Support sits at 231,811, a distance of 2,288 points and 0.42 ATR below the last close; resistance sits at 255,460, a distance of 21,361 points and 3.96 ATR above.",
+            "volatility_read": "Today's range is 5,390.71 against a recent average of 5,871.88 \u2014 below average, i.e. compressed.",
+            "in_play": "Support at 0.42 ATR is close enough that even on a compressed day it remains a plausible reach; resistance at 3.96 ATR is not, regardless of volatility.",
+            "term_structure": "Contango, with the deferred contract 6,451 points above the front at last close, having widened by 298 points on the session; forty-one sessions to expiry, with only 1.5% of open interest yet on the deferred contract.",
+            "degraded": null,
+            "refused": [],
+            "sources": [
+              "dist_to_support_atr",
+              "dist_to_support",
+              "support_level",
+              "dist_to_resistance_atr",
+              "dist_to_resistance",
+              "resistance_level",
+              "atr",
+              "atr_avg",
+              "cont_stale_sessions",
+              "term_structure",
+              "near_next_spread",
+              "near_next_spread_change",
+              "sessions_to_expiry",
+              "next_oi_share"
+            ]
+          },
+          {
+            "instrument": "CRUDEOIL",
+            "level_read": "Support sits at 8,952.0, a distance of 770 points and 2.52 ATR below the last close. The board carries no resistance level for crude oil \u2014 both the resistance level and its ATR distance are null.",
+            "volatility_read": "Today's range is 305.36 against a recent average of 356.80 \u2014 below average, i.e. compressed.",
+            "in_play": "Support at 2.52 ATR is a long way off on a compressed day and is not a level a normal session would reach.",
+            "term_structure": "Backwardation, with the deferred contract 370 points below the front at last close, the discount having widened by 114 points on the session; six sessions to expiry, with 21.9% of open interest already on the deferred contract.",
+            "degraded": "The board's level structure here is one-sided \u2014 only a support level is stored, so no resistance read exists to compare against.",
+            "refused": [
+              "resistance_level",
+              "dist_to_resistance",
+              "dist_to_resistance_atr"
+            ],
+            "sources": [
+              "dist_to_support_atr",
+              "dist_to_support",
+              "support_level",
+              "resistance_level",
+              "dist_to_resistance",
+              "dist_to_resistance_atr",
+              "atr",
+              "atr_avg",
+              "cont_stale_sessions",
+              "term_structure",
+              "near_next_spread",
+              "near_next_spread_change",
+              "sessions_to_expiry",
+              "next_oi_share"
+            ]
+          },
+          {
+            "instrument": "NATURALGAS",
+            "level_read": "Support sits at 259.4, a distance of 11.1 points and 1.27 ATR below the last close; resistance sits at 286.0, a distance of 15.5 points and 1.78 ATR above.",
+            "volatility_read": "Today's range is 8.73 against a recent average of 8.78 \u2014 essentially equal, i.e. unremarkable.",
+            "in_play": "Neither level is close enough to call in play on unremarkable volatility; both distances sit above one ATR and mean what they say.",
+            "term_structure": "Contango, with the deferred contract 15.1 points above the front at last close, having widened by 1.4 points on the session; ten sessions to expiry, with 20.1% of open interest already on the deferred contract.",
+            "degraded": null,
+            "refused": [],
+            "sources": [
+              "dist_to_support_atr",
+              "dist_to_support",
+              "support_level",
+              "dist_to_resistance_atr",
+              "dist_to_resistance",
+              "resistance_level",
+              "atr",
+              "atr_avg",
+              "cont_stale_sessions",
+              "term_structure",
+              "near_next_spread",
+              "near_next_spread_change",
+              "sessions_to_expiry",
+              "next_oi_share"
+            ]
+          },
+          {
+            "instrument": "COPPER",
+            "level_read": "Support sits at 1,361.1, a distance of 11.55 points and 0.66 ATR below the last close; resistance sits at 1,409.25, a distance of 36.6 points and 2.09 ATR above.",
+            "volatility_read": "Today's range is 17.53 against a recent average of 16.65 \u2014 modestly above average, i.e. expanding.",
+            "in_play": "Support at 0.66 ATR is clearly reachable on this expanding session; resistance at 2.09 ATR is further out but less remote than it would be on a quiet day.",
+            "term_structure": "Contango, with the deferred contract 8.6 points above the front at last close, having widened by 2.05 points on the session; thirteen sessions to expiry, with 18.5% of open interest already on the deferred contract.",
+            "degraded": null,
+            "refused": [],
+            "sources": [
+              "dist_to_support_atr",
+              "dist_to_support",
+              "support_level",
+              "dist_to_resistance_atr",
+              "dist_to_resistance",
+              "resistance_level",
+              "atr",
+              "atr_avg",
+              "cont_stale_sessions",
+              "term_structure",
+              "near_next_spread",
+              "near_next_spread_change",
+              "sessions_to_expiry",
+              "next_oi_share"
+            ]
+          },
+          {
+            "instrument": "ZINC",
+            "level_read": "Resistance sits at 424.15, a distance of 9.0 points and 0.89 ATR above the last close; support sits at 385.0, a distance of 30.15 points and 3.0 ATR below.",
+            "volatility_read": "Today's range is 10.06 against a recent average of 7.43 \u2014 meaningfully above average, i.e. expanding.",
+            "in_play": "Resistance at 0.89 ATR is in play on this expanding session; support at 3.0 ATR is not.",
+            "term_structure": "Backwardation, with the deferred contract 8.5 points below the front at last close, essentially flat on the session (a 0.1-point move); thirteen sessions to expiry, with 16.9% of open interest already on the deferred contract. Data is Tier B (LME-priced): no implied open or COT confidence is carried, and the read is correspondingly lighter.",
+            "degraded": null,
+            "refused": [],
+            "sources": [
+              "dist_to_resistance_atr",
+              "dist_to_resistance",
+              "resistance_level",
+              "dist_to_support_atr",
+              "dist_to_support",
+              "support_level",
+              "atr",
+              "atr_avg",
+              "cont_stale_sessions",
+              "term_structure",
+              "near_next_spread",
+              "near_next_spread_change",
+              "sessions_to_expiry",
+              "next_oi_share",
+              "data_tier"
+            ]
+          },
+          {
+            "instrument": "ALUMINIUM",
+            "level_read": "Support sits at 342.5, a distance of 6.8 points and 1.53 ATR below the last close; resistance sits at 357.95, a distance of 8.65 points and 1.95 ATR above.",
+            "volatility_read": "Today's range is 4.44 against a recent average of 5.16 \u2014 below average, i.e. compressed.",
+            "in_play": "Both levels sit above one ATR already, and the compression makes even the nearer support at 1.53 ATR harder to reach on a normal day.",
+            "term_structure": "Backwardation, with the deferred contract 0.15 points below the front at last close, having narrowed sharply \u2014 a 1.25-point move on the session; thirteen sessions to expiry, with 16.8% of open interest already on the deferred contract. Data is Tier B: no implied open or COT confidence is carried, and the read is correspondingly lighter.",
+            "degraded": null,
+            "refused": [],
+            "sources": [
+              "dist_to_support_atr",
+              "dist_to_support",
+              "support_level",
+              "dist_to_resistance_atr",
+              "dist_to_resistance",
+              "resistance_level",
+              "atr",
+              "atr_avg",
+              "cont_stale_sessions",
+              "term_structure",
+              "near_next_spread",
+              "near_next_spread_change",
+              "sessions_to_expiry",
+              "next_oi_share",
+              "data_tier"
+            ]
+          },
+          {
+            "instrument": "LEAD",
+            "level_read": "Support sits at 195.5, a distance of 1.0 point and 0.62 ATR below the last close; resistance sits at 200.0, a distance of 3.5 points and 2.18 ATR above.",
+            "volatility_read": "Today's range is 1.60 against a recent average of 2.51 \u2014 meaningfully below average, i.e. compressed.",
+            "in_play": "Support is nominally close at 0.62 ATR, but the session is compressed enough (roughly a third below its recent average range) that even this near level is harder to reach than the raw distance suggests.",
+            "term_structure": "Contango, with the deferred contract 0.1 points above the front at last close, having moved 0.35 points on the session; thirteen sessions to expiry, with 28.1% of open interest already on the deferred contract. Data is Tier B: no implied open or COT confidence is carried, and the read is correspondingly lighter.",
+            "degraded": null,
+            "refused": [],
+            "sources": [
+              "dist_to_support_atr",
+              "dist_to_support",
+              "support_level",
+              "dist_to_resistance_atr",
+              "dist_to_resistance",
+              "resistance_level",
+              "atr",
+              "atr_avg",
+              "cont_stale_sessions",
+              "term_structure",
+              "near_next_spread",
+              "near_next_spread_change",
+              "sessions_to_expiry",
+              "next_oi_share",
+              "data_tier"
+            ]
+          },
+          {
+            "instrument": "NICKEL",
+            "level_read": "Support sits at 1,596.0, a distance of 9.1 points and 0.45 ATR below the last close; resistance sits at 1,647.0, a distance of 41.9 points and 2.07 ATR above.",
+            "volatility_read": "Today's range is 20.29 against a recent average of 20.84 \u2014 essentially equal, i.e. unremarkable.",
+            "in_play": "Support at 0.45 ATR is well within reach of a normal session; resistance at 2.07 ATR is not.",
+            "term_structure": "Contango, with the deferred contract 16.7 points above the front at last close, having widened by 2.9 points on the session; three sessions to expiry, with 36.4% of open interest already on the deferred contract. Data is Tier B: no implied open or COT confidence is carried, and the read is correspondingly lighter.",
+            "degraded": null,
+            "refused": [],
+            "sources": [
+              "dist_to_support_atr",
+              "dist_to_support",
+              "support_level",
+              "dist_to_resistance_atr",
+              "dist_to_resistance",
+              "resistance_level",
+              "atr",
+              "atr_avg",
+              "cont_stale_sessions",
+              "term_structure",
+              "near_next_spread",
+              "near_next_spread_change",
+              "sessions_to_expiry",
+              "next_oi_share",
+              "data_tier"
+            ]
+          }
+        ]
+      },
+      "status": "ok",
+      "model": "claude-sonnet-4-6",
+      "tokens_estimated": 2996
+    }
+  ]
+}
