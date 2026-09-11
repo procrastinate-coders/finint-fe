@@ -117,6 +117,41 @@ full reasoning and limits are in the test file — read them before trusting a g
 
 ---
 
+**2026-09-11 — THE AGENT-RUN PAGE, REBUILT AT THE RIGHT ALTITUDE.** The complaint was
+"overwhelming" and it was not a styling problem: 3,949 words / 20 min / 15.8 A4 pages on one page,
+with **69% of the numbers in the prose already in the table** and 181 raw snake_case field names
+leaking into it. The page ENUMERATED per-instrument what was actually board-wide.
+- ⚠️ **THE VERDICT BAND is the way in** (`verdict.ts` + `VerdictBand.tsx`) — ~50 words at the top.
+  **STRUCTURED FIELDS ONLY**: `implied_open_span_days`, `usdinr_span_days`, `refused[]`, the
+  PRESENCE of a `divergence` field, `guard.decisions`, `gate`. Never parsed from prose — that is
+  FIN-197, removed once, and a band is a tempting place to reintroduce it.
+- ⚠️ **THE TENSION LINE carries the most weight on the page.** FIN-216 built
+  `implied_open_span_days` because an implied open measured over a long weekend read as "last
+  night"; this is the first surface that ever showed it — "5 of 9 implied opens are not overnight".
+- ⚠️ **THE FOUR READS STAY STACKED, NEVER TABBED.** The value of a second pipeline is where its four
+  readers disagree about the same instrument, and tabs hide exactly that. The band is a way in, not
+  a replacement — nothing is summarised or hidden except the four board notes, which collapse behind
+  **their own first sentence** (a cut, never a generated précis — summarising an agent would invent
+  a claim it did not make).
+- ⚠️ **ONE ALIGNMENT SPINE** (`Spine.tsx`) down the whole page — verdict rows, six fact groups, four
+  reads, board notes, guard decisions all hang off one 108px gutter. That is what stops density
+  reading as scatter; the previous version had no spine, which is why nine panels of correct
+  information still felt like debris.
+- Board table: **five columns, figures at 15px**; the other 40-odd fields live in the detail in six
+  labelled groups. A group with nothing in it is OMITTED (GOLD has no LME/EIA) — an empty labelled
+  group claims it was measured and came back blank.
+- ⚠️ `prior_close_sessions` is on the readiness `BoardRow`, NOT `AgentRunBoardRow` — not read here;
+  the span fields carry the same fact and are served.
+- 🔑 **THE ATR LESSON (FIN-238):** 45 "declines" the old page reported were OUR BUG — `BOARD_FIELDS`
+  never shipped `atr`, and the derivation that built that list was CIRCULAR (derived from what
+  agents cite; an agent can only cite what it has). The page was honestly reporting an absence we
+  created. When a page reports a lot of missing data, check what you ship before redesigning it.
+- ⚠️ **NODE 26 SHADOWS jsdom's `localStorage`** — a global that is `undefined` without
+  `--localstorage-file` takes precedence, so `window.localStorage` is undefined and every test
+  touching the session store dies. Pre-existing on main, surfaced by a Node upgrade, nothing in the
+  repo different. `src/test/setup.ts` now installs an in-memory Storage shim when the environment
+  has no working one, so the suite no longer depends on which Node is on PATH.
+
 **2026-09-09 (c) — THE READ BUDGET WAS 9s AND CANCELLED A REAL 10.49s READ.** Measured:
 `/readiness` = 18,250 bytes, **10.49s** from the laptop, **<1s** from the EC2 box — the time is
 TRANSFER, not computation. Reproduced exactly at the incident rate: 18,250 B at 1,740 B/s = 10.495s.
